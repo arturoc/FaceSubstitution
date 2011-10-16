@@ -12,7 +12,7 @@ void main() {\
 		vec2 curOffset = float(i) * direction;\
 		vec4 leftMask = texture2DRect(mask, pos - curOffset);\
 		vec4 rightMask = texture2DRect(mask, pos + curOffset);\
-		bool valid = leftMask.r > 0. && rightMask.r > 0.;\
+		bool valid = leftMask.r == 1. && rightMask.r == 1.;\
 		if(valid) {\
 			sum +=\
 				texture2DRect(tex, pos + curOffset) +\

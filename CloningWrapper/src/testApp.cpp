@@ -17,6 +17,7 @@ void testApp::update() {
 		ofSetColor(255);
 		
 		src.begin();
+		ofClear(0, 255);
 		dst.draw(x - w / 2, y - h / 2);
 		src.end();
 		

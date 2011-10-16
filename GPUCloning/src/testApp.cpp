@@ -3,7 +3,7 @@
 void testApp::setup() {
 	//ofSetVerticalSync(true);
 	
-	src.loadImage("src.jpg");
+	src.loadImage("src.png");
 	src.setImageType(OF_IMAGE_COLOR);
 	dst.loadImage("dst.jpg");
 	dst.setImageType(OF_IMAGE_COLOR);
