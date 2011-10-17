@@ -87,12 +87,12 @@ void testApp::draw() {
 	ofPopMatrix();
 	
 	ofEnableAlphaBlending();
-	dst.draw(0, 480);	
+	dst.draw(640, 0);
 	cloneShader.begin();
 	cloneShader.setUniformTexture("src", src, 1);
 	cloneShader.setUniformTexture("srcBlur", srcBlur, 2);
 	cloneShader.setUniformTexture("dstBlur", dstBlur, 3);
-	dst.draw(0, 480);
+	dst.draw(640, 0);
 	cloneShader.end();
 	ofDisableAlphaBlending();
 	
