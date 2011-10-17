@@ -1,6 +1,7 @@
 #include "Clone.h"
 
 char maskBlurShaderSource[] =
+"#extension GL_ARB_texture_rectangle : enable\n"
 "uniform sampler2DRect tex, mask;\
 uniform vec2 direction;\
 uniform int k;\
@@ -26,6 +27,7 @@ void main() {\
 }";
 
 char cloneShaderSource[] = 
+"#extension GL_ARB_texture_rectangle : enable\n"
 "uniform sampler2DRect src, srcBlur, dstBlur;\
 void main() {\
 	vec2 pos = gl_TexCoord[0].st;	\
