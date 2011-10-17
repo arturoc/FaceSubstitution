@@ -3,7 +3,9 @@
 using namespace ofxCv;
 
 void testApp::setup() {
+#ifdef TARGET_OSX
 	ofSetDataPathRoot("../data/");
+#endif
 	ofSetVerticalSync(true);
 	cloneReady = false;
 	cam.initGrabber(640, 480);
@@ -17,6 +19,14 @@ void testApp::setup() {
 	srcTracker.setup();
 	srcTracker.setIterations(25);
 	srcTracker.setAttempts(4);
+
+	faces.allowExt("jpg");
+	faces.allowExt("png");
+	faces.listDir("faces");
+	currentFace = 0;
+	if(faces.size()!=0){
+		loadFace(faces.getPath(currentFace));
+	}
 }
 
 void testApp::update() {
@@ -67,10 +77,29 @@ void testApp::draw() {
 	}
 }
 
-void testApp::dragEvent(ofDragInfo dragInfo) {
-	src.loadImage(dragInfo.files[0]);
+void testApp::loadFace(string face){
+	src.loadImage(face);
 	if(src.getWidth() > 0) {
 		srcTracker.update(toCv(src));
 		srcPoints = srcTracker.getImagePoints();
+	}
+}
+
+void testApp::dragEvent(ofDragInfo dragInfo) {
+	loadFace(dragInfo.files[0]);
+}
+
+void testApp::keyPressed(int key){
+	switch(key){
+	case OF_KEY_UP:
+		currentFace++;
+		break;
+	case OF_KEY_DOWN:
+		currentFace--;
+		break;
+	}
+	currentFace = ofClamp(currentFace,0,faces.size());
+	if(faces.size()!=0){
+		loadFace(faces.getPath(currentFace));
 	}
 }
