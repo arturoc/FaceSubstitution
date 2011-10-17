@@ -3,6 +3,7 @@
 using namespace ofxCv;
 
 void testApp::setup() {
+	ofSetDataPathRoot("../data/");
 	ofSetVerticalSync(true);
 	cloneReady = false;
 	cam.initGrabber(640, 480);
