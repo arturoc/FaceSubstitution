@@ -21,3 +21,7 @@ Demonstrates a GPU-based clone that uses GLSL shaders to compute the masked blur
 ## CloningWrapper
 
 Provides a single class `Clone`, that wraps the GPUCloning approach with a simple interface. `Clone` contains the shader source inline, which means you only need `Clone` to do cloning -- no extra files are required.
+
+## FaceSubstitution
+
+Uses CloningWrapper with ofxFaceTracker to clone a face from disk onto a face in real time.
