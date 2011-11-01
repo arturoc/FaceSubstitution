@@ -12,7 +12,10 @@ public:
 	void update();
 	void draw();
 	void dragEvent(ofDragInfo dragInfo);
+	void loadFace(string face);
 	
+	void keyPressed(int key);
+
 	ofxFaceTrackerThreaded camTracker;
 	ofVideoGrabber cam;
 	
@@ -23,4 +26,7 @@ public:
 	bool cloneReady;
 	Clone clone;
 	ofFbo srcFbo, maskFbo;
+
+	ofDirectory faces;
+	int currentFace;
 };

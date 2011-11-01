@@ -1,3 +1,4 @@
+#extension GL_ARB_texture_rectangle : enable
 uniform sampler2DRect src, srcBlur, dstBlur;
 
 void main() {

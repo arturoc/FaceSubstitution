@@ -3,7 +3,7 @@
 void testApp::setup() {
 	//ofSetVerticalSync(true);
 	
-	src.loadImage("src.png");
+	src.loadImage("src.jpg");
 	src.setImageType(OF_IMAGE_COLOR);
 	dst.loadImage("dst.jpg");
 	dst.setImageType(OF_IMAGE_COLOR);
@@ -68,12 +68,12 @@ void testApp::draw() {
 	ofPopMatrix();
 	
 	ofEnableAlphaBlending();
-	dst.draw(0, 480);	
+	dst.draw(640, 0);
 	cloneShader.begin();
 	cloneShader.setUniformTexture("src", src, 1);
 	cloneShader.setUniformTexture("srcBlur", srcBlur, 2);
 	cloneShader.setUniformTexture("dstBlur", dstBlur, 3);
-	dst.draw(0, 480);
+	dst.draw(640, 0);
 	cloneShader.end();
 	ofDisableAlphaBlending();
 	
