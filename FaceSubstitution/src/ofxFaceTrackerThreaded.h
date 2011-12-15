@@ -5,56 +5,73 @@
 class ofxFaceTrackerThreaded : public ofThread {
 public:
 	void setup() {
-		startThread(false, false);
+		tracker.setup();
+		startThread(true, false);
 	}
 	void update(cv::Mat mat) {
-		if(lock()) {
+		if(mutex.tryLock()){
 			ofxCv::copy(mat, buffer);
+			frameProcessed = false;
 			unlock();
-			newFrame = true;
-			ofSleepMillis(30); // give the tracker a moment
+			newFrame.signal();
 		}
 	}
 	void draw() {
-		if(lock()) {
-			tracker->draw();
-			unlock();
-		}
+		lock();
+			tracker.draw();
+		unlock();
 	}
 	bool getFound() {
-		bool found = false;
-		if(lock()) {
-			found = tracker->getFound();
-			unlock();
-		}
-		return found;
+		return tracker.getFound();
 	}
 	ofMesh getImageMesh() {
-		ofMesh imageMesh;
-		if(lock()) {
-			imageMesh = tracker->getImageMesh();
-			unlock();
+		Poco::ScopedLock<ofMutex> lock(meshMutex);
+		return mesh;
+	}
+
+	float getGesture(ofxFaceTracker::Gesture gesture){
+		if(mutex.tryLock()){
+			float gest =  tracker.getGesture(gesture);
+			mutex.unlock();
+			return gest;
+		}else{
+			return 0;
 		}
-		return imageMesh;
+	}
+
+	bool isFrameNew(){
+		if(frameProcessed){
+			frameProcessed = false;
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	ofPolyline getImageFeature(ofxFaceTracker::Feature feature){
+		Poco::ScopedLock<ofMutex> lock(mutex);
+		return tracker.getImageFeature(feature);
+	}
+
+	ofPolyline getObjectFeature(ofxFaceTracker::Feature feature){
+		Poco::ScopedLock<ofMutex> lock(mutex);
+		return tracker.getObjectFeature(feature);
 	}
 protected:
 	void threadedFunction() {
-		newFrame = false;
-		tracker = new ofxFaceTracker();
-		tracker->setup();
+		mutex.lock();
 		while(isThreadRunning()) {
-			if(newFrame) {
-				if(lock()) {
-					newFrame = false;
-					tracker->update(buffer);
-					unlock();
-				}
-			}
-			ofSleepMillis(1);
+			newFrame.wait(mutex);
+			tracker.update(buffer);
+			mesh = tracker.getImageMesh();
+			frameProcessed = true;
 		}
 	}
 	
-	ofxFaceTracker* tracker;
+	ofMesh mesh;
+	ofMutex meshMutex;
+	ofxFaceTracker tracker;
 	cv::Mat buffer;
-	bool newFrame;
+	Poco::Condition newFrame;
+	bool frameProcessed;
 };
