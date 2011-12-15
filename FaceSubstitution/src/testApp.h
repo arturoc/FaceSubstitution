@@ -5,6 +5,11 @@
 #include "Clone.h"
 #include "ofxFaceTracker.h"
 #include "ofxFaceTrackerThreaded.h"
+#include <gst/app/gstappsrc.h>
+
+#include "BlinkDetector.h"
+
+#include "OldBW.h"
 
 class testApp : public ofBaseApp {
 public:
@@ -14,10 +19,14 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void loadFace(string face);
 	
+	void allocateGstVirtualCamera();
+	void updateGstVirtualCamera();
+
 	void keyPressed(int key);
 
 	ofxFaceTrackerThreaded camTracker;
 	ofVideoGrabber cam;
+	ofVideoPlayer vid;
 	
 	ofxFaceTracker srcTracker;
 	ofImage src;
@@ -29,4 +38,25 @@ public:
 
 	ofDirectory faces;
 	int currentFace;
+
+	bool live;
+
+	ofBaseVideoDraws * video;
+	ofMesh camMesh;
+
+
+	ofGstVideoUtils gst;
+	GstAppSrc * gstSrc;
+	ofPixels pixels;
+	ofPixels pixelsAlpha;
+
+	int millisEyesClosed;
+	int firstEyesClosedEvent;
+	int millisToChange;
+	bool faceChangedOnEyesClosed;
+
+	BlinkDetector leftBD,rightBD;
+
+	bool debug;
+
 };
