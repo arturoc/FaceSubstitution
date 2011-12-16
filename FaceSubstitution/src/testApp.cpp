@@ -4,6 +4,9 @@
 
 //#define USE_GST_VIRTUAL_CAMERA
 
+int w = 640;
+int h = 480;
+
 using namespace ofxCv;
 
 void testApp::allocateGstVirtualCamera(){
@@ -12,7 +15,7 @@ void testApp::allocateGstVirtualCamera(){
 				"video/x-raw-rgb,width=640,height=480,depth=24,bpp=24,framerate=30/1,endianness=4321,red_mask=16711680, green_mask=65280, blue_mask=255 ! queue ! ";;
 	string videorate;//  = "videorate ! video/x-raw-rgb,depth=24,bpp=24,framerate=25/2,endianness=4321,red_mask=16711680, green_mask=65280, blue_mask=255 ! ";
 	string videoscale;// = "videoscale ! video/x-raw-rgb,width=" + ofToString(width) + ",height=" + ofToString(height) + ",depth=24,bpp=24,endianness=4321,red_mask=16711680, green_mask=65280, blue_mask=255 ! ";
-	string colorspace = " ffmpegcolorspace ! video/x-raw-yuv,width=" + ofToString(width) + ",height=" + ofToString(height) + " ! ";
+	string colorspace = " ffmpegcolorspace ! video/x-raw-yuv,width=" + ofToString(w) + ",height=" + ofToString(h) + " ! ";
 
 	string pipeline = appsrc + videorate + videoscale + colorspace + " v4l2sink device=/dev/video2";
 
@@ -45,18 +48,17 @@ void testApp::updateGstVirtualCamera(){
 }
 
 void testApp::setup() {
+	ofSetLogLevel("testApp",OF_LOG_VERBOSE);
+
 #ifdef TARGET_OSX
 	ofSetDataPathRoot("../data/");
 #endif
 	ofSetVerticalSync(true);
 	cloneReady = false;
 
-	int width = 640;
-	int height = 480;
-
 	live = true;
 	if(live){
-		cam.initGrabber(width, height);
+		cam.initGrabber(w, h);
 		video = &cam;
 	}else{
 		vid.loadMovie("video.mp4");
@@ -91,14 +93,26 @@ void testApp::setup() {
 	firstEyesClosedEvent = 0;
 	faceChangedOnEyesClosed = false;
 	millisToChange = 1000;
+
+	loadNextFace = false;
+
+	ofAddListener(camTracker.threadedUpdateE,this,&testApp::threadedUpdate);
 }
 
 void testApp::update() {
+	if(loadNextFace){
+		if(faces.size()!=0){
+			loadFace(faces.getPath(currentFace));
+		}
+		loadNextFace = false;
+	}
+
 	video->update();
 	if(video->isFrameNew()) {
 		camTracker.update(toCv(*video));
 		cloneReady = camTracker.getFound();
 	}
+
 	if(camTracker.isFrameNew()) {
 		if(cloneReady) {
 			camMesh = camTracker.getImageMesh();
@@ -116,42 +130,42 @@ void testApp::update() {
 			camMesh.draw();
 			src.unbind();
 			srcFbo.end();
-
-			leftBD.update(camTracker.getObjectFeature(ofxFaceTracker::LEFT_EYE));
-			rightBD.update(camTracker.getObjectFeature(ofxFaceTracker::RIGHT_EYE));
-
-
-
-			if(leftBD.isClosed() && rightBD.isClosed()){
-				cout << "eyesClosed " << millisEyesClosed <<  endl;
-				if(firstEyesClosedEvent==0){
-					firstEyesClosedEvent = ofGetElapsedTimeMillis();
-				}
-				if(!faceChangedOnEyesClosed ){
-					millisEyesClosed = ofGetElapsedTimeMillis()-firstEyesClosedEvent;
-					if(millisEyesClosed>millisToChange){
-						currentFace++;
-						currentFace = ofClamp(currentFace,0,faces.size()-1);
-						if(faces.size()!=0){
-							loadFace(faces.getPath(currentFace));
-						}
-						faceChangedOnEyesClosed = true;
-					}
-				}
-			}else{
-				millisEyesClosed = 0;
-				firstEyesClosedEvent = 0;
-				faceChangedOnEyesClosed = false;
-			}
-		}else{
-			leftBD.reset();
-			rightBD.reset();
 		}
 			
 		clone.setStrength(16);
 		clone.update(srcFbo.getTextureReference(), video->getTextureReference(), maskFbo.getTextureReference());
 
 		updateGstVirtualCamera();
+	}
+}
+
+void testApp::threadedUpdate(ofEventArgs & args){
+	if(camTracker.getFound()){
+		leftBD.update(camTracker.getObjectFeature(ofxFaceTracker::LEFT_EYE));
+		rightBD.update(camTracker.getObjectFeature(ofxFaceTracker::RIGHT_EYE));
+
+		if(leftBD.isClosed() && rightBD.isClosed()){
+			ofLogVerbose("testApp") << "eyesClosed" << millisEyesClosed;
+			if(firstEyesClosedEvent==0){
+				firstEyesClosedEvent = ofGetElapsedTimeMillis();
+			}
+			if(!faceChangedOnEyesClosed ){
+				millisEyesClosed = ofGetElapsedTimeMillis()-firstEyesClosedEvent;
+				if(millisEyesClosed>millisToChange){
+					currentFace++;
+					currentFace = ofClamp(currentFace,0,faces.size()-1);
+					loadNextFace = true;
+					faceChangedOnEyesClosed = true;
+				}
+			}
+		}else{
+			millisEyesClosed = 0;
+			firstEyesClosedEvent = 0;
+			faceChangedOnEyesClosed = false;
+		}
+	}else{
+		leftBD.reset();
+		rightBD.reset();
 	}
 }
 

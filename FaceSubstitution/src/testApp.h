@@ -19,6 +19,8 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void loadFace(string face);
 	
+	void threadedUpdate(ofEventArgs & args);
+
 	void allocateGstVirtualCamera();
 	void updateGstVirtualCamera();
 
@@ -58,5 +60,7 @@ public:
 	BlinkDetector leftBD,rightBD;
 
 	bool debug;
+
+	bool loadNextFace;
 
 };
