@@ -13,12 +13,10 @@ public:
 
 	bool getFound();
 	ofMesh getImageMesh();
-	float getGesture(ofxFaceTracker::Gesture gesture);
-
-	ofPolyline getImageFeature(ofxFaceTracker::Feature feature);
-	ofPolyline getObjectFeature(ofxFaceTracker::Feature feature);
 
 	ofEvent<ofEventArgs> threadedUpdateE;
+
+	ofxFaceTracker * getTracker();
 
 protected:
 	void threadedFunction();

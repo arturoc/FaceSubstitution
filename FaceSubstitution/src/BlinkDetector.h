@@ -10,12 +10,14 @@
 
 #include <deque>
 #include "ofPolyline.h"
+#include "ofxFaceTracker.h"
 
 class BlinkDetector {
 public:
 	BlinkDetector();
 
-	void update(const ofPolyline & eyeContour);
+	void setup(ofxFaceTracker * tracker, ofxFaceTracker::Feature eye);
+	void update();
 	float getOpennes();
 	bool isClosed();
 
@@ -23,7 +25,11 @@ public:
 
 	deque<float> getHistory();
 
+	static string LOG_NAME;
+
 private:
+	ofxFaceTracker * tracker;
+	ofxFaceTracker::Feature eye;
 	deque<float> latestEyeOpennes;
 	bool eyeClosed;
 

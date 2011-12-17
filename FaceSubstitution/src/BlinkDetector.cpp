@@ -7,13 +7,20 @@
 
 #include "BlinkDetector.h"
 
+string BlinkDetector::LOG_NAME = "BlinkDetector";
+
 BlinkDetector::BlinkDetector() {
 	eyeClosed = false;
 
 }
 
+void BlinkDetector::setup(ofxFaceTracker * _tracker, ofxFaceTracker::Feature _eye){
+	tracker = _tracker;
+	eye = _eye;
+}
 
-void BlinkDetector::update(const ofPolyline & eyeContour){
+void BlinkDetector::update(){
+	const ofPolyline & eyeContour = tracker->getObjectFeature(eye);
 	float area = eyeContour.getArea();
 	float max=-1, min=99;
 
@@ -23,8 +30,12 @@ void BlinkDetector::update(const ofPolyline & eyeContour){
 		if(min>*it) min=*it;
 	}
 
+	float faceInclination = tracker->getObjectPoint(27).z - tracker->getObjectPoint(21).z;
 
-	//cout << "thres " << (max+min)*0.5-area <<  endl;
+	ofLogVerbose(LOG_NAME) << "face angle" << faceInclination;
+
+	//ofLogVerbose(LOG_NAME) << "thres" << (max+min)*0.5-area;
+
 	if(latestEyeOpennes.size()>5 && (max+min)*0.5-area > area*.2){
 		eyeClosed = true;
 	}else{ // if(!eyesOpened && avg-(max+min)*0.5 > .2){

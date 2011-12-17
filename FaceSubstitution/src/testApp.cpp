@@ -49,6 +49,7 @@ void testApp::updateGstVirtualCamera(){
 
 void testApp::setup() {
 	ofSetLogLevel("testApp",OF_LOG_VERBOSE);
+	//ofSetLogLevel(BlinkDetector::LOG_NAME,OF_LOG_VERBOSE);
 
 #ifdef TARGET_OSX
 	ofSetDataPathRoot("../data/");
@@ -96,6 +97,10 @@ void testApp::setup() {
 
 	loadNextFace = false;
 
+
+	leftBD.setup(camTracker.getTracker(),ofxFaceTracker::LEFT_EYE);
+	rightBD.setup(camTracker.getTracker(),ofxFaceTracker::RIGHT_EYE);
+
 	ofAddListener(camTracker.threadedUpdateE,this,&testApp::threadedUpdate);
 }
 
@@ -141,8 +146,8 @@ void testApp::update() {
 
 void testApp::threadedUpdate(ofEventArgs & args){
 	if(camTracker.getFound()){
-		leftBD.update(camTracker.getObjectFeature(ofxFaceTracker::LEFT_EYE));
-		rightBD.update(camTracker.getObjectFeature(ofxFaceTracker::RIGHT_EYE));
+		leftBD.update();
+		rightBD.update();
 
 		if(leftBD.isClosed() && rightBD.isClosed()){
 			ofLogVerbose("testApp") << "eyesClosed" << millisEyesClosed;
