@@ -36,14 +36,15 @@ void BlinkDetector::update(){
 
 	//ofLogVerbose(LOG_NAME) << "thres" << (max+min)*0.5-area;
 
+	latestEyeOpennes.push_back(area);
+	if(latestEyeOpennes.size()>60){
+		latestEyeOpennes.pop_front();
+	}
+
 	if(latestEyeOpennes.size()>5 && (max+min)*0.5-area > area*.2){
 		eyeClosed = true;
 	}else{ // if(!eyesOpened && avg-(max+min)*0.5 > .2){
 		eyeClosed = false;
-		latestEyeOpennes.push_back(area);
-		if(latestEyeOpennes.size()>60){
-			latestEyeOpennes.pop_front();
-		}
 	}
 
 }
