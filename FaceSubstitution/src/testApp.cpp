@@ -94,7 +94,7 @@ void testApp::setup() {
 	millisEyesClosed = 0;
 	firstEyesClosedEvent = 0;
 	faceChangedOnEyesClosed = false;
-	millisToChange = 1000;
+	millisToChange = 200;
 
 	loadNextFace = false;
 
@@ -145,6 +145,14 @@ void testApp::update() {
 	}
 }
 
+int randomDifferent(int low, int high, int old) {
+	int cur = ofRandom(low, high - 1);
+	if(cur >= old) {
+		cur++;
+	}
+	return cur;
+}
+
 void testApp::threadedUpdate(ofEventArgs & args){
 	if(camTracker.getFound()){
 		leftBD.update();
@@ -158,8 +166,7 @@ void testApp::threadedUpdate(ofEventArgs & args){
 			if(!faceChangedOnEyesClosed ){
 				millisEyesClosed = ofGetElapsedTimeMillis()-firstEyesClosedEvent;
 				if(millisEyesClosed>millisToChange){
-					currentFace++;
-					currentFace = ofClamp(currentFace,0,faces.size()-1);
+					currentFace = randomDifferent(0, faces.size() - 1, currentFace);
 					loadNextFace = true;
 					faceChangedOnEyesClosed = true;
 				}
@@ -185,6 +192,7 @@ void testApp::draw() {
 	}
 	
 	if(debug){
+		camTracker.getImageMesh().drawWireframe();
 		if(!camTracker.getFound()) {
 			drawHighlightString("camera face not found", 10, 10);
 		}
