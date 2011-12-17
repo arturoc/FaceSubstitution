@@ -28,6 +28,8 @@
 		2751AAE7143D78A100605D00 /* Expression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2751AAD9143D78A100605D00 /* Expression.cpp */; };
 		2751AAE8143D78A100605D00 /* ExpressionClassifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2751AADB143D78A100605D00 /* ExpressionClassifier.cpp */; };
 		2751AAE9143D78A100605D00 /* ofxFaceTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2751AADD143D78A100605D00 /* ofxFaceTracker.cpp */; };
+		275D3602149D10A800132EA7 /* BlinkDetector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 275D3600149D10A800132EA7 /* BlinkDetector.cpp */; };
+		275D361C149D334B00132EA7 /* ofxFaceTrackerThreaded.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 275D361B149D334B00132EA7 /* ofxFaceTrackerThreaded.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworks.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworks.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -187,6 +189,9 @@
 		2751AADC143D78A100605D00 /* ExpressionClassifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExpressionClassifier.h; path = ../../../addons/ofxFaceTracker/src/ExpressionClassifier.h; sourceTree = SOURCE_ROOT; };
 		2751AADD143D78A100605D00 /* ofxFaceTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxFaceTracker.cpp; path = ../../../addons/ofxFaceTracker/src/ofxFaceTracker.cpp; sourceTree = SOURCE_ROOT; };
 		2751AADE143D78A100605D00 /* ofxFaceTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFaceTracker.h; path = ../../../addons/ofxFaceTracker/src/ofxFaceTracker.h; sourceTree = SOURCE_ROOT; };
+		275D3600149D10A800132EA7 /* BlinkDetector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlinkDetector.cpp; path = src/BlinkDetector.cpp; sourceTree = SOURCE_ROOT; };
+		275D3601149D10A800132EA7 /* BlinkDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlinkDetector.h; path = src/BlinkDetector.h; sourceTree = SOURCE_ROOT; };
+		275D361B149D334B00132EA7 /* ofxFaceTrackerThreaded.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxFaceTrackerThreaded.cpp; path = src/ofxFaceTrackerThreaded.cpp; sourceTree = SOURCE_ROOT; };
 		279FB8221448A131007D42A0 /* ofxFaceTrackerThreaded.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxFaceTrackerThreaded.h; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -667,9 +672,12 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				275D3600149D10A800132EA7 /* BlinkDetector.cpp */,
+				275D3601149D10A800132EA7 /* BlinkDetector.h */,
 				270204F7144B448100E65507 /* Clone.cpp */,
 				270204F8144B448100E65507 /* Clone.h */,
 				279FB8221448A131007D42A0 /* ofxFaceTrackerThreaded.h */,
+				275D361B149D334B00132EA7 /* ofxFaceTrackerThreaded.cpp */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* testApp.h */,
@@ -793,6 +801,8 @@
 				2751AAE8143D78A100605D00 /* ExpressionClassifier.cpp in Sources */,
 				2751AAE9143D78A100605D00 /* ofxFaceTracker.cpp in Sources */,
 				270204F9144B448100E65507 /* Clone.cpp in Sources */,
+				275D3602149D10A800132EA7 /* BlinkDetector.cpp in Sources */,
+				275D361C149D334B00132EA7 /* ofxFaceTrackerThreaded.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

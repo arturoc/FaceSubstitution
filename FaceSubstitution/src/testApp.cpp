@@ -1,8 +1,9 @@
 #include "testApp.h"
+
+#ifdef USE_GST_VIRTUAL_CAMERA
 #include <gst/app/gstappsink.h>
 #include <gst/app/gstappbuffer.h>
-
-//#define USE_GST_VIRTUAL_CAMERA
+#endif
 
 int w = 640;
 int h = 480;

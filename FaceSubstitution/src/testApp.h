@@ -3,13 +3,15 @@
 #include "ofMain.h"
 #include "ofxCv.h"
 #include "Clone.h"
-#include "ofxFaceTracker.h"
 #include "ofxFaceTrackerThreaded.h"
+
+//#define USE_GST_VIRTUAL_CAMERA
+
+#ifdef USE_GST_VIRTUAL_CAMERA
 #include <gst/app/gstappsrc.h>
+#endif
 
 #include "BlinkDetector.h"
-
-#include "OldBW.h"
 
 class testApp : public ofBaseApp {
 public:
@@ -46,9 +48,10 @@ public:
 	ofBaseVideoDraws * video;
 	ofMesh camMesh;
 
-
+#ifdef USE_GST_VIRTUAL_CAMERA
 	ofGstVideoUtils gst;
 	GstAppSrc * gstSrc;
+#endif
 	ofPixels pixels;
 	ofPixels pixelsAlpha;
 
