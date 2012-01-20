@@ -23,6 +23,7 @@ int randomDifferent(int low, int high, int old) {
 	int cur = ofRandom(low, high - 1);
 	if(cur >= old) {
 		cur++;
+		cur = cur % high;
 	}
 	return cur;
 }
