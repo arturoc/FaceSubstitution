@@ -66,4 +66,8 @@ public:
 
 	bool loadNextFace;
 
+	int numInputRotation90;
+	ofPixels rotatedInput;
+	ofTexture rotatedInputTex;
+
 };

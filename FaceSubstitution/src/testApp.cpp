@@ -1,3 +1,10 @@
+
+
+
+
+
+
+
 #include "testApp.h"
 
 #ifdef USE_GST_VIRTUAL_CAMERA
@@ -5,10 +12,20 @@
 #include <gst/app/gstappbuffer.h>
 #endif
 
-int w = 640;
-int h = 480;
+int w = 1280;
+int h = 720;
 
 using namespace ofxCv;
+
+
+
+int randomDifferent(int low, int high, int old) {
+	int cur = ofRandom(low, high - 1);
+	if(cur >= old) {
+		cur++;
+	}
+	return cur;
+}
 
 void testApp::allocateGstVirtualCamera(){
 #ifdef USE_GST_VIRTUAL_CAMERA
@@ -49,8 +66,9 @@ void testApp::updateGstVirtualCamera(){
 }
 
 void testApp::setup() {
+	ofSetLogLevel(OF_LOG_VERBOSE);
 	ofSetLogLevel("testApp",OF_LOG_VERBOSE);
-	//ofSetLogLevel(BlinkDetector::LOG_NAME,OF_LOG_VERBOSE);
+	ofSetLogLevel(BlinkDetector::LOG_NAME,OF_LOG_VERBOSE);
 
 #ifdef TARGET_OSX
 	ofSetDataPathRoot("../data/");
@@ -60,6 +78,7 @@ void testApp::setup() {
 
 	live = true;
 	if(live){
+		cam.setDeviceID(1);
 		cam.initGrabber(w, h);
 		video = &cam;
 	}else{
@@ -80,7 +99,7 @@ void testApp::setup() {
 
 	faces.allowExt("jpg");
 	faces.allowExt("png");
-	faces.listDir("faces");
+	faces.listDir("faces_politicians");
 	currentFace = 0;
 	if(faces.size()!=0){
 		loadFace(faces.getPath(currentFace));
@@ -103,19 +122,34 @@ void testApp::setup() {
 	rightBD.setup(camTracker.getTracker(),ofxFaceTracker::RIGHT_EYE);
 
 	ofAddListener(camTracker.threadedUpdateE,this,&testApp::threadedUpdate);
+
+	ofBackground(0);
+	numInputRotation90 = 0;
+	rotatedInput.allocate(video->getHeight(),video->getWidth(),OF_IMAGE_COLOR);
+	rotatedInputTex.allocate(video->getHeight(),video->getWidth(),GL_RGB);
 }
 
 void testApp::update() {
 	if(loadNextFace){
 		if(faces.size()!=0){
 			loadFace(faces.getPath(currentFace));
+			while(!srcTracker.getFound()){
+				currentFace = randomDifferent(0, faces.size() - 1, currentFace);
+				loadFace(faces.getPath(currentFace));
+			}
 		}
 		loadNextFace = false;
 	}
 
 	video->update();
 	if(video->isFrameNew()) {
-		camTracker.update(toCv(*video));
+		if(numInputRotation90!=0 && numInputRotation90!=2){
+			video->getPixelsRef().rotate90To(rotatedInput,numInputRotation90);
+			camTracker.update(toCv(rotatedInput));
+			if(debug) rotatedInputTex.loadData(rotatedInput);
+		}else{
+			camTracker.update(toCv(*video));
+		}
 		cloneReady = camTracker.getFound();
 	}
 
@@ -124,6 +158,17 @@ void testApp::update() {
 			camMesh = camTracker.getImageMesh();
 			camMesh.clearTexCoords();
 			camMesh.addTexCoords(srcPoints);
+
+			if(numInputRotation90!=0){
+				for(int i=0;i<camMesh.getNumVertices();i++){
+					ofVec3f & v = camMesh.getVertices()[i];
+					std::swap(v.x,v.y);
+					if(numInputRotation90==1)
+						v.y = video->getHeight()-v.y;
+					else if(numInputRotation90==3)
+						v.x = video->getWidth()-v.x;
+				}
+			}
 
 			maskFbo.begin();
 			ofClear(0, 255);
@@ -143,14 +188,6 @@ void testApp::update() {
 
 		updateGstVirtualCamera();
 	}
-}
-
-int randomDifferent(int low, int high, int old) {
-	int cur = ofRandom(low, high - 1);
-	if(cur >= old) {
-		cur++;
-	}
-	return cur;
 }
 
 void testApp::threadedUpdate(ofEventArgs & args){
@@ -185,14 +222,33 @@ void testApp::threadedUpdate(ofEventArgs & args){
 void testApp::draw() {
 	ofSetColor(255);
 	
+	float ratio = clone.getTextureRef().getHeight()/clone.getTextureRef().getWidth();
+
+	int width = ofGetWidth();
+	int height = ofGetWidth()*ratio;
+	int x = 0;
+	int y = (ofGetHeight()-float(ofGetWidth())*ratio)*.5;
+
+
+	if(numInputRotation90==0 || numInputRotation90==1){
+		x = width;
+		width = -width;
+	}
+
+	if(numInputRotation90==3){
+		y = ofGetHeight() - y;
+		height = -height;
+	}
+
 	if(src.getWidth()> 0 && cloneReady) {
-		clone.draw(0, 0);
+		clone.draw(x,y,width,height);
 	} else {
-		video->draw(0, 0);
+		video->draw(x,y,width,height);
 	}
 	
 	if(debug){
-		camTracker.getImageMesh().drawWireframe();
+		camMesh.clearTexCoords();
+		camMesh.drawWireframe();
 		if(!camTracker.getFound()) {
 			drawHighlightString("camera face not found", 10, 10);
 		}
@@ -207,7 +263,7 @@ void testApp::draw() {
 		const deque<float> & leftEyeHist = leftBD.getHistory();
 		ofBeginShape();
 		for(int i=0;i<(int)leftEyeHist.size();i++){
-			ofVertex(i*10,leftEyeHist[i]*10);
+			ofVertex(i*10,leftEyeHist[i]);
 		}
 		ofEndShape();
 
@@ -215,14 +271,20 @@ void testApp::draw() {
 		const deque<float> & rightEyeHist = rightBD.getHistory();
 		ofBeginShape();
 		for(int i=0;i<(int)rightEyeHist.size();i++){
-			ofVertex(i*10,rightEyeHist[i]*10+300);
+			ofVertex(i*10,rightEyeHist[i]+300);
 		}
 		ofEndShape();
+
+		rotatedInputTex.draw(0,0,240*ratio,240);
 	}
 }
 
 void testApp::loadFace(string face){
+	ofLog(OF_LOG_ERROR) << face;
 	src.loadImage(face);
+	while(src.getWidth()>1000 || src.getHeight()>1000){
+		src.resize(src.getWidth()/2., src.getHeight()/2.);
+	}
 	if(src.getWidth() > 0) {
 		srcTracker.update(toCv(src));
 		srcPoints = srcTracker.getImagePoints();
