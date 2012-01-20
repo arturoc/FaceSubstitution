@@ -14,7 +14,13 @@ void ofxFaceTrackerThreaded::setup() {
 
 void ofxFaceTrackerThreaded::update(cv::Mat mat) {
 	if(!isRunningOnThread()){
-		if(mutex.tryLock()){
+		if(!tracker.getFound() && mutex.tryLock()){
+			ofxCv::copy(mat, buffer);
+			frameProcessed = false;
+			unlock();
+			newFrame.signal();
+		}else if(tracker.getFound()){
+			mutex.lock();
 			ofxCv::copy(mat, buffer);
 			frameProcessed = false;
 			unlock();
