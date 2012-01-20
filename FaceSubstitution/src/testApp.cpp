@@ -142,7 +142,8 @@ void testApp::update() {
 	}
 
 	video->update();
-	cloneReady = camTracker.isFrameNew() & camTracker.getFound();
+	cloneReady = camTracker.getFound();
+	bool frameProcessed = camTracker.isFrameNew();
 
 	if(video->isFrameNew()) {
 		if(numInputRotation90!=0 && numInputRotation90!=2){
@@ -154,7 +155,7 @@ void testApp::update() {
 		}
 	}
 
-	if(cloneReady) {
+	if(cloneReady && frameProcessed) {
 		camMesh = camTracker.getImageMesh();
 		camMesh.clearTexCoords();
 		camMesh.addTexCoords(srcPoints);
