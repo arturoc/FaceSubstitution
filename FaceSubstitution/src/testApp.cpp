@@ -142,6 +142,8 @@ void testApp::update() {
 	}
 
 	video->update();
+	cloneReady = camTracker.isFrameNew() & camTracker.getFound();
+
 	if(video->isFrameNew()) {
 		if(numInputRotation90!=0 && numInputRotation90!=2){
 			video->getPixelsRef().rotate90To(rotatedInput,numInputRotation90);
@@ -150,39 +152,36 @@ void testApp::update() {
 		}else{
 			camTracker.update(toCv(*video));
 		}
-		cloneReady = camTracker.getFound();
 	}
 
-	if(camTracker.isFrameNew()) {
-		if(cloneReady) {
-			camMesh = camTracker.getImageMesh();
-			camMesh.clearTexCoords();
-			camMesh.addTexCoords(srcPoints);
+	if(cloneReady) {
+		camMesh = camTracker.getImageMesh();
+		camMesh.clearTexCoords();
+		camMesh.addTexCoords(srcPoints);
 
-			if(numInputRotation90!=0){
-				for(int i=0;i<camMesh.getNumVertices();i++){
-					ofVec3f & v = camMesh.getVertices()[i];
-					std::swap(v.x,v.y);
-					if(numInputRotation90==1)
-						v.y = video->getHeight()-v.y;
-					else if(numInputRotation90==3)
-						v.x = video->getWidth()-v.x;
-				}
+		if(numInputRotation90!=0){
+			for(int i=0;i<camMesh.getNumVertices();i++){
+				ofVec3f & v = camMesh.getVertices()[i];
+				std::swap(v.x,v.y);
+				if(numInputRotation90==1)
+					v.y = video->getHeight()-v.y;
+				else if(numInputRotation90==3)
+					v.x = video->getWidth()-v.x;
 			}
-
-			maskFbo.begin();
-			ofClear(0, 255);
-			camMesh.draw();
-			maskFbo.end();
-			
-			srcFbo.begin();
-			ofClear(0, 255);
-			src.bind();
-			camMesh.draw();
-			src.unbind();
-			srcFbo.end();
 		}
-			
+
+		maskFbo.begin();
+		ofClear(0, 255);
+		camMesh.draw();
+		maskFbo.end();
+
+		srcFbo.begin();
+		ofClear(0, 255);
+		src.bind();
+		camMesh.draw();
+		src.unbind();
+		srcFbo.end();
+
 		clone.setStrength(16);
 		clone.update(srcFbo.getTextureReference(), video->getTextureReference(), maskFbo.getTextureReference());
 
