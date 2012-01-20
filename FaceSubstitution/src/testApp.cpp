@@ -124,9 +124,12 @@ void testApp::setup() {
 	ofAddListener(camTracker.threadedUpdateE,this,&testApp::threadedUpdate);
 
 	ofBackground(0);
-	numInputRotation90 = 0;
+	numInputRotation90 = 3;
 	rotatedInput.allocate(video->getHeight(),video->getWidth(),OF_IMAGE_COLOR);
 	rotatedInputTex.allocate(video->getHeight(),video->getWidth(),GL_RGB);
+
+
+	clone.setStrength(16);
 }
 
 void testApp::update() {
@@ -141,19 +144,8 @@ void testApp::update() {
 		loadNextFace = false;
 	}
 
-	video->update();
 	cloneReady = camTracker.getFound();
 	bool frameProcessed = camTracker.isFrameNew();
-
-	if(video->isFrameNew()) {
-		if(numInputRotation90!=0 && numInputRotation90!=2){
-			video->getPixelsRef().rotate90To(rotatedInput,numInputRotation90);
-			camTracker.update(toCv(rotatedInput));
-			if(debug) rotatedInputTex.loadData(rotatedInput);
-		}else{
-			camTracker.update(toCv(*video));
-		}
-	}
 
 	if(cloneReady && frameProcessed) {
 		camMesh = camTracker.getImageMesh();
@@ -183,10 +175,20 @@ void testApp::update() {
 		src.unbind();
 		srcFbo.end();
 
-		clone.setStrength(16);
 		clone.update(srcFbo.getTextureReference(), video->getTextureReference(), maskFbo.getTextureReference());
 
 		updateGstVirtualCamera();
+	}
+
+	video->update();
+	if(video->isFrameNew()) {
+		if(numInputRotation90!=0 && numInputRotation90!=2){
+			video->getPixelsRef().rotate90To(rotatedInput,numInputRotation90);
+			camTracker.update(toCv(rotatedInput));
+			if(debug) rotatedInputTex.loadData(rotatedInput);
+		}else{
+			camTracker.update(toCv(*video));
+		}
 	}
 }
 
