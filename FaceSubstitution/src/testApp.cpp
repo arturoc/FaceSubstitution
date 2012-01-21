@@ -17,6 +17,8 @@ int h = 720;
 
 using namespace ofxCv;
 
+#define FACES_DIR "faces_politicians"
+
 
 
 int randomDifferent(int low, int high, int old) {
@@ -66,8 +68,36 @@ void testApp::updateGstVirtualCamera(){
 #endif
 }
 
+void testApp::resizeAndDiscardImages(){
+	faces.listDir(FACES_DIR);
+	if(faces.size()==0) return;
+
+	for(int i=0;i<(int)faces.size();i++){
+		string path = faces.getPath(i);
+		src.loadImage(path);
+		bool saveCopy = false;
+		if((src.getWidth()>1000 || src.getHeight()>1000)){
+			saveCopy = true;
+			while(src.getWidth()>1000 || src.getHeight()>1000){
+				src.resize(src.getWidth()/2., src.getHeight()/2.);
+			}
+		}
+		if(src.getWidth() > 0) {
+			srcTracker.update(toCv(src));
+			srcPoints = srcTracker.getImagePoints();
+		}
+		if (!srcTracker.getFound()){
+			ofLogVerbose("testApp") << "moving" << path;
+			ofFile(path).moveTo("non_working");
+		}else if(saveCopy){
+			ofLogVerbose("testApp") << "scaling" << path;
+			src.saveImage(path,OF_IMAGE_QUALITY_BEST);
+		}
+	}
+}
+
 void testApp::setup() {
-	ofSetLogLevel(OF_LOG_VERBOSE);
+	//ofSetLogLevel(OF_LOG_VERBOSE);
 	ofSetLogLevel("testApp",OF_LOG_VERBOSE);
 	ofSetLogLevel(BlinkDetector::LOG_NAME,OF_LOG_VERBOSE);
 
@@ -100,12 +130,14 @@ void testApp::setup() {
 
 	faces.allowExt("jpg");
 	faces.allowExt("png");
-	faces.listDir("faces_politicians");
+	resizeAndDiscardImages();
+
 	currentFace = 0;
+	faces.listDir(FACES_DIR);
+
 	if(faces.size()!=0){
 		loadFace(faces.getPath(currentFace));
 	}
-
 	if(!live) vid.play();
 
 	allocateGstVirtualCamera();

@@ -20,6 +20,7 @@ public:
 	void draw();
 	void dragEvent(ofDragInfo dragInfo);
 	void loadFace(string face);
+	void resizeAndDiscardImages();
 	
 	void threadedUpdate(ofEventArgs & args);
 
