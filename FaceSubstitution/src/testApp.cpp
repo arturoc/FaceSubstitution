@@ -19,17 +19,6 @@ using namespace ofxCv;
 
 #define FACES_DIR "faces_politicians"
 
-
-
-int randomDifferent(int low, int high, int old) {
-	int cur = ofRandom(low, high - 1);
-	if(cur >= old) {
-		cur++;
-		cur = cur % high;
-	}
-	return cur;
-}
-
 void testApp::allocateGstVirtualCamera(){
 #ifdef USE_GST_VIRTUAL_CAMERA
 	string appsrc = "appsrc  name=video_src is-live=true do-timestamp=true ! "
@@ -68,33 +57,6 @@ void testApp::updateGstVirtualCamera(){
 #endif
 }
 
-void testApp::resizeAndDiscardImages(){
-	faces.listDir(FACES_DIR);
-	if(faces.size()==0) return;
-
-	for(int i=0;i<(int)faces.size();i++){
-		string path = faces.getPath(i);
-		src.loadImage(path);
-		bool saveCopy = false;
-		if((src.getWidth()>1000 || src.getHeight()>1000)){
-			saveCopy = true;
-			while(src.getWidth()>1000 || src.getHeight()>1000){
-				src.resize(src.getWidth()/2., src.getHeight()/2.);
-			}
-		}
-		if(src.getWidth() > 0) {
-			srcTracker.update(toCv(src));
-			srcPoints = srcTracker.getImagePoints();
-		}
-		if (!srcTracker.getFound()){
-			ofLogVerbose("testApp") << "moving" << path;
-			ofFile(path).moveTo("non_working");
-		}else if(saveCopy){
-			ofLogVerbose("testApp") << "scaling" << path;
-			src.saveImage(path,OF_IMAGE_QUALITY_BEST);
-		}
-	}
-}
 
 void testApp::setup() {
 	//ofSetLogLevel(OF_LOG_VERBOSE);
@@ -124,20 +86,9 @@ void testApp::setup() {
 	maskFbo.allocate(settings);
 	srcFbo.allocate(settings);
 	camTracker.setup();
-	srcTracker.setup();
-	srcTracker.setIterations(25);
-	srcTracker.setAttempts(4);
 
-	faces.allowExt("jpg");
-	faces.allowExt("png");
-	resizeAndDiscardImages();
+	faceLoader.setup(FACES_DIR);
 
-	currentFace = 0;
-	faces.listDir(FACES_DIR);
-
-	if(faces.size()!=0){
-		loadFace(faces.getPath(currentFace));
-	}
 	if(!live) vid.play();
 
 	allocateGstVirtualCamera();
@@ -148,7 +99,6 @@ void testApp::setup() {
 	faceChangedOnEyesClosed = false;
 	millisToChange = 200;
 
-	loadNextFace = false;
 
 
 	leftBD.setup(camTracker.getTracker(),ofxFaceTracker::LEFT_EYE);
@@ -157,7 +107,7 @@ void testApp::setup() {
 	ofAddListener(camTracker.threadedUpdateE,this,&testApp::threadedUpdate);
 
 	ofBackground(0);
-	numInputRotation90 = 3;
+	numInputRotation90 = 0;
 	rotatedInput.allocate(video->getHeight(),video->getWidth(),OF_IMAGE_COLOR);
 	rotatedInputTex.allocate(video->getHeight(),video->getWidth(),GL_RGB);
 
@@ -167,23 +117,16 @@ void testApp::setup() {
 
 void testApp::update() {
 	if(loadNextFace){
-		if(faces.size()!=0){
-			loadFace(faces.getPath(currentFace));
-			while(!srcTracker.getFound()){
-				currentFace = randomDifferent(0, faces.size() - 1, currentFace);
-				loadFace(faces.getPath(currentFace));
-			}
-		}
-		loadNextFace = false;
+		faceLoader.loadRandom();
+		loadNextFace  = false;
 	}
-
+	faceLoader.update();
 	cloneReady = camTracker.getFound();
 	bool frameProcessed = camTracker.isFrameNew();
 
 	if(cloneReady && frameProcessed) {
 		camMesh = camTracker.getImageMesh();
-		camMesh.clearTexCoords();
-		camMesh.addTexCoords(srcPoints);
+		camMesh.getTexCoords() = faceLoader.getCurrentImagePoints();
 
 		if(numInputRotation90!=0){
 			for(int i=0;i<camMesh.getNumVertices();i++){
@@ -203,9 +146,9 @@ void testApp::update() {
 
 		srcFbo.begin();
 		ofClear(0, 255);
-		src.bind();
+		faceLoader.getCurrentImg().bind();
 		camMesh.draw();
-		src.unbind();
+		faceLoader.getCurrentImg().unbind();
 		srcFbo.end();
 
 		clone.update(srcFbo.getTextureReference(), video->getTextureReference(), maskFbo.getTextureReference());
@@ -238,7 +181,6 @@ void testApp::threadedUpdate(ofEventArgs & args){
 			if(!faceChangedOnEyesClosed ){
 				millisEyesClosed = ofGetElapsedTimeMillis()-firstEyesClosedEvent;
 				if(millisEyesClosed>millisToChange){
-					currentFace = randomDifferent(0, faces.size() - 1, currentFace);
 					loadNextFace = true;
 					faceChangedOnEyesClosed = true;
 				}
@@ -275,7 +217,7 @@ void testApp::draw() {
 		height = -height;
 	}
 
-	if(src.getWidth()> 0 && cloneReady) {
+	if(faceLoader.getCurrentImg().getWidth()> 0 && cloneReady) {
 		clone.draw(x,y,width,height);
 	} else {
 		video->draw(x,y,width,height);
@@ -287,9 +229,9 @@ void testApp::draw() {
 		if(!camTracker.getFound()) {
 			drawHighlightString("camera face not found", 10, 10);
 		}
-		if(src.getWidth() == 0) {
+		if(faceLoader.getCurrentImg().getWidth() == 0) {
 			drawHighlightString("drag an image here", 10, 30);
-		} else if(!srcTracker.getFound()) {
+		} else if(!faceLoader.getTracker().getFound()) {
 			drawHighlightString("image face not found", 10, 30);
 		}
 
@@ -314,39 +256,24 @@ void testApp::draw() {
 	}
 }
 
-void testApp::loadFace(string face){
-	ofLog(OF_LOG_ERROR) << face;
-	src.loadImage(face);
-	while(src.getWidth()>1000 || src.getHeight()>1000){
-		src.resize(src.getWidth()/2., src.getHeight()/2.);
-	}
-	if(src.getWidth() > 0) {
-		srcTracker.update(toCv(src));
-		srcPoints = srcTracker.getImagePoints();
-	}
-}
 
 void testApp::dragEvent(ofDragInfo dragInfo) {
-	loadFace(dragInfo.files[0]);
+	//faceLoader.loadFace(dragInfo.files[0]);
 }
 
 void testApp::keyPressed(int key){
 	switch(key){
-	case OF_KEY_UP:
-		currentFace++;
+	/*case OF_KEY_UP:
+		faceLoader.loadNext();
 		break;
 	case OF_KEY_DOWN:
-		currentFace--;
-		break;
+		faceLoader.loadPrevious();
+		break;*/
 	case 'f':
 		ofToggleFullscreen();
 		return;
 	case 'd':
 		debug = !debug;
 		return;
-	}
-	currentFace = ofClamp(currentFace,0,faces.size()-1);
-	if(faces.size()!=0){
-		loadFace(faces.getPath(currentFace));
 	}
 }

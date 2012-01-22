@@ -4,6 +4,7 @@
 #include "ofxCv.h"
 #include "Clone.h"
 #include "ofxFaceTrackerThreaded.h"
+#include "FaceLoader.h"
 
 //#define USE_GST_VIRTUAL_CAMERA
 
@@ -19,8 +20,6 @@ public:
 	void update();
 	void draw();
 	void dragEvent(ofDragInfo dragInfo);
-	void loadFace(string face);
-	void resizeAndDiscardImages();
 	
 	void threadedUpdate(ofEventArgs & args);
 
@@ -33,16 +32,11 @@ public:
 	ofVideoGrabber cam;
 	ofVideoPlayer vid;
 	
-	ofxFaceTracker srcTracker;
-	ofImage src;
-	vector<ofVec2f> srcPoints;
-	
 	bool cloneReady;
 	Clone clone;
 	ofFbo srcFbo, maskFbo;
 
-	ofDirectory faces;
-	int currentFace;
+	FaceLoader faceLoader;
 
 	bool live;
 
