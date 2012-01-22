@@ -6,7 +6,7 @@ class Clone {
 public:
 	void setup(int width, int height);
 	void setStrength(int strength);
-	void update(ofTexture& src, ofTexture& dst, ofTexture& mask);
+	void update(ofTexture& src, ofTexture& dst, ofMesh& mask,  ofTexture & texMask);
 	void draw(float x, float y);
 	void draw(float x, float y, float w, float h);
 	
@@ -14,8 +14,8 @@ public:
 	void readToPixels(ofPixels & pix);
 
 protected:
-	void maskedBlur(ofTexture& tex, ofTexture& mask, ofFbo& result);
+	void maskedBlur(ofTexture& tex, ofMesh& mask, ofTexture & maskTex, ofFbo& result, bool dst);
 	ofFbo buffer, srcBlur, dstBlur;
-	ofShader maskBlurShader, cloneShader;
+	ofShader maskBlurShaderH, maskBlurShaderV, cloneShader;
 	int strength;
 };

@@ -71,7 +71,7 @@ void FaceLoader::setup(string folder){
 
 	faces.allowExt("jpg");
 	faces.allowExt("png");
-	resizeAndDiscardImages(folder);
+	//resizeAndDiscardImages(folder);
 
 	currentFace = 0;
 	faces.listDir(folder);

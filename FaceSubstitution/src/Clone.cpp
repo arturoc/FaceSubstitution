@@ -1,45 +1,63 @@
 #include "Clone.h"
 
-char maskBlurShaderSource[] =
-"#extension GL_ARB_texture_rectangle : enable\n"
-"uniform sampler2DRect tex, mask;\
-uniform vec2 direction;\
-uniform int k;\
-void main() {\
-	vec2 pos = gl_TexCoord[0].st;\
-	vec4 sum = texture2DRect(tex, pos);\
-	int i;\
-	for(i = 1; i < k; i++) {\
-		vec2 curOffset = float(i) * direction;\
-		vec4 leftMask = texture2DRect(mask, pos - curOffset);\
-		vec4 rightMask = texture2DRect(mask, pos + curOffset);\
-		bool valid = leftMask.r == 1. && rightMask.r == 1.;\
-		if(valid) {\
-			sum +=\
-				texture2DRect(tex, pos + curOffset) +\
-				texture2DRect(tex, pos - curOffset);\
-		} else {\
-			break;\
+string getMaskBlurShaderSourceH(int strenght){
+	return
+	"#extension GL_ARB_texture_rectangle : enable\n"
+	"uniform sampler2DRect tex, mask;\
+	void main() {\
+		vec2 pos = gl_FragCoord.xy;\
+		vec4 sum = texture2DRect(tex, pos);\
+		int samples=0;\
+		for(int i = 1; i < " +  ofToString(strenght) + "; i++) {\
+			vec2 curOffset = vec2(float(i),0);\
+			vec4 maskL = texture2DRect(mask, pos- curOffset);\
+			vec4 maskR = texture2DRect(mask, pos+ curOffset);\
+			if(maskL.r==1. && maskR.r==1.){\
+				sum += (texture2DRect(tex, pos + curOffset)+\
+					   texture2DRect(tex, pos - curOffset));\
+				samples++;\
+			}else{\
+				break;\
+			}\
 		}\
-	}\
-	int samples = 1 + (i - 1) * 2;\
-	gl_FragColor = sum / float(samples);\
-}";
+		gl_FragColor = sum / float(samples*2+1);\
+	}";
+}
+
+string getMaskBlurShaderSourceV(int strenght){
+	return
+	"#extension GL_ARB_texture_rectangle : enable\n"
+	"uniform sampler2DRect tex, mask;\
+	void main() {\
+		vec2 pos = gl_FragCoord.xy;\
+		vec4 sum = texture2DRect(tex, pos);\
+		int samples=0;\
+		for(int i = 1; i < " +  ofToString(strenght) + "; i++) {\
+			vec2 curOffset = vec2(0,float(i));\
+			vec4 maskL = texture2DRect(mask, pos- curOffset);\
+			vec4 maskR = texture2DRect(mask, pos+ curOffset);\
+			if(maskL.r==1. && maskR.r==1.){\
+				sum += (texture2DRect(tex, pos + curOffset)+\
+					   texture2DRect(tex, pos - curOffset));\
+				samples++;\
+			}else{\
+				break;\
+			}\
+		}\
+		gl_FragColor = sum / float(samples*2+1);\
+	}";
+}
 
 char cloneShaderSource[] = 
 "#extension GL_ARB_texture_rectangle : enable\n"
 "uniform sampler2DRect src, srcBlur, dstBlur;\
 void main() {\
-	vec2 pos = gl_TexCoord[0].st;	\
+	vec2 pos = gl_FragCoord.xy;	\
 	vec4 srcColorBlur = texture2DRect(srcBlur, pos);\
-	if(srcColorBlur.a > 0.) {\
-		vec3 srcColor = texture2DRect(src, pos).rgb;\
-		vec4 dstColorBlur = texture2DRect(dstBlur, pos);\
-		vec3 offset = (dstColorBlur.rgb - srcColorBlur.rgb);\
-		gl_FragColor = vec4(srcColor + offset, 1.);\
-	} else {\
-		gl_FragColor = vec4(0.);\
-	}\
+	vec3 srcColor = texture2DRect(src, pos).rgb;\
+	vec4 dstColorBlur = texture2DRect(dstBlur, pos);\
+	vec3 offset = (dstColorBlur.rgb - srcColorBlur.rgb);\
+	gl_FragColor = vec4(srcColor + offset, 1.);\
 }";
 
 void Clone::setup(int width, int height) {
@@ -51,47 +69,57 @@ void Clone::setup(int width, int height) {
 	srcBlur.allocate(settings);
 	dstBlur.allocate(settings);
 	
-	maskBlurShader.setupShaderFromSource(GL_FRAGMENT_SHADER, maskBlurShaderSource);
+	strength = 0;
+
+	maskBlurShaderH.setupShaderFromSource(GL_FRAGMENT_SHADER, getMaskBlurShaderSourceH(strength));
+	maskBlurShaderV.setupShaderFromSource(GL_FRAGMENT_SHADER, getMaskBlurShaderSourceV(strength));
+	maskBlurShaderH.linkProgram();
+	maskBlurShaderV.linkProgram();
 	cloneShader.setupShaderFromSource(GL_FRAGMENT_SHADER, cloneShaderSource);
-	maskBlurShader.linkProgram();
 	cloneShader.linkProgram();
 	
-	strength = 0;
 }
 
-void Clone::maskedBlur(ofTexture& tex, ofTexture& mask, ofFbo& result) {
-	int k = strength;
-	
+void Clone::maskedBlur(ofTexture& tex, ofMesh& mask, ofTexture & maskTex, ofFbo& result, bool dst) {
 	buffer.begin();
-	maskBlurShader.begin();
-	maskBlurShader.setUniformTexture("tex", tex, 1);
-	maskBlurShader.setUniformTexture("mask", mask, 2);
-	maskBlurShader.setUniform2f("direction", 1, 0);
-	maskBlurShader.setUniform1i("k", k);
-	tex.draw(0, 0);
-	maskBlurShader.end();
+	ofClear(0, 0);
+	maskBlurShaderH.begin();
+	maskBlurShaderH.setUniformTexture("mask", maskTex, 0);
+	maskBlurShaderH.setUniformTexture("tex", tex, 1);
+	mask.draw();
+	maskBlurShaderH.end();
 	buffer.end();
 	
 	result.begin();
-	maskBlurShader.begin();
-	maskBlurShader.setUniformTexture("tex", buffer, 1);
-	maskBlurShader.setUniformTexture("mask", mask, 2);
-	maskBlurShader.setUniform2f("direction", 0, 1);
-	maskBlurShader.setUniform1i("k", k);
-	buffer.draw(0, 0);
-	maskBlurShader.end();
+	if(dst){
+		tex.draw(0,0);
+	}else{
+		ofClear(0,0);
+	}
+	maskBlurShaderV.begin();
+	maskBlurShaderV.setUniformTexture("mask", maskTex, 0);
+	maskBlurShaderV.setUniformTexture("tex", buffer, 1);
+	mask.draw();
+	maskBlurShaderV.end();
 	result.end();
 }
 
 void Clone::setStrength(int strength) {
 	this->strength = strength;
+	maskBlurShaderH.unload();
+	maskBlurShaderV.unload();
+	maskBlurShaderH.setupShaderFromSource(GL_FRAGMENT_SHADER, getMaskBlurShaderSourceH(strength));
+	maskBlurShaderV.setupShaderFromSource(GL_FRAGMENT_SHADER, getMaskBlurShaderSourceV(strength));
+	maskBlurShaderH.linkProgram();
+	maskBlurShaderV.linkProgram();
 }
 
-void Clone::update(ofTexture& src, ofTexture& dst, ofTexture& mask) {
-	maskedBlur(src, mask, srcBlur);
-	maskedBlur(dst, mask, dstBlur);
+void Clone::update(ofTexture& src, ofTexture& dst, ofMesh& mask, ofTexture & texMask) {
+	maskedBlur(src, mask, texMask, srcBlur, false);
+	maskedBlur(dst, mask, texMask, dstBlur, true);
 	
 	buffer.begin();
+	//dstBlur.draw(0,0);
 	ofPushStyle();
 	ofEnableAlphaBlending();
 	dst.draw(0, 0);	
@@ -99,7 +127,7 @@ void Clone::update(ofTexture& src, ofTexture& dst, ofTexture& mask) {
 	cloneShader.setUniformTexture("src", src, 1);
 	cloneShader.setUniformTexture("srcBlur", srcBlur, 2);
 	cloneShader.setUniformTexture("dstBlur", dstBlur, 3);
-	dst.draw(0, 0);
+	mask.draw();
 	cloneShader.end();
 	ofDisableAlphaBlending();
 	ofPopStyle();

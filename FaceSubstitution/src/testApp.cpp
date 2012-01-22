@@ -145,13 +145,13 @@ void testApp::update() {
 		maskFbo.end();
 
 		srcFbo.begin();
-		ofClear(0, 255);
+		video->draw(0,0);
 		faceLoader.getCurrentImg().bind();
 		camMesh.draw();
 		faceLoader.getCurrentImg().unbind();
 		srcFbo.end();
 
-		clone.update(srcFbo.getTextureReference(), video->getTextureReference(), maskFbo.getTextureReference());
+		clone.update(srcFbo.getTextureReference(), video->getTextureReference(), camMesh, maskFbo.getTextureReference());
 
 		updateGstVirtualCamera();
 	}
