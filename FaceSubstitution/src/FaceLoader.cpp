@@ -112,7 +112,14 @@ void FaceLoader::loadFace(string face){
 	nextImg->loadImage(face);
 	if(nextImg->getWidth() > 0) {
 		tracker.update(toCv(*nextImg));
-		*nextPoints = tracker.getImagePoints();
+		ofMesh imageMesh;
+		ofFile loadedMeshFile(face+".ply");
+		if(loadedMeshFile.exists()){
+			loadedMeshFile >> imageMesh;
+			*nextPoints = imageMesh.getTexCoords();
+		}else{
+			*nextPoints = tracker.getImagePoints();
+		}
 	}
 }
 
