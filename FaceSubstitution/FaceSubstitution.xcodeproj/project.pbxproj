@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		270204F9144B448100E65507 /* Clone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 270204F7144B448100E65507 /* Clone.cpp */; };
 		2705B477143D6E6600F2A09E /* opencv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2705B40B143D6E6500F2A09E /* opencv.a */; };
 		2705B4BB143D6F0400F2A09E /* Calibration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2705B4B3143D6F0400F2A09E /* Calibration.cpp */; };
 		2705B4BC143D6F0400F2A09E /* ContourFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2705B4B4143D6F0400F2A09E /* ContourFinder.cpp */; };
@@ -17,6 +16,8 @@
 		2705B4C0143D6F0400F2A09E /* Tracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2705B4B8143D6F0400F2A09E /* Tracker.cpp */; };
 		2705B4C1143D6F0400F2A09E /* Utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2705B4B9143D6F0400F2A09E /* Utilities.cpp */; };
 		2705B4C2143D6F0400F2A09E /* Wrappers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2705B4BA143D6F0400F2A09E /* Wrappers.cpp */; };
+		2749CEF514D4608A00AC5E07 /* Clone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2749CEF314D4608A00AC5E07 /* Clone.cpp */; };
+		2749CEFC14D460A400AC5E07 /* FaceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2749CEFA14D460A400AC5E07 /* FaceLoader.cpp */; };
 		2751AADF143D78A100605D00 /* CLM.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2751AAC8143D78A100605D00 /* CLM.cc */; };
 		2751AAE0143D78A100605D00 /* FCheck.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2751AACA143D78A100605D00 /* FCheck.cc */; };
 		2751AAE1143D78A100605D00 /* FDet.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2751AACC143D78A100605D00 /* FDet.cc */; };
@@ -80,8 +81,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		270204F7144B448100E65507 /* Clone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Clone.cpp; path = ../../../apps/FaceSubstitution/CloningWrapper/src/Clone.cpp; sourceTree = SOURCE_ROOT; };
-		270204F8144B448100E65507 /* Clone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Clone.h; path = ../../../apps/FaceSubstitution/CloningWrapper/src/Clone.h; sourceTree = SOURCE_ROOT; };
 		2705B33D143D6DB000F2A09E /* ofxCv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxCv.h; path = ../../../addons/ofxCv/src/ofxCv.h; sourceTree = SOURCE_ROOT; };
 		2705B377143D6E6500F2A09E /* cv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cv.h; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv/cv.h; sourceTree = SOURCE_ROOT; };
 		2705B378143D6E6500F2A09E /* cv.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = cv.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv/cv.hpp; sourceTree = SOURCE_ROOT; };
@@ -166,6 +165,10 @@
 		2705B4B8143D6F0400F2A09E /* Tracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tracker.cpp; path = ../../../addons/ofxCv/libs/ofxCv/src/Tracker.cpp; sourceTree = SOURCE_ROOT; };
 		2705B4B9143D6F0400F2A09E /* Utilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Utilities.cpp; path = ../../../addons/ofxCv/libs/ofxCv/src/Utilities.cpp; sourceTree = SOURCE_ROOT; };
 		2705B4BA143D6F0400F2A09E /* Wrappers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Wrappers.cpp; path = ../../../addons/ofxCv/libs/ofxCv/src/Wrappers.cpp; sourceTree = SOURCE_ROOT; };
+		2749CEF314D4608A00AC5E07 /* Clone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Clone.cpp; path = src/Clone.cpp; sourceTree = SOURCE_ROOT; };
+		2749CEF414D4608A00AC5E07 /* Clone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Clone.h; path = src/Clone.h; sourceTree = SOURCE_ROOT; };
+		2749CEFA14D460A400AC5E07 /* FaceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FaceLoader.cpp; path = src/FaceLoader.cpp; sourceTree = SOURCE_ROOT; };
+		2749CEFB14D460A400AC5E07 /* FaceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FaceLoader.h; path = src/FaceLoader.h; sourceTree = SOURCE_ROOT; };
 		2751AAC7143D78A100605D00 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = .gitignore; path = ../../../addons/ofxFaceTracker/libs/Tracker/.gitignore; sourceTree = SOURCE_ROOT; };
 		2751AAC8143D78A100605D00 /* CLM.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CLM.cc; path = ../../../addons/ofxFaceTracker/libs/Tracker/CLM.cc; sourceTree = SOURCE_ROOT; };
 		2751AAC9143D78A100605D00 /* CLM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLM.h; path = ../../../addons/ofxFaceTracker/libs/Tracker/CLM.h; sourceTree = SOURCE_ROOT; };
@@ -672,10 +675,12 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				2749CEFA14D460A400AC5E07 /* FaceLoader.cpp */,
+				2749CEFB14D460A400AC5E07 /* FaceLoader.h */,
+				2749CEF314D4608A00AC5E07 /* Clone.cpp */,
+				2749CEF414D4608A00AC5E07 /* Clone.h */,
 				275D3600149D10A800132EA7 /* BlinkDetector.cpp */,
 				275D3601149D10A800132EA7 /* BlinkDetector.h */,
-				270204F7144B448100E65507 /* Clone.cpp */,
-				270204F8144B448100E65507 /* Clone.h */,
 				279FB8221448A131007D42A0 /* ofxFaceTrackerThreaded.h */,
 				275D361B149D334B00132EA7 /* ofxFaceTrackerThreaded.cpp */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
@@ -800,9 +805,10 @@
 				2751AAE7143D78A100605D00 /* Expression.cpp in Sources */,
 				2751AAE8143D78A100605D00 /* ExpressionClassifier.cpp in Sources */,
 				2751AAE9143D78A100605D00 /* ofxFaceTracker.cpp in Sources */,
-				270204F9144B448100E65507 /* Clone.cpp in Sources */,
 				275D3602149D10A800132EA7 /* BlinkDetector.cpp in Sources */,
 				275D361C149D334B00132EA7 /* ofxFaceTrackerThreaded.cpp in Sources */,
+				2749CEF514D4608A00AC5E07 /* Clone.cpp in Sources */,
+				2749CEFC14D460A400AC5E07 /* FaceLoader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
