@@ -106,6 +106,10 @@ void Clone::update(ofTexture& src, ofTexture& dst, ofTexture& mask) {
 	buffer.end();
 }
 
-void Clone::draw(float x, float y) {
-	buffer.draw(x, y);
+void Clone::draw(float x, float y, float width, float height) {
+	buffer.draw(x, y, width, height);
+}
+
+ofTexture& Clone::getTextureRef() {
+	return buffer.getTextureReference();
 }

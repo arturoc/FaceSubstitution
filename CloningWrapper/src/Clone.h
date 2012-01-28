@@ -7,7 +7,8 @@ public:
 	void setup(int width, int height);
 	void setStrength(int strength);
 	void update(ofTexture& src, ofTexture& dst, ofTexture& mask);
-	void draw(float x, float y);
+	void draw(float x, float y, float width, float height);
+	ofTexture& getTextureRef();
 	
 protected:
 	void maskedBlur(ofTexture& tex, ofTexture& mask, ofFbo& result);

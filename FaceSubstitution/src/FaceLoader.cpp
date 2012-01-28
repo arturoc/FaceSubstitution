@@ -8,7 +8,9 @@
 #include "FaceLoader.h"
 #include "ofxFaceTracker.h"
 #include "Poco/ScopedLock.h"
+#include "ofxCv.h"
 
+using namespace ofxCv;
 
 int randomDifferent(int low, int high, int old) {
 	int cur = ofRandom(low, high - 1);
