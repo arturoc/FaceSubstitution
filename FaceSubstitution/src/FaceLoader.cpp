@@ -66,7 +66,7 @@ void FaceLoader::resizeAndDiscardImages(string folder){
 }
 
 
-void FaceLoader::setup(string folder){
+void FaceLoader::setup(string folder, Mode _mode){
 	tracker.setup();
 	tracker.setIterations(25);
 	tracker.setAttempts(4);
@@ -86,6 +86,7 @@ void FaceLoader::setup(string folder){
 		loadFace(faces.getPath(currentFace));
 	}
 
+	mode = _mode;
 	loadNextFace = false;
 	startThread(true,false);
 }
@@ -117,7 +118,7 @@ void FaceLoader::loadFace(string face){
 		ofMesh imageMesh;
 		ofFile loadedMeshFile(face+".ply");
 		if(loadedMeshFile.exists()){
-			loadedMeshFile >> imageMesh;
+			imageMesh.load(face+".ply");
 			*nextPoints = imageMesh.getTexCoords();
 		}else{
 			*nextPoints = tracker.getImagePoints();
@@ -137,13 +138,18 @@ vector<ofVec2f> & FaceLoader::getCurrentImagePoints(){
 	return *currentPoints;
 }
 
-void FaceLoader::loadRandom(){
+void FaceLoader::loadNext(){
 	mutex.lock();
 	std::swap(nextPoints,currentPoints);
 	std::swap(nextImg,currentImg);
 	nextImg->setUseTexture(false);
 	loadNextFace = true;
 	mutex.unlock();
-	currentFace = randomDifferent(0, faces.size() - 1, currentFace);
+	if(mode==Random){
+		currentFace = randomDifferent(0, faces.size(), currentFace);
+	}else{
+		currentFace++;
+		currentFace %= faces.size();
+	}
 	loadNew.signal();
 }

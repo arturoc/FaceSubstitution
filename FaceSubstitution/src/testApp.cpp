@@ -18,6 +18,7 @@ int h = 720;
 using namespace ofxCv;
 
 #define FACES_DIR "faces_politicians"
+#define LOAD_MODE FaceLoader::Sequential
 
 void testApp::allocateGstVirtualCamera(){
 #ifdef USE_GST_VIRTUAL_CAMERA
@@ -86,8 +87,10 @@ void testApp::setup() {
 	maskFbo.allocate(settings);
 	srcFbo.allocate(settings);
 	camTracker.setup();
+	camTracker.getTracker()->setRescale(.5);
+	camTracker.getTracker()->setIterations(10);
 
-	faceLoader.setup(FACES_DIR);
+	faceLoader.setup(FACES_DIR,LOAD_MODE);
 
 	if(!live) vid.play();
 
@@ -117,7 +120,7 @@ void testApp::setup() {
 
 void testApp::update() {
 	if(loadNextFace){
-		faceLoader.loadRandom();
+		faceLoader.loadNext();
 		loadNextFace  = false;
 	}
 	faceLoader.update();

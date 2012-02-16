@@ -64,5 +64,6 @@ public:
 	int numInputRotation90;
 	ofPixels rotatedInput;
 	ofTexture rotatedInputTex;
+	
 
 };

@@ -25,7 +25,7 @@ public:
 		Sequential
 	};
 
-	void setup(string folder);
+	void setup(string folder, Mode mode);
 	void update();
 
 	ofImage & getCurrentImg();
@@ -34,7 +34,7 @@ public:
 
 	void threadedFunction();
 
-	void loadRandom();
+	void loadNext();
 
 private:
 	void resizeAndDiscardImages(string path);
@@ -47,6 +47,7 @@ private:
 	int currentFace;
 	bool loadNextFace;
 	Poco::Condition loadNew;
+	Mode mode;
 
 	//ofMutex mutex;
 
