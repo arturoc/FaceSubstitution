@@ -17,7 +17,7 @@ int h = 720;
 
 using namespace ofxCv;
 
-#define FACES_DIR "faces_politicians"
+#define FACES_DIR "faces"
 #define LOAD_MODE FaceLoader::Sequential
 
 void testApp::allocateGstVirtualCamera(){
