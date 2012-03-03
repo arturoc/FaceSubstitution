@@ -68,7 +68,7 @@ public:
 
 	bool loadNextFace;
 
-	int numInputRotation90;
+	ofxParameter<int> numInputRotation90;
 	ofPixels rotatedInput;
 	ofTexture rotatedInputTex;
 	

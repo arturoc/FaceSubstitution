@@ -32,7 +32,7 @@ void AutoExposure::update(ofPixels & frame, ofPixels & mask){
 	ofxCv::convertColor(frame,grayPixels,CV_RGB2GRAY);
 	ofxCv::convertColor(mask,grayPixelsMask,CV_RGB2GRAY);
 	cv::Scalar avg = cv::mean(ofxCv::toCv(grayPixels),ofxCv::toCv(grayPixelsMask));
-	int exposure = ofMap(avg.val[0],40,200,1200,900);
+	int exposure = ofMap(avg.val[0],40,200,1400,800);
 	//cout << "avg: " << avg.val[0] << " -> exposure " << exposure << endl;
 
 	settings["Exposure (Absolute)"] = exposure;

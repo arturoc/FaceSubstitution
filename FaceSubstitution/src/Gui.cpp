@@ -19,7 +19,7 @@ Gui::~Gui() {
 	// TODO Auto-generated destructor stub
 }
 
-void Gui::setup(FaceLoader * _faceLoader, BlinkDetector * _leftBd, BlinkDetector * _rightBd, ofMesh * _camMesh, ofxFaceTrackerThreaded * _tracker, VideoFader * _videoFader, FaceBlinkRecorder * _faceBlinkRecorder, AutoExposure * _autoExposure){
+void Gui::setup(FaceLoader * _faceLoader, BlinkDetector * _leftBd, BlinkDetector * _rightBd, ofMesh * _camMesh, ofxFaceTrackerThreaded * _tracker, VideoFader * _videoFader, FaceBlinkRecorder * _faceBlinkRecorder, AutoExposure * _autoExposure, ofxParameter<int> numInputRotations){
 	faceLoader = _faceLoader;
 	leftBD = _leftBd;
 	rightBD = _rightBd;
@@ -35,6 +35,7 @@ void Gui::setup(FaceLoader * _faceLoader, BlinkDetector * _leftBd, BlinkDetector
 	gui.add(showMesh.setup("show mesh",false));
 	gui.add(showVideos.setup("show videos",false));
 	gui.add(showMugs.setup("show mugs",false));
+	gui.add(rotation.setup("rotation",numInputRotations,0,3));
 	gui.add(currentFace.setup("current face",faceLoader->getCurrentFace(),0,faceLoader->getTotalFaces()));
 	gui.add(faderRemaining.setup("fader remaining",videoFader->getRemainingPct(),0,videoFader->getDuration()));
 	gui.add(videoFps.setup("video fps",faceBlinkRecorder->getFps(),0,60));
@@ -70,6 +71,18 @@ void Gui::update(){
 }
 
 void Gui::draw(){
+	if(rotation==0){
+		ofSetOrientation(OF_ORIENTATION_DEFAULT);
+	}else if(rotation==1){
+		ofSetOrientation(OF_ORIENTATION_90_RIGHT);
+	}else if(rotation==2){
+		ofSetOrientation(OF_ORIENTATION_180);
+	}else if(rotation==3){
+		ofSetOrientation(OF_ORIENTATION_90_LEFT);
+	}
+	ofPushView();
+	ofSetupScreenPerspective();
+
 	gui.draw();
 
 	if(showGraphs){
@@ -99,6 +112,8 @@ void Gui::draw(){
 		drawHighlightString("image face not found", 10, gui.getHeight() + 40);
 	}
 
-
 	drawHighlightString("recorder state " + faceBlinkRecorder->getState(), 10, gui.getHeight() + 60);
+
+	ofPopView();
+	ofSetOrientation(OF_ORIENTATION_DEFAULT);
 }

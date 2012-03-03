@@ -123,7 +123,7 @@ void testApp::setup() {
 	autoExposure.setup(0,w,h);
 
 	blinkRecorder.setup(camTracker);
-	gui.setup(&faceLoader,&leftBD,&rightBD,&camMesh,&camTracker,&videoFader,&blinkRecorder, &autoExposure);
+	gui.setup(&faceLoader,&leftBD,&rightBD,&camMesh,&camTracker,&videoFader,&blinkRecorder, &autoExposure, numInputRotation90);
 
 	showVideosChanged(gui.showVideos);
 	gui.showVideos.addListener(this,&testApp::showVideosChanged);

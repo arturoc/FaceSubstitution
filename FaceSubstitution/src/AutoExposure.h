@@ -18,8 +18,8 @@ public:
 	virtual ~AutoExposure();
 
 	bool setup(int device, int w, int h);
-
 	void update(ofPixels & frame, ofPixels & mask);
+
 
 	ofxV4L2Settings settings;
 

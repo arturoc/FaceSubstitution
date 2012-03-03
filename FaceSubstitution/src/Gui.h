@@ -20,7 +20,7 @@ public:
 	Gui();
 	virtual ~Gui();
 
-	void setup(FaceLoader * faceLoader, BlinkDetector * leftBd, BlinkDetector * rightBd, ofMesh * camMesh, ofxFaceTrackerThreaded * tracker, VideoFader * videoFader, FaceBlinkRecorder * faceBlinkRecorder, AutoExposure * autoExposure);
+	void setup(FaceLoader * faceLoader, BlinkDetector * leftBd, BlinkDetector * rightBd, ofMesh * camMesh, ofxFaceTrackerThreaded * tracker, VideoFader * videoFader, FaceBlinkRecorder * faceBlinkRecorder, AutoExposure * autoExposure, ofxParameter<int> numInputRotations);
 	void update();
 	void draw();
 
@@ -34,6 +34,7 @@ public:
 	ofxToggle showVideos;
 	ofxToggle showMugs;
 	ofxIntSlider currentFace;
+	ofxIntSlider rotation;
 	ofxFloatSlider faderRemaining;
 	ofxFloatSlider videoFps;
 
