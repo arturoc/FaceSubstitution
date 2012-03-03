@@ -82,6 +82,7 @@ string BlinkDetector::LOG_NAME = "BlinkDetector";
 
 BlinkDetector::BlinkDetector() {
 	eyeClosed = false;
+	prevArea = 0;
 
 }
 
@@ -131,6 +132,12 @@ void BlinkDetector::update(){
 		eyeClosed = false;
 	}
 
+	graphArea.setThreshold(((max+min)*0.5-area*.2));
+	graphArea.addSample(area);
+	graphDerivative.addSample(area-prevArea);
+	graphBool.addSample(eyeClosed);
+
+	prevArea = area;
 }
 
 float BlinkDetector::getOpennes(){
