@@ -77,6 +77,7 @@ void FaceLoader::setup(string folder, Mode _mode){
 
 	currentFace = 0;
 	faces.listDir(folder);
+	faces.sort();
 
 	if(faces.size()!=0){
 		loadFace(faces.getPath(currentFace));
