@@ -16,6 +16,7 @@
 
 #include "BlinkDetector.h"
 #include "Gui.h"
+#include "AutoExposure.h"
 
 class testApp : public ofBaseApp {
 public:
@@ -40,6 +41,7 @@ public:
 	bool cloneReady;
 	Clone clone;
 	ofFbo srcFbo, maskFbo;
+	ofPixels maskPixels;
 
 	FaceLoader faceLoader;
 
@@ -76,5 +78,7 @@ public:
 
 	Gui gui;
 	bool showGui;
+
+	AutoExposure autoExposure;
 
 };

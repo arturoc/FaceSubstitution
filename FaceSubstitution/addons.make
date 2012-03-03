@@ -6,3 +6,4 @@ ofxGui
 ofxXmlSettings
 ofxPlaymodes
 ofxOsc
+ofxV4L2Settings

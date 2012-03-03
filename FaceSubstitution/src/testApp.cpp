@@ -120,8 +120,10 @@ void testApp::setup() {
 
 	clone.setStrength(16);
 
+	autoExposure.setup(0,w,h);
+
 	blinkRecorder.setup(camTracker);
-	gui.setup(&faceLoader,&leftBD,&rightBD,&camMesh,&camTracker,&videoFader,&blinkRecorder);
+	gui.setup(&faceLoader,&leftBD,&rightBD,&camMesh,&camTracker,&videoFader,&blinkRecorder, &autoExposure);
 
 	showVideosChanged(gui.showVideos);
 	gui.showVideos.addListener(this,&testApp::showVideosChanged);
@@ -149,6 +151,7 @@ void testApp::update() {
 		loadNextFace  = false;
 	}
 	faceLoader.update();
+	bool prevFound = cloneReady;
 	cloneReady = camTracker.getFound();
 	bool frameProcessed = camTracker.isFrameNew();
 
@@ -172,6 +175,11 @@ void testApp::update() {
 		camMesh.draw();
 		maskFbo.end();
 
+		if(1){
+			maskFbo.readToPixels(maskPixels);
+			autoExposure.update(video->getPixelsRef(),maskPixels);
+		}
+
 		srcFbo.begin();
 		faceLoader.getCurrentImg().bind();
 		camMesh.draw();
@@ -192,7 +200,7 @@ void testApp::update() {
 		}else{
 			camTracker.update(toCv(*video));
 		}
-		blinkRecorder.update(video->getPixelsRef());
+		if(gui.showVideos) blinkRecorder.update(video->getPixelsRef());
 	}
 
 	videoFader.update();
@@ -217,12 +225,12 @@ void testApp::threadedUpdate(ofEventArgs & args){
 					faceChangedOnEyesClosed = true;
 				}
 			}
-			blinkRecorder.setEyesClosed(true);
+			if(gui.showVideos) blinkRecorder.setEyesClosed(true);
 		}else{
 			millisEyesClosed = 0;
 			firstEyesClosedEvent = 0;
 			faceChangedOnEyesClosed = false;
-			blinkRecorder.setEyesClosed(false);
+			if(gui.showVideos) blinkRecorder.setEyesClosed(false);
 		}
 	}else{
 		leftBD.reset();

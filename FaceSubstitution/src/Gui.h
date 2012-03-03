@@ -13,13 +13,14 @@
 #include "BlinkDetector.h"
 #include "VideoFader.h"
 #include "FaceBlinkRecorder.h"
+#include "AutoExposure.h"
 
 class Gui {
 public:
 	Gui();
 	virtual ~Gui();
 
-	void setup(FaceLoader * faceLoader, BlinkDetector * leftBd, BlinkDetector * rightBd, ofMesh * camMesh, ofxFaceTrackerThreaded * tracker, VideoFader * videoFader, FaceBlinkRecorder * faceBlinkRecorder);
+	void setup(FaceLoader * faceLoader, BlinkDetector * leftBd, BlinkDetector * rightBd, ofMesh * camMesh, ofxFaceTrackerThreaded * tracker, VideoFader * videoFader, FaceBlinkRecorder * faceBlinkRecorder, AutoExposure * autoExposure);
 	void update();
 	void draw();
 
@@ -44,6 +45,7 @@ private:
 	ofxFaceTrackerThreaded * tracker;
 	VideoFader * videoFader;
 	FaceBlinkRecorder * faceBlinkRecorder;
+	AutoExposure * autoExposure;
 };
 
 #endif /* GUI_H_ */
