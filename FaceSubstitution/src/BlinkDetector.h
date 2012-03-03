@@ -11,6 +11,7 @@
 #include <deque>
 #include "ofPolyline.h"
 #include "ofxFaceTracker.h"
+#include "Graph.h"
 
 class BlinkDetector {
 public:
@@ -27,6 +28,11 @@ public:
 
 	static string LOG_NAME;
 
+
+	Graph graphArea;
+	Graph graphDerivative;
+	Graph graphBool;
+
 private:
 	ofxFaceTracker * tracker;
 	ofxFaceTracker::Feature eye;
@@ -34,7 +40,7 @@ private:
 	ofMesh mesh;
 	deque<float> latestEyeOpennes;
 	bool eyeClosed;
-
+	float prevArea;
 };
 
 #endif /* BLINKDETECTOR_H_ */

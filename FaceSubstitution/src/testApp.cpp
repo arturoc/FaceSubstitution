@@ -60,11 +60,14 @@ void testApp::updateGstVirtualCamera(){
 
 
 void testApp::setup() {
+	ofLog::setAutoSpace(true);
 	//ofSetLogLevel(OF_LOG_VERBOSE);
-	ofSetLogLevel("testApp",OF_LOG_VERBOSE);
-	ofSetLogLevel(BlinkDetector::LOG_NAME,OF_LOG_VERBOSE);
+	//ofSetLogLevel("testApp",OF_LOG_VERBOSE);
+	//ofSetLogLevel(BlinkDetector::LOG_NAME,OF_LOG_VERBOSE);
+	ofSetLogLevel(FaceBlinkRecorder::LOG_NAME,OF_LOG_VERBOSE);
+	ofSetLogLevel(VideoFader::LOG_NAME,OF_LOG_VERBOSE);
 
-#ifdef TARGET_OSX
+#ifdef FACES_IN_BUNDLE
 	ofSetDataPathRoot("../data/");
 #endif
 	ofSetVerticalSync(true);
@@ -116,6 +119,30 @@ void testApp::setup() {
 
 
 	clone.setStrength(16);
+
+	autoExposure.setup(0,w,h);
+
+	blinkRecorder.setup(camTracker);
+	gui.setup(&faceLoader,&leftBD,&rightBD,&camMesh,&camTracker,&videoFader,&blinkRecorder, &autoExposure, numInputRotation90);
+
+	showVideosChanged(gui.showVideos);
+	gui.showVideos.addListener(this,&testApp::showVideosChanged);
+
+	ofEnableAlphaBlending();
+
+	showGui = false;
+}
+
+void testApp::showVideosChanged(bool & v){
+	if(v)
+		ofAddListener(blinkRecorder.recordingE,this,&testApp::recording);
+	else
+		ofRemoveListener(blinkRecorder.recordingE,this,&testApp::recording);
+}
+
+void testApp::recording(bool & rec){
+	if(rec) videoFader.setup(video);
+	isRecording = rec;
 }
 
 void testApp::update() {
@@ -124,6 +151,7 @@ void testApp::update() {
 		loadNextFace  = false;
 	}
 	faceLoader.update();
+	bool prevFound = cloneReady;
 	cloneReady = camTracker.getFound();
 	bool frameProcessed = camTracker.isFrameNew();
 
@@ -147,8 +175,12 @@ void testApp::update() {
 		camMesh.draw();
 		maskFbo.end();
 
+		if(1){
+			maskFbo.readToPixels(maskPixels);
+			autoExposure.update(video->getPixelsRef(),maskPixels);
+		}
+
 		srcFbo.begin();
-		video->draw(0,0);
 		faceLoader.getCurrentImg().bind();
 		camMesh.draw();
 		faceLoader.getCurrentImg().unbind();
@@ -168,7 +200,12 @@ void testApp::update() {
 		}else{
 			camTracker.update(toCv(*video));
 		}
+		if(gui.showVideos) blinkRecorder.update(video->getPixelsRef());
 	}
+
+	videoFader.update();
+	gui.update();
+
 }
 
 void testApp::threadedUpdate(ofEventArgs & args){
@@ -188,10 +225,12 @@ void testApp::threadedUpdate(ofEventArgs & args){
 					faceChangedOnEyesClosed = true;
 				}
 			}
+			if(gui.showVideos) blinkRecorder.setEyesClosed(true);
 		}else{
 			millisEyesClosed = 0;
 			firstEyesClosedEvent = 0;
 			faceChangedOnEyesClosed = false;
+			if(gui.showVideos) blinkRecorder.setEyesClosed(false);
 		}
 	}else{
 		leftBD.reset();
@@ -220,43 +259,20 @@ void testApp::draw() {
 		height = -height;
 	}
 
-	if(faceLoader.getCurrentImg().getWidth()> 0 && cloneReady) {
-		clone.draw(x,y,width,height);
-	} else {
-		video->draw(x,y,width,height);
+	if(isRecording){
+		videoFader.draw(x,y,width,height);
+	}else{
+		if(faceLoader.getCurrentImg().getWidth()> 0 && cloneReady) {
+			clone.draw(x,y,width,height);
+		} else {
+			video->draw(x,y,width,height);
+		}
 	}
-	
-	if(debug){
-		camMesh.clearTexCoords();
-		camMesh.drawWireframe();
-		if(!camTracker.getFound()) {
-			drawHighlightString("camera face not found", 10, 10);
-		}
-		if(faceLoader.getCurrentImg().getWidth() == 0) {
-			drawHighlightString("drag an image here", 10, 30);
-		} else if(!faceLoader.getTracker().getFound()) {
-			drawHighlightString("image face not found", 10, 30);
-		}
 
-
-		ofNoFill();
-		const deque<float> & leftEyeHist = leftBD.getHistory();
-		ofBeginShape();
-		for(int i=0;i<(int)leftEyeHist.size();i++){
-			ofVertex(i*10,leftEyeHist[i]);
-		}
-		ofEndShape();
-
-
-		const deque<float> & rightEyeHist = rightBD.getHistory();
-		ofBeginShape();
-		for(int i=0;i<(int)rightEyeHist.size();i++){
-			ofVertex(i*10,rightEyeHist[i]+300);
-		}
-		ofEndShape();
-
-		rotatedInputTex.draw(0,0,240*ratio,240);
+	if(showGui){
+		gui.draw();
 	}
+
 }
 
 
@@ -266,17 +282,20 @@ void testApp::dragEvent(ofDragInfo dragInfo) {
 
 void testApp::keyPressed(int key){
 	switch(key){
-	/*case OF_KEY_UP:
+	case OF_KEY_UP:
 		faceLoader.loadNext();
 		break;
 	case OF_KEY_DOWN:
 		faceLoader.loadPrevious();
-		break;*/
+		break;
 	case 'f':
 		ofToggleFullscreen();
 		return;
 	case 'd':
 		debug = !debug;
 		return;
+	case 'g':
+		showGui = !showGui;
+		break;
 	}
 }

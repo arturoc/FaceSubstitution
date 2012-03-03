@@ -100,6 +100,10 @@ void FaceLoader::update(){
 	}
 }
 
+void FaceLoader::setMode(Mode _mode){
+	mode = _mode;
+}
+
 
 void FaceLoader::threadedFunction(){
 	mutex.lock();
@@ -112,12 +116,11 @@ void FaceLoader::threadedFunction(){
 
 
 void FaceLoader::loadFace(string face){
-	ofLog(OF_LOG_ERROR) << face;
 	nextImg->loadImage(face);
 	if(nextImg->getWidth() > 0) {
 		tracker.update(toCv(*nextImg));
 		ofMesh imageMesh;
-		ofFile loadedMeshFile(face+".ply");
+		ofFile loadedMeshFile(face+".ply",ofFile::Reference);
 		if(loadedMeshFile.exists()){
 			imageMesh.load(face+".ply");
 			*nextPoints = imageMesh.getTexCoords();
@@ -153,4 +156,29 @@ void FaceLoader::loadNext(){
 		currentFace %= faces.size();
 	}
 	loadNew.signal();
+}
+
+void FaceLoader::loadPrevious(){
+	mutex.lock();
+	std::swap(nextPoints,currentPoints);
+	std::swap(nextImg,currentImg);
+	nextImg->setUseTexture(false);
+	loadNextFace = true;
+	mutex.unlock();
+	if(mode==Random){
+		currentFace = randomDifferent(0, faces.size(), currentFace);
+	}else{
+		currentFace--;
+		currentFace %= faces.size();
+	}
+	loadNew.signal();
+
+}
+
+int FaceLoader::getTotalFaces(){
+	return faces.size();
+}
+
+int FaceLoader::getCurrentFace(){
+	return currentFace;
 }

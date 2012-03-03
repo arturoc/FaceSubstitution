@@ -5,6 +5,8 @@
 #include "Clone.h"
 #include "ofxFaceTrackerThreaded.h"
 #include "FaceLoader.h"
+#include "FaceBlinkRecorder.h"
+#include "VideoFader.h"
 
 //#define USE_GST_VIRTUAL_CAMERA
 
@@ -13,6 +15,8 @@
 #endif
 
 #include "BlinkDetector.h"
+#include "Gui.h"
+#include "AutoExposure.h"
 
 class testApp : public ofBaseApp {
 public:
@@ -27,6 +31,8 @@ public:
 	void updateGstVirtualCamera();
 
 	void keyPressed(int key);
+	void recording(bool & rec);
+	void showVideosChanged(bool & v);
 
 	ofxFaceTrackerThreaded camTracker;
 	ofVideoGrabber cam;
@@ -35,6 +41,7 @@ public:
 	bool cloneReady;
 	Clone clone;
 	ofFbo srcFbo, maskFbo;
+	ofPixels maskPixels;
 
 	FaceLoader faceLoader;
 
@@ -61,9 +68,17 @@ public:
 
 	bool loadNextFace;
 
-	int numInputRotation90;
+	ofxParameter<int> numInputRotation90;
 	ofPixels rotatedInput;
 	ofTexture rotatedInputTex;
 	
+	FaceBlinkRecorder blinkRecorder;
+	VideoFader videoFader;
+	bool isRecording;
+
+	Gui gui;
+	bool showGui;
+
+	AutoExposure autoExposure;
 
 };

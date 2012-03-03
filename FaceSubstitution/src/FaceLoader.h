@@ -14,6 +14,7 @@
 #include "ofxFaceTrackerThreaded.h"
 #include "ofThread.h"
 #include "ofFileUtils.h"
+#include "ofxGui.h"
 
 class FaceLoader: public ofThread {
 public:
@@ -28,6 +29,8 @@ public:
 	void setup(string folder, Mode mode);
 	void update();
 
+	void setMode(Mode mode);
+
 	ofImage & getCurrentImg();
 	ofxFaceTracker & getTracker();
 	vector<ofVec2f> & getCurrentImagePoints();
@@ -35,6 +38,10 @@ public:
 	void threadedFunction();
 
 	void loadNext();
+	void loadPrevious();
+
+	int getTotalFaces();
+	int getCurrentFace();
 
 private:
 	void resizeAndDiscardImages(string path);
@@ -44,10 +51,10 @@ private:
 	ofImage src[2], *currentImg, *nextImg;
 	vector<ofVec2f> srcPoints[2], *currentPoints, *nextPoints;
 	ofDirectory faces;
-	int currentFace;
 	bool loadNextFace;
 	Poco::Condition loadNew;
 	Mode mode;
+	int currentFace;
 
 	//ofMutex mutex;
 
