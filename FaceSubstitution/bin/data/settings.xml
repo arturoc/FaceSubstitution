@@ -1,0 +1,28 @@
+<face_loader_seq />
+<face_loader_seq />
+<face_loader_seq/rnd>0</face_loader_seq/rnd>
+<show_graphs>0</show_graphs>
+<show_mesh>0</show_mesh>
+<show_videos>0</show_videos>
+<show_mugs>0</show_mugs>
+<rotation>0</rotation>
+<current_face>29</current_face>
+<fader_remaining>1</fader_remaining>
+<video_fps>30</video_fps>
+<Backlight_Compensation>0</Backlight_Compensation>
+<Brightness>3</Brightness>
+<Contrast>50</Contrast>
+<Exposure_(Absolute)>999</Exposure_(Absolute)>
+<Exposure,_Auto>1</Exposure,_Auto>
+<Exposure,_Auto_Priority>1</Exposure,_Auto_Priority>
+<Gamma>113</Gamma>
+<Hue>0</Hue>
+<Pan_(Absolute)>0</Pan_(Absolute)>
+<Power_Line_Frequency>1</Power_Line_Frequency>
+<Privacy>0</Privacy>
+<Saturation>50</Saturation>
+<Sharpness>1</Sharpness>
+<Tilt_(Absolute)>3600</Tilt_(Absolute)>
+<White_Balance_Temperature>4095</White_Balance_Temperature>
+<White_Balance_Temperature,_Auto>0</White_Balance_Temperature,_Auto>
+<Zoom,_Absolute>0</Zoom,_Absolute>

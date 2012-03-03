@@ -50,6 +50,8 @@ void Gui::setup(FaceLoader * _faceLoader, BlinkDetector * _leftBd, BlinkDetector
 
 	ofAddListener(videoFader->stateChanged,this,&Gui::videoFaderStateChanged);
 
+	gui.loadFromFile("settings.xml");
+
 }
 
 void Gui::faceLoaderModeChanged(bool & m){
