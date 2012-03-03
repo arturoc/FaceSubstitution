@@ -12,13 +12,14 @@
 #include "FaceLoader.h"
 #include "BlinkDetector.h"
 #include "VideoFader.h"
+#include "FaceBlinkRecorder.h"
 
 class Gui {
 public:
 	Gui();
 	virtual ~Gui();
 
-	void setup(FaceLoader * faceLoader, BlinkDetector * leftBd, BlinkDetector * rightBd, ofMesh * camMesh, ofxFaceTrackerThreaded * tracker, VideoFader * videoFader);
+	void setup(FaceLoader * faceLoader, BlinkDetector * leftBd, BlinkDetector * rightBd, ofMesh * camMesh, ofxFaceTrackerThreaded * tracker, VideoFader * videoFader, FaceBlinkRecorder * faceBlinkRecorder);
 	void update();
 	void draw();
 
@@ -33,6 +34,7 @@ public:
 	ofxToggle showMugs;
 	ofxIntSlider currentFace;
 	ofxFloatSlider faderRemaining;
+	ofxFloatSlider videoFps;
 
 private:
 	FaceLoader * faceLoader;
@@ -41,6 +43,7 @@ private:
 	ofMesh * camMesh;
 	ofxFaceTrackerThreaded * tracker;
 	VideoFader * videoFader;
+	FaceBlinkRecorder * faceBlinkRecorder;
 };
 
 #endif /* GUI_H_ */

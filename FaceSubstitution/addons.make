@@ -2,3 +2,7 @@ ofxOpenCv
 ofxCv
 ofxFaceTracker
 ofxVideoRecorder
+ofxGui
+ofxXmlSettings
+ofxPlaymodes
+ofxOsc

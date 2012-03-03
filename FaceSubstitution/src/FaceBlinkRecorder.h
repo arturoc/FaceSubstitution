@@ -13,7 +13,7 @@
 #include "Poco/Condition.h"
 #include "ofxPlaymodes.h"
 
-class FaceBlinkRecorder: public ofThread {
+class FaceBlinkRecorder: public ofThread, public ofxPm::VideoSource {
 public:
 	FaceBlinkRecorder();
 	virtual ~FaceBlinkRecorder();
@@ -25,7 +25,12 @@ public:
 
 	void setEyesClosed(bool closed);
 
+	ofxPm::VideoFrame * getNextVideoFrame();
+    int getFps();
+
 	static string LOG_NAME;
+
+	string getState();
 
 	ofEvent<bool> recordingE;
 
@@ -37,5 +42,12 @@ private:
 	int firstEyesClosed;
 	bool recording;
 	bool eyesClosed;
+	ofxPm::VideoBuffer buffer;
+	ofPixels * pixels;
+	bool encoding;
+
+	float oneSec;
+	int framesOneSec;
+	float fps;
 };
 #endif /* FACEBLINKRECORDER_H_ */

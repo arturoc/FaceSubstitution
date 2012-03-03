@@ -12,7 +12,7 @@
 string VideoFader::LOG_NAME = "VideoFader";
 
 VideoFader::VideoFader() {
-	// TODO Auto-generated constructor stub
+	state = Live;
 
 }
 
@@ -82,7 +82,7 @@ float VideoFader::getDuration(){
 	if(state == Video2){
 		return player2.getDuration();
 	}
-	return 0;
+	return 1;
 }
 
 float VideoFader:: getRemainingPct(){
@@ -92,5 +92,5 @@ float VideoFader:: getRemainingPct(){
 	if(state == Video2){
 		return player2.getDuration() - player2.getDuration()*player2.getPosition();
 	}
-	return 0;
+	return 1;
 }

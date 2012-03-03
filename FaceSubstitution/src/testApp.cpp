@@ -121,7 +121,7 @@ void testApp::setup() {
 	clone.setStrength(16);
 
 	blinkRecorder.setup(camTracker);
-	gui.setup(&faceLoader,&leftBD,&rightBD,&camMesh,&camTracker,&videoFader);
+	gui.setup(&faceLoader,&leftBD,&rightBD,&camMesh,&camTracker,&videoFader,&blinkRecorder);
 
 	showVideosChanged(gui.showVideos);
 	gui.showVideos.addListener(this,&testApp::showVideosChanged);

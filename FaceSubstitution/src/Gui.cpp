@@ -19,13 +19,14 @@ Gui::~Gui() {
 	// TODO Auto-generated destructor stub
 }
 
-void Gui::setup(FaceLoader * _faceLoader, BlinkDetector * _leftBd, BlinkDetector * _rightBd, ofMesh * _camMesh, ofxFaceTrackerThreaded * _tracker, VideoFader * _videoFader){
+void Gui::setup(FaceLoader * _faceLoader, BlinkDetector * _leftBd, BlinkDetector * _rightBd, ofMesh * _camMesh, ofxFaceTrackerThreaded * _tracker, VideoFader * _videoFader, FaceBlinkRecorder * _faceBlinkRecorder){
 	faceLoader = _faceLoader;
 	leftBD = _leftBd;
 	rightBD = _rightBd;
 	camMesh = _camMesh;
 	tracker = _tracker;
 	videoFader = _videoFader;
+	faceBlinkRecorder = _faceBlinkRecorder;
 
 	gui.setup("face substitution");
 	gui.add(faceLoaderMode.setup("face loader seq/rnd",false));
@@ -35,6 +36,7 @@ void Gui::setup(FaceLoader * _faceLoader, BlinkDetector * _leftBd, BlinkDetector
 	gui.add(showMugs.setup("show mugs",false));
 	gui.add(currentFace.setup("current face",faceLoader->getCurrentFace(),0,faceLoader->getTotalFaces()));
 	gui.add(faderRemaining.setup("fader remaining",videoFader->getRemainingPct(),0,videoFader->getDuration()));
+	gui.add(videoFps.setup("video fps",faceBlinkRecorder->getFps(),0,60));
 
 	faceLoaderMode.addListener(this,&Gui::faceLoaderModeChanged);
 
@@ -57,6 +59,7 @@ void Gui::videoFaderStateChanged(VideoFader::State & state){
 void Gui::update(){
 	currentFace = faceLoader->getCurrentFace();
 	faderRemaining = videoFader->getRemainingPct();
+	videoFps = faceBlinkRecorder->getFps();
 }
 
 void Gui::draw(){
@@ -88,4 +91,7 @@ void Gui::draw(){
 	if(!faceLoader->getTracker().getFound()) {
 		drawHighlightString("image face not found", 10, gui.getHeight() + 40);
 	}
+
+
+	drawHighlightString("recorder state " + faceBlinkRecorder->getState(), 10, gui.getHeight() + 60);
 }
