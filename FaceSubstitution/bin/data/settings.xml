@@ -12,9 +12,12 @@
 <Backlight_Compensation>0</Backlight_Compensation>
 <Brightness>3</Brightness>
 <Contrast>50</Contrast>
-<Exposure_(Absolute)>999</Exposure_(Absolute)>
+<!-- thinkpad Exposure_(Absolute)>999</Exposure_(Absolute)-->
+<Exposure_(Absolute)>280</Exposure_(Absolute)>
 <Exposure,_Auto>1</Exposure,_Auto>
 <Exposure,_Auto_Priority>1</Exposure,_Auto_Priority>
+<Focus,_Auto>1</Focus,_Auto>
+<Focus (absolute)>1022</Focus (absolute)>
 <Gamma>113</Gamma>
 <Hue>0</Hue>
 <Pan_(Absolute)>0</Pan_(Absolute)>
