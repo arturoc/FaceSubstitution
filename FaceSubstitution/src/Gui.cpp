@@ -75,13 +75,13 @@ void Gui::update(){
 }
 
 void Gui::rotationChanged(int & rot){
-	if(rotation==0){
+	if(rot==0){
 		ofSetOrientation(OF_ORIENTATION_DEFAULT);
-	}else if(rotation==1){
+	}else if(rot==1){
 		ofSetOrientation(OF_ORIENTATION_90_RIGHT);
-	}else if(rotation==2){
+	}else if(rot==2){
 		ofSetOrientation(OF_ORIENTATION_180);
-	}else if(rotation==3){
+	}else if(rot==3){
 		ofSetOrientation(OF_ORIENTATION_90_LEFT);
 	}
 }
