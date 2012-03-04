@@ -251,6 +251,12 @@ void testApp::threadedUpdate(ofEventArgs & args){
 }
 
 void testApp::draw() {
+	ofOrientation orientation = ofGetOrientation();
+
+	ofSetOrientation(OF_ORIENTATION_DEFAULT);
+	ofPushView();
+	ofSetupScreenPerspective();
+
 	ofSetColor(255);
 	
 	float ratio = clone.getTextureRef().getHeight()/clone.getTextureRef().getWidth();
@@ -280,11 +286,12 @@ void testApp::draw() {
 			video->draw(x,y,width,height);
 		}
 	}
+	ofPopView();
+	ofSetOrientation(orientation);
 
 	if(showGui){
 		gui.draw();
 	}
-
 }
 
 

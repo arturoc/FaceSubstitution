@@ -47,8 +47,10 @@ void Gui::setup(FaceLoader * _faceLoader, BlinkDetector * _leftBd, BlinkDetector
 	}
 
 	faceLoaderMode.addListener(this,&Gui::faceLoaderModeChanged);
+	rotation.addListener(this,&Gui::rotationChanged);
 
 	ofAddListener(videoFader->stateChanged,this,&Gui::videoFaderStateChanged);
+
 
 	gui.loadFromFile("settings.xml");
 
@@ -72,7 +74,7 @@ void Gui::update(){
 	videoFps = faceBlinkRecorder->getFps();
 }
 
-void Gui::draw(){
+void Gui::rotationChanged(int & rot){
 	if(rotation==0){
 		ofSetOrientation(OF_ORIENTATION_DEFAULT);
 	}else if(rotation==1){
@@ -82,9 +84,9 @@ void Gui::draw(){
 	}else if(rotation==3){
 		ofSetOrientation(OF_ORIENTATION_90_LEFT);
 	}
-	ofPushView();
-	ofSetupScreenPerspective();
+}
 
+void Gui::draw(){
 	gui.draw();
 
 	if(showGraphs){
@@ -116,6 +118,5 @@ void Gui::draw(){
 
 	drawHighlightString("recorder state " + faceBlinkRecorder->getState(), 10, gui.getHeight() + 60);
 
-	ofPopView();
-	ofSetOrientation(OF_ORIENTATION_DEFAULT);
+	ofDrawBitmapString(ofToString(ofGetMouseX())+","+ofToString(ofGetMouseY()),ofGetWidth()-120,20);
 }

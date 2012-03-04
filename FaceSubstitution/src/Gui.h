@@ -25,6 +25,7 @@ public:
 	void draw();
 
 	void faceLoaderModeChanged(bool & m);
+	void rotationChanged(int & rot);
 	void videoFaderStateChanged(VideoFader::State & state);
 
 	ofxPanel gui;
