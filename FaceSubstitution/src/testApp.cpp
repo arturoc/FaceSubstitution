@@ -1,16 +1,4 @@
-
-
-
-
-
-
-
 #include "testApp.h"
-
-#ifdef USE_GST_VIRTUAL_CAMERA
-#include <gst/app/gstappsink.h>
-#include <gst/app/gstappbuffer.h>
-#endif
 
 int w = 1280;
 int h = 720;
@@ -61,30 +49,20 @@ void testApp::setup() {
 
 	if(!live) vid.play();
 
-
-	millisEyesClosed = 0;
-	firstEyesClosedEvent = 0;
-	faceChangedOnEyesClosed = false;
-	millisToChange = 200;
-
-
-
-	leftBD.setup(camTracker.getTracker(),ofxFaceTracker::LEFT_EYE);
-	rightBD.setup(camTracker.getTracker(),ofxFaceTracker::RIGHT_EYE);
-
-	ofAddListener(camTracker.threadedUpdateE,this,&testApp::threadedUpdate);
-
 	ofBackground(0);
 	numInputRotation90 = 0;
 	rotatedInput.allocate(video->getHeight(),video->getWidth(),OF_IMAGE_COLOR);
 
+	blinkTrigger.setup(camTracker);
+	ofAddListener(blinkTrigger.blinkE,this,&testApp::blinkTriggered);
+	ofAddListener(blinkTrigger.longBlinkE,this,&testApp::longBlinkTriggered);
 
 	clone.setStrength(16);
 
 	autoExposure.setup(0,w,h);
 
 	blinkRecorder.setup(camTracker);
-	gui.setup(&faceLoader,&leftBD,&rightBD,&camMesh,&camTracker,&videoFader,&blinkRecorder, &autoExposure, numInputRotation90);
+	gui.setup(&faceLoader,&blinkTrigger,&camMesh,&camTracker,&videoFader,&blinkRecorder, &autoExposure, numInputRotation90);
 
 	showVideosChanged(gui.showVideos);
 	gui.showVideos.addListener(this,&testApp::showVideosChanged);
@@ -175,41 +153,26 @@ void testApp::update() {
 	if(isRecording){
 		videoFader.update();
 	}
+
+	if(gui.showVideos){
+		blinkRecorder.setEyesClosed(blinkTrigger.areEyesClosed());
+	}
+
 	ofSetOrientation(orientation);
 	gui.update();
 
 }
 
-void testApp::threadedUpdate(ofEventArgs & args){
-	if(camTracker.getFound()){
-		leftBD.update();
-		rightBD.update();
 
-		if(leftBD.isClosed() && rightBD.isClosed()){
-			ofLogVerbose("testApp") << "eyesClosed" << millisEyesClosed;
-			if(firstEyesClosedEvent==0){
-				firstEyesClosedEvent = ofGetElapsedTimeMillis();
-			}
-			if(!faceChangedOnEyesClosed ){
-				millisEyesClosed = ofGetElapsedTimeMillis()-firstEyesClosedEvent;
-				if(millisEyesClosed>millisToChange){
-					loadNextFace = true;
-					faceChangedOnEyesClosed = true;
-				}
-			}
-			if(gui.showVideos) blinkRecorder.setEyesClosed(true);
-		}else{
-			if(millisEyesClosed>millisToChange){
-				takeSnapshotFrom = ofGetElapsedTimef();
-			}
-			millisEyesClosed = 0;
-			firstEyesClosedEvent = 0;
-			faceChangedOnEyesClosed = false;
-			if(gui.showVideos) blinkRecorder.setEyesClosed(false);
-		}
+void testApp::blinkTriggered(bool & eyesClosed){
+
+}
+
+void testApp::longBlinkTriggered(bool & eyesClosed){
+	if(eyesClosed){
+		loadNextFace = true;
 	}else{
-		leftBD.reset();
-		rightBD.reset();
+		takeSnapshotFrom = ofGetElapsedTimef();
 	}
 }
 

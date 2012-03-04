@@ -14,7 +14,7 @@
 #include <gst/app/gstappsrc.h>
 #endif
 
-#include "BlinkDetector.h"
+#include "BlinkTrigger.h"
 #include "Gui.h"
 #include "AutoExposure.h"
 #include "SnapshotSaver.h"
@@ -26,7 +26,8 @@ public:
 	void draw();
 	void dragEvent(ofDragInfo dragInfo);
 	
-	void threadedUpdate(ofEventArgs & args);
+	void blinkTriggered(bool & eyesClosed);
+	void longBlinkTriggered(bool & eyesClosed);
 
 	void keyPressed(int key);
 	void recording(bool & rec);
@@ -52,12 +53,7 @@ public:
 	float takeSnapshotFrom;
 	SnapshotSaver snapshotSaver;
 
-	int millisEyesClosed;
-	int firstEyesClosedEvent;
-	int millisToChange;
-	bool faceChangedOnEyesClosed;
-
-	BlinkDetector leftBD,rightBD;
+	BlinkTrigger blinkTrigger;
 
 	bool loadNextFace;
 

@@ -8,19 +8,35 @@
 #ifndef BLINKTRIGGER_H_
 #define BLINKTRIGGER_H_
 
-#if 0
+#include "BlinkDetector.h"
+#include "ofEvents.h"
+#include "ofxGui.h"
+#include "ofxFaceTrackerThreaded.h"
+
 class BlinkTrigger {
 public:
 	BlinkTrigger();
 	virtual ~BlinkTrigger();
 
-	void setup(int msClosedToTrigger);
-	void update();
+	void setup(ofxFaceTrackerThreaded & tracker);
 
-	ofEvent triggerE;
+	void threadedUpdate(ofEventArgs & args);
+
+	bool areEyesClosed();
+
+	ofEvent<bool> blinkE;
+	ofEvent<bool> longBlinkE;
+
+	ofxParameter<int> millisLongBlink;
+	BlinkDetector leftBD,rightBD;
 
 private:
-	BlinkDetector leftBD,rightBD;
+	ofxFaceTrackerThreaded * tracker;
+
+	int millisEyesClosed;
+	int firstEyesClosedEvent;
+	bool longBlinkTriggered;
+	bool eyesClosed;
 };
-#endif
+
 #endif /* BLINKTRIGGER_H_ */

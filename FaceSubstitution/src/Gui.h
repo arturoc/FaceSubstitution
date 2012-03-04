@@ -10,7 +10,7 @@
 
 #include "ofxGui.h"
 #include "FaceLoader.h"
-#include "BlinkDetector.h"
+#include "BlinkTrigger.h"
 #include "VideoFader.h"
 #include "FaceBlinkRecorder.h"
 #include "AutoExposure.h"
@@ -20,7 +20,7 @@ public:
 	Gui();
 	virtual ~Gui();
 
-	void setup(FaceLoader * faceLoader, BlinkDetector * leftBd, BlinkDetector * rightBd, ofMesh * camMesh, ofxFaceTrackerThreaded * tracker, VideoFader * videoFader, FaceBlinkRecorder * faceBlinkRecorder, AutoExposure * autoExposure, ofxParameter<int> numInputRotations);
+	void setup(FaceLoader * faceLoader, BlinkTrigger * trigger, ofMesh * camMesh, ofxFaceTrackerThreaded * tracker, VideoFader * videoFader, FaceBlinkRecorder * faceBlinkRecorder, AutoExposure * autoExposure, ofxParameter<int> numInputRotations);
 	void update();
 	void draw();
 
@@ -36,13 +36,13 @@ public:
 	ofxToggle showMugs;
 	ofxIntSlider currentFace;
 	ofxIntSlider rotation;
+	ofxIntSlider millisLongBlink;
 	ofxFloatSlider faderRemaining;
 	ofxFloatSlider videoFps;
 
 private:
 	FaceLoader * faceLoader;
-	BlinkDetector * leftBD;
-	BlinkDetector * rightBD;
+	BlinkTrigger * blinkTrigger;
 	ofMesh * camMesh;
 	ofxFaceTrackerThreaded * tracker;
 	VideoFader * videoFader;
