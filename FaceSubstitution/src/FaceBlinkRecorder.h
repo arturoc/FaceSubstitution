@@ -34,16 +34,17 @@ public:
 
 	ofEvent<bool> recordingE;
 
+
 private:
 	ofxFaceTrackerThreaded * tracker;
 	ofxVideoRecorder recorder;
 	Poco::Condition encodeVideo;
-	int prevFound;
-	int firstEyesClosed;
+	float prevFound;
+	float firstEyesClosed;
 	bool recording;
 	bool eyesClosed;
 	ofxPm::VideoBuffer buffer;
-	ofPixels * pixels;
+	ofxPm::VideoFrame * vframe;
 	bool encoding;
 
 	float oneSec;
