@@ -28,9 +28,6 @@ public:
 	
 	void threadedUpdate(ofEventArgs & args);
 
-	void allocateGstVirtualCamera();
-	void updateGstVirtualCamera();
-
 	void keyPressed(int key);
 	void recording(bool & rec);
 	void showVideosChanged(bool & v);
@@ -51,13 +48,6 @@ public:
 	ofBaseVideoDraws * video;
 	ofMesh camMesh;
 
-#ifdef USE_GST_VIRTUAL_CAMERA
-	ofGstVideoUtils gst;
-	GstAppSrc * gstSrc;
-#endif
-	ofPixels pixels;
-	ofPixels pixelsAlpha;
-
 	ofPixels snapshot;
 	float takeSnapshotFrom;
 	SnapshotSaver snapshotSaver;
@@ -69,13 +59,10 @@ public:
 
 	BlinkDetector leftBD,rightBD;
 
-	bool debug;
-
 	bool loadNextFace;
 
 	ofxParameter<int> numInputRotation90;
 	ofPixels rotatedInput;
-	ofTexture rotatedInputTex;
 	
 	FaceBlinkRecorder blinkRecorder;
 	VideoFader videoFader;
