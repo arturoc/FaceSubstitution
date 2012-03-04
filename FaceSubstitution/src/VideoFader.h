@@ -11,6 +11,7 @@
 #include "ofVideoPlayer.h"
 #include "ofBaseTypes.h"
 #include "ofEvents.h"
+#include "ofxGui.h"
 
 class VideoFader {
 public:
@@ -26,20 +27,23 @@ public:
 
 	static string LOG_NAME;
 
+	ofxParameter<int> numVideos;
+	ofxParameter<int> fadeMillis;
+
 	enum State{
-		Video1,
-		Video2,
-		Live
+		Live,
+		Video
 	};
 
 	ofEvent<State> stateChanged;
 
 private:
-	ofVideoPlayer player1, player2;
+	vector<ofVideoPlayer> players;
 	ofBaseVideoDraws * live;
-	State state;
 	int startTime;
 	int millisFinishedLastVideo;
+	int currentVideo;
+	State state;
 };
 
 #endif /* VIDEOFADER_H_ */

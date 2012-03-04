@@ -41,6 +41,7 @@ public:
 	ofxFloatSlider secsFaceLostToDropRecording;
 	ofxFloatSlider secsEyesClosedToEndRecording;
 	ofxFloatSlider secsToRecord;
+	ofxIntSlider fadeMillis;
 	ofxFloatSlider faderRemaining;
 	ofxFloatSlider videoFps;
 

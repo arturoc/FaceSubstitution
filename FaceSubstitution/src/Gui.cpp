@@ -40,6 +40,7 @@ void Gui::setup(FaceLoader * _faceLoader, BlinkTrigger * _trigger, ofMesh * _cam
 	gui.add(secsFaceLostToDropRecording.setup("secs drop recording",faceBlinkRecorder->secsFaceLostToDropRecording,0,5));
 	gui.add(secsEyesClosedToEndRecording.setup("secs eyes closed finish rec",faceBlinkRecorder->secsEyesClosedToEndRecording,0,3));
 	gui.add(secsToRecord.setup("secs to record",faceBlinkRecorder->secsToRecord,0,5));
+	gui.add(fadeMillis.setup("fade millis",videoFader->fadeMillis,0,2000));
 	gui.add(currentFace.setup("current face",faceLoader->getCurrentFace(),0,faceLoader->getTotalFaces()));
 	gui.add(faderRemaining.setup("fader remaining",videoFader->getRemainingPct(),0,videoFader->getDuration()));
 	gui.add(videoFps.setup("video fps",faceBlinkRecorder->getFps(),0,60));
@@ -69,7 +70,7 @@ void Gui::faceLoaderModeChanged(bool & m){
 }
 
 void Gui::videoFaderStateChanged(VideoFader::State & state){
-	gui.add(faderRemaining.setup("fader remaining",videoFader->getRemainingPct(),0,videoFader->getDuration()));
+	faderRemaining.setup("fader remaining",videoFader->getRemainingPct(),0,videoFader->getDuration());
 }
 
 void Gui::update(){
