@@ -149,6 +149,9 @@ void testApp::recording(bool & rec){
 }
 
 void testApp::update() {
+	ofOrientation orientation = ofGetOrientation();
+	ofSetOrientation(OF_ORIENTATION_DEFAULT);
+
 	if(loadNextFace){
 		faceLoader.loadNext();
 		loadNextFace  = false;
@@ -213,6 +216,7 @@ void testApp::update() {
 	}
 
 	videoFader.update();
+	ofSetOrientation(orientation);
 	gui.update();
 
 }
