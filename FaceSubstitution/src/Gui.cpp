@@ -119,4 +119,5 @@ void Gui::draw(){
 	drawHighlightString("recorder state " + faceBlinkRecorder->getState(), 10, gui.getHeight() + 60);
 
 	ofDrawBitmapString(ofToString(ofGetMouseX())+","+ofToString(ofGetMouseY()),ofGetWidth()-120,20);
+	ofDrawBitmapString(ofToString(ofGetFrameRate()),ofGetWidth()-120,40);
 }
