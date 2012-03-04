@@ -23,15 +23,18 @@ VideoFader::~VideoFader() {
 
 void VideoFader::setup(ofBaseVideoDraws * video){
 	state = Video1;
-	ofDirectory dir;
+	ofDirectory dir("recordings");
+	if(!dir.exists()) dir.create(true);
 	dir.allowExt("mp4");
-	dir.listDir("recordings");
-	unsigned int pos = ofRandom(0,dir.size()-1);
-	player1.loadMovie(dir.getPath(pos));
-	player2.loadMovie(dir.getPath((pos+1)%dir.size()));
-	ofLogVerbose(LOG_NAME) << "loading video 1" << dir.getPath(pos);
-	ofLogVerbose(LOG_NAME) << "loading video 2" << dir.getPath((pos+1)%dir.size());
-	player1.play();
+	dir.listDir();
+	if(dir.size()){
+		unsigned int pos = ofRandom(0,dir.size()-1);
+		player1.loadMovie(dir.getPath(pos));
+		player2.loadMovie(dir.getPath((pos+1)%dir.size()));
+		ofLogVerbose(LOG_NAME) << "loading video 1" << dir.getPath(pos);
+		ofLogVerbose(LOG_NAME) << "loading video 2" << dir.getPath((pos+1)%dir.size());
+		player1.play();
+	}
 	startTime = ofGetElapsedTimeMillis();
 	live = video;
 	ofNotifyEvent(stateChanged,state);
