@@ -131,6 +131,7 @@ void testApp::setup() {
 	ofEnableAlphaBlending();
 
 	showGui = false;
+	ofHideCursor();
 
 	takeSnapshotFrom = 0;
 	snapshotSaver.setup("screenshots");
@@ -319,6 +320,11 @@ void testApp::keyPressed(int key){
 		return;
 	case 'g':
 		showGui = !showGui;
+		if(showGui){
+			ofShowCursor();
+		}else{
+			ofHideCursor();
+		}
 		break;
 	}
 }
