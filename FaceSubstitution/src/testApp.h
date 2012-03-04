@@ -17,6 +17,7 @@
 #include "BlinkDetector.h"
 #include "Gui.h"
 #include "AutoExposure.h"
+#include "SnapshotSaver.h"
 
 class testApp : public ofBaseApp {
 public:
@@ -56,6 +57,10 @@ public:
 #endif
 	ofPixels pixels;
 	ofPixels pixelsAlpha;
+
+	ofPixels snapshot;
+	float takeSnapshotFrom;
+	SnapshotSaver snapshotSaver;
 
 	int millisEyesClosed;
 	int firstEyesClosedEvent;

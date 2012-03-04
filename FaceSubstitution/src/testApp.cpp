@@ -131,6 +131,9 @@ void testApp::setup() {
 	ofEnableAlphaBlending();
 
 	showGui = false;
+
+	takeSnapshotFrom = 0;
+	snapshotSaver.setup("screenshots");
 }
 
 void testApp::showVideosChanged(bool & v){
@@ -189,6 +192,12 @@ void testApp::update() {
 		clone.update(srcFbo.getTextureReference(), video->getTextureReference(), camMesh, maskFbo.getTextureReference());
 
 		updateGstVirtualCamera();
+
+		if(takeSnapshotFrom>0 && ofGetElapsedTimef()-takeSnapshotFrom>1.5){
+			clone.readToPixels(snapshot);
+			snapshotSaver.save(snapshot);
+			takeSnapshotFrom = 0;
+		}
 	}
 
 	video->update();
@@ -227,6 +236,9 @@ void testApp::threadedUpdate(ofEventArgs & args){
 			}
 			if(gui.showVideos) blinkRecorder.setEyesClosed(true);
 		}else{
+			if(millisEyesClosed>millisToChange){
+				takeSnapshotFrom = ofGetElapsedTimef();
+			}
 			millisEyesClosed = 0;
 			firstEyesClosedEvent = 0;
 			faceChangedOnEyesClosed = false;
@@ -239,6 +251,12 @@ void testApp::threadedUpdate(ofEventArgs & args){
 }
 
 void testApp::draw() {
+	ofOrientation orientation = ofGetOrientation();
+
+	ofSetOrientation(OF_ORIENTATION_DEFAULT);
+	ofPushView();
+	ofSetupScreenPerspective();
+
 	ofSetColor(255);
 	
 	float ratio = clone.getTextureRef().getHeight()/clone.getTextureRef().getWidth();
@@ -268,11 +286,12 @@ void testApp::draw() {
 			video->draw(x,y,width,height);
 		}
 	}
+	ofPopView();
+	ofSetOrientation(orientation);
 
 	if(showGui){
 		gui.draw();
 	}
-
 }
 
 
