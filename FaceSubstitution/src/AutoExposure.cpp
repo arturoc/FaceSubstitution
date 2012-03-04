@@ -23,7 +23,8 @@ bool AutoExposure::setup(int device, int w, int h){
 	}
 	grayPixels.allocate(w,h,1);
 	grayPixelsMask.allocate(w,h,1);
-	//settings["Exposure, Auto"] = 1;
+
+	settings["Exposure, Auto"] = 1;
 	//settings["Exposure (Absolute)"] = 1033;
 
 	// thinkpad
@@ -48,7 +49,6 @@ void AutoExposure::update(ofPixels & frame, ofPixels & mask){
 
 	}
 
-	//logitech
 	int exposure = ofMap(mean.val[0],40,200,maxExposure,minExposure);
 
 	settings["Exposure (Absolute)"] = exposure;
