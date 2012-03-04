@@ -148,11 +148,15 @@ void testApp::update() {
 		clone.update(srcFbo.getTextureReference(), video->getTextureReference(), camMesh, maskFbo.getTextureReference());
 
 		if(takeSnapshotFrom>0 && ofGetElapsedTimef()-takeSnapshotFrom>1.5){
-			maskFbo.readToPixels(maskPixels);
-			autoExposure.update(video->getPixelsRef(),maskPixels);
 			clone.readToPixels(snapshot);
 			snapshotSaver.save(snapshot);
 			takeSnapshotFrom = 0;
+		}
+
+		if(adjustExposure){
+			adjustExposure = false;
+			maskFbo.readToPixels(maskPixels);
+			autoExposure.update(video->getPixelsRef(),maskPixels);
 		}
 	}
 
@@ -188,6 +192,7 @@ void testApp::blinkTriggered(bool & eyesClosed){
 void testApp::longBlinkTriggered(bool & eyesClosed){
 	if(eyesClosed){
 		loadNextFace = true;
+		adjustExposure = true;
 	}else{
 		takeSnapshotFrom = ofGetElapsedTimef();
 	}

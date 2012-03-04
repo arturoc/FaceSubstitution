@@ -42,6 +42,7 @@ public:
 	ofxFloatSlider secsEyesClosedToEndRecording;
 	ofxFloatSlider secsToRecord;
 	ofxIntSlider fadeMillis;
+	ofxIntSlider minExposure, maxExposure;
 	ofxFloatSlider faderRemaining;
 	ofxFloatSlider videoFps;
 

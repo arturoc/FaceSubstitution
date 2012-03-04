@@ -41,6 +41,8 @@ void Gui::setup(FaceLoader * _faceLoader, BlinkTrigger * _trigger, ofMesh * _cam
 	gui.add(secsEyesClosedToEndRecording.setup("secs eyes closed finish rec",faceBlinkRecorder->secsEyesClosedToEndRecording,0,3));
 	gui.add(secsToRecord.setup("secs to record",faceBlinkRecorder->secsToRecord,0,5));
 	gui.add(fadeMillis.setup("fade millis",videoFader->fadeMillis,0,2000));
+	gui.add(minExposure.setup("min exposure",autoExposure->minExposure,0,1000));
+	gui.add(maxExposure.setup("max exposure",autoExposure->maxExposure,0,1000));
 	gui.add(currentFace.setup("current face",faceLoader->getCurrentFace(),0,faceLoader->getTotalFaces()));
 	gui.add(faderRemaining.setup("fader remaining",videoFader->getRemainingPct(),0,videoFader->getDuration()));
 	gui.add(videoFps.setup("video fps",faceBlinkRecorder->getFps(),0,60));

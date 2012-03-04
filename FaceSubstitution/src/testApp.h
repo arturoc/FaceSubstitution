@@ -67,5 +67,5 @@ public:
 	bool showGui;
 
 	AutoExposure autoExposure;
-
+	bool adjustExposure;
 };

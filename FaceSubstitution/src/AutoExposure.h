@@ -10,7 +10,7 @@
 
 #include "ofxV4L2Settings.h"
 #include "ofPixels.h"
-#include "ofMesh.h"
+#include "ofxGui.h"
 
 class AutoExposure {
 public:
@@ -22,6 +22,8 @@ public:
 
 
 	ofxV4L2Settings settings;
+
+	ofxParameter<int> minExposure, maxExposure;
 
 private:
 	ofPixels grayPixels,grayPixelsMask;
