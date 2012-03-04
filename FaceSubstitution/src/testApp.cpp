@@ -10,6 +10,7 @@ using namespace ofxCv;
 
 
 void testApp::setup() {
+	// logging
 	ofLog::setAutoSpace(true);
 	//ofSetLogLevel(OF_LOG_VERBOSE);
 	//ofSetLogLevel("testApp",OF_LOG_VERBOSE);
@@ -20,9 +21,22 @@ void testApp::setup() {
 #ifdef FACES_IN_BUNDLE
 	ofSetDataPathRoot("../data/");
 #endif
-	ofSetVerticalSync(true);
-	cloneReady = false;
 
+
+	// initialize state variables
+	cloneReady = false;
+	takeSnapshotFrom = 0;
+	loadNextFace = false;
+	numInputRotation90 = 0;
+
+
+	// general graphics options
+	ofSetVerticalSync(true);
+	ofEnableAlphaBlending();
+	ofBackground(0);
+
+
+	// video
 	live = true;
 	if(live){
 		cam.setDeviceID(1);
@@ -31,49 +45,53 @@ void testApp::setup() {
 	}else{
 		vid.loadMovie("video.mp4");
 		video = &vid;
+		vid.play();
 	}
 
+
+	// init clone and related buffers
 	clone.setup(video->getWidth(), video->getHeight());
+	clone.setStrength(16);
+
 	ofFbo::Settings settings;
 	settings.width = video->getWidth();
 	settings.height = video->getHeight();
 	srcFbo.allocate(settings);
+
 	settings.internalformat = GL_LUMINANCE;
 	maskFbo.allocate(settings);
 
+	rotatedInput.allocate(video->getHeight(),video->getWidth(),OF_IMAGE_COLOR);
+
+
+	// init trackers
 	camTracker.setup();
 	//camTracker.getTracker()->setRescale(.5);
 	camTracker.getTracker()->setIterations(10);
 
 	faceLoader.setup(FACES_DIR,LOAD_MODE);
 
-	if(!live) vid.play();
 
-	ofBackground(0);
-	numInputRotation90 = 0;
-	rotatedInput.allocate(video->getHeight(),video->getWidth(),OF_IMAGE_COLOR);
-
+	// init blink triggers
 	blinkTrigger.setup(camTracker);
 	ofAddListener(blinkTrigger.blinkE,this,&testApp::blinkTriggered);
 	ofAddListener(blinkTrigger.longBlinkE,this,&testApp::longBlinkTriggered);
 
-	clone.setStrength(16);
 
+	// init other utils classes
 	autoExposure.setup(0,w,h);
-
 	blinkRecorder.setup(camTracker);
-	gui.setup(&faceLoader,&blinkTrigger,&camMesh,&camTracker,&videoFader,&blinkRecorder, &autoExposure, numInputRotation90);
+	snapshotSaver.setup("screenshots");
 
-	showVideosChanged(gui.showVideos);
-	gui.showVideos.addListener(this,&testApp::showVideosChanged);
 
-	ofEnableAlphaBlending();
-
+	// gui
 	showGui = false;
 	ofHideCursor();
+	gui.setup(&faceLoader,&blinkTrigger,&camMesh,&camTracker,&videoFader,&blinkRecorder, &autoExposure, numInputRotation90);
+	gui.showVideos.addListener(this,&testApp::showVideosChanged);
 
-	takeSnapshotFrom = 0;
-	snapshotSaver.setup("screenshots");
+
+	showVideosChanged(gui.showVideos);
 }
 
 void testApp::showVideosChanged(bool & v){
@@ -85,7 +103,6 @@ void testApp::showVideosChanged(bool & v){
 
 void testApp::recording(bool & rec){
 	if(rec) videoFader.setup(video);
-	isRecording = rec;
 }
 
 void testApp::update() {
@@ -101,7 +118,7 @@ void testApp::update() {
 	cloneReady = camTracker.getFound();
 	bool frameProcessed = camTracker.isFrameNew();
 
-	if(!isRecording && cloneReady && frameProcessed) {
+	if(!blinkRecorder.isRecording() && cloneReady && frameProcessed) {
 		camMesh = camTracker.getImageMesh();
 		camMesh.getTexCoords() = faceLoader.getCurrentImagePoints();
 
@@ -150,7 +167,7 @@ void testApp::update() {
 		if(gui.showVideos) blinkRecorder.update(video->getPixelsRef());
 	}
 
-	if(isRecording){
+	if(blinkRecorder.isRecording()){
 		videoFader.update();
 	}
 
@@ -203,7 +220,7 @@ void testApp::draw() {
 		height = -height;
 	}
 
-	if(isRecording){
+	if(blinkRecorder.isRecording()){
 		videoFader.draw(x,y,width,height);
 	}else{
 		if(faceLoader.getCurrentImg().getWidth()> 0 && cloneReady) {

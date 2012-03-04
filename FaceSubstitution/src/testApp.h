@@ -62,7 +62,6 @@ public:
 	
 	FaceBlinkRecorder blinkRecorder;
 	VideoFader videoFader;
-	bool isRecording;
 
 	Gui gui;
 	bool showGui;

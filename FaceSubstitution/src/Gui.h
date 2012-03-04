@@ -37,6 +37,10 @@ public:
 	ofxIntSlider currentFace;
 	ofxIntSlider rotation;
 	ofxIntSlider millisLongBlink;
+	ofxFloatSlider secsFaceLostBetweenRecordings;
+	ofxFloatSlider secsFaceLostToDropRecording;
+	ofxFloatSlider secsEyesClosedToEndRecording;
+	ofxFloatSlider secsToRecord;
 	ofxFloatSlider faderRemaining;
 	ofxFloatSlider videoFps;
 

@@ -26,9 +26,13 @@ void FaceBlinkRecorder::setup(ofxFaceTrackerThreaded & _tracker){
 	firstEyesClosed = 0;
 	recording = false;
 	eyesClosed = false;
-	buffer.setup(*this,5*30);
+	buffer.setup(*this,10*30);
 	oneSec = ofGetElapsedTimef();
 	fps = 30;
+	secsFaceLostBetweenRecordings = 10;
+	secsFaceLostToDropRecording = 1;
+	secsEyesClosedToEndRecording = .6;
+	secsToRecord = 3;
 	startThread(true,false);
 }
 
@@ -40,17 +44,17 @@ void FaceBlinkRecorder::update(ofPixels & frame){
 		framesOneSec=0;
 		oneSec = t;
 	}
-	if(!recording && tracker->getFound() && t - prevFound >= 10){
+	if(!recording && tracker->getFound() && t - prevFound >= secsFaceLostBetweenRecordings){
 		ofLogVerbose(LOG_NAME) << "face found after" << t - prevFound << "seconds starting recording";
 		recording = true;
 		ofNotifyEvent(recordingE,recording);
 	}else if(recording){
-		if(eyesClosed && t-firstEyesClosed >= .6){
+		if(eyesClosed && t-firstEyesClosed >= secsEyesClosedToEndRecording){
 			ofLogVerbose(LOG_NAME) << "eyes closed for" << t - firstEyesClosed << "seconds encoding video";
 			encodeVideo.signal();
 			recording = false;
 			ofNotifyEvent(recordingE,recording);
-		}else if(!tracker->getFound() && t - prevFound >= 1){
+		}else if(!tracker->getFound() && t - prevFound >= secsFaceLostToDropRecording){
 			ofLogVerbose(LOG_NAME) << "face lost for" << t - prevFound << "seconds dropping video";
 			if(mutex.tryLock()){
 				buffer.clear();
@@ -77,20 +81,30 @@ void FaceBlinkRecorder::update(ofPixels & frame){
 void FaceBlinkRecorder::threadedFunction(){
 	while(isThreadRunning()){
 		encodeVideo.wait(mutex);
-		ofLogVerbose(LOG_NAME) << "start recording" << buffer.size() << "frames at " << fps << "fps";
 		encoding = true;
-		recorder.setup("recordings/" + ofGetTimestampString()+".mp4",vframe->getWidth(),vframe->getHeight(),fps,false);
-		for(int i=0;i<(int)buffer.size();i++){
-			VideoFrame * frame = buffer.getVideoFrame(i);
-			recorder.addFrame(frame->getPixelsRef());
-			frame->release();
+		int framesToSave = secsToRecord*fps*1.2;
+		int initFrame = int(buffer.size())-framesToSave;
+		if(initFrame>=0){
+			ofLogVerbose(LOG_NAME) << "start recording" << framesToSave << "frames at " << fps*1.2 << "fps";
+			recorder.setup("recordings/" + ofGetTimestampString()+".mp4",vframe->getWidth(),vframe->getHeight(),fps*1.2,false);
+			for(int i=initFrame;i<(int)buffer.size();i++){
+				VideoFrame * frame = buffer.getVideoFrame(i);
+				recorder.addFrame(frame->getPixelsRef());
+				frame->release();
+			}
+			recorder.encodeVideo();
+		}else{
+			ofLogVerbose(LOG_NAME) << "eyes clsed to sson only" << framesToSave << "frames at " << fps << "fps, dropping video";
 		}
 		buffer.clear();
 		vframe->release();
 		vframe = NULL;
-		recorder.encodeVideo();
 		encoding = false;
 	}
+}
+
+bool FaceBlinkRecorder::isRecording(){
+	return recording;
 }
 
 

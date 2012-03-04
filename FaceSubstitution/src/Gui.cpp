@@ -36,6 +36,10 @@ void Gui::setup(FaceLoader * _faceLoader, BlinkTrigger * _trigger, ofMesh * _cam
 	gui.add(showMugs.setup("show mugs",false));
 	gui.add(rotation.setup("rotation",numInputRotations,0,3));
 	gui.add(millisLongBlink.setup("millis long blink",blinkTrigger->millisLongBlink,0,1000));
+	gui.add(secsFaceLostBetweenRecordings.setup("secs between recordings",faceBlinkRecorder->secsFaceLostBetweenRecordings,0,20));
+	gui.add(secsFaceLostToDropRecording.setup("secs drop recording",faceBlinkRecorder->secsFaceLostToDropRecording,0,5));
+	gui.add(secsEyesClosedToEndRecording.setup("secs eyes closed finish rec",faceBlinkRecorder->secsEyesClosedToEndRecording,0,3));
+	gui.add(secsToRecord.setup("secs to record",faceBlinkRecorder->secsToRecord,0,5));
 	gui.add(currentFace.setup("current face",faceLoader->getCurrentFace(),0,faceLoader->getTotalFaces()));
 	gui.add(faderRemaining.setup("fader remaining",videoFader->getRemainingPct(),0,videoFader->getDuration()));
 	gui.add(videoFps.setup("video fps",faceBlinkRecorder->getFps(),0,60));

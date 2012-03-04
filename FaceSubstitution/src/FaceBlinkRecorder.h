@@ -12,6 +12,7 @@
 #include "ofxFaceTrackerThreaded.h"
 #include "Poco/Condition.h"
 #include "ofxPlaymodes.h"
+#include "ofxGui.h"
 
 class FaceBlinkRecorder: public ofThread, public ofxPm::VideoSource {
 public:
@@ -32,8 +33,14 @@ public:
 
 	string getState();
 
+	bool isRecording();
+
 	ofEvent<bool> recordingE;
 
+	ofxParameter<float> secsFaceLostBetweenRecordings;
+	ofxParameter<float> secsFaceLostToDropRecording;
+	ofxParameter<float> secsEyesClosedToEndRecording;
+	ofxParameter<float> secsToRecord;
 
 private:
 	ofxFaceTrackerThreaded * tracker;
