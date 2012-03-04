@@ -30,12 +30,19 @@ bool AutoExposure::setup(int device, int w, int h){
 
 void AutoExposure::update(ofPixels & frame, ofPixels & mask){
 	ofxCv::convertColor(frame,grayPixels,CV_RGB2GRAY);
-	ofxCv::convertColor(mask,grayPixelsMask,CV_RGB2GRAY);
-	cv::Scalar avg = cv::mean(ofxCv::toCv(grayPixels),ofxCv::toCv(grayPixelsMask));
+	cv::Scalar mean;
+	if(mask.getNumChannels()==3){
+		ofxCv::convertColor(mask,grayPixelsMask,CV_RGB2GRAY);
+		mean = cv::mean(ofxCv::toCv(grayPixels),ofxCv::toCv(grayPixelsMask));
+	}else if(mask.getNumChannels()==1){
+		mean = cv::mean(ofxCv::toCv(grayPixels),ofxCv::toCv(mask));
+
+	}
+
 	//thinkpad int exposure = ofMap(avg.val[0],40,200,1400,800);
 
 	//logitech
-	int exposure = ofMap(avg.val[0],40,200,300,200);
+	int exposure = ofMap(mean.val[0],40,200,300,200);
 	//cout << "avg: " << avg.val[0] << " -> exposure " << exposure << endl;
 
 	settings["Exposure (Absolute)"] = exposure;

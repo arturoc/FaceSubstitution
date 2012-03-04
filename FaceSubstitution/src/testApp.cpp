@@ -17,7 +17,7 @@ int h = 720;
 
 using namespace ofxCv;
 
-#define FACES_DIR "faces_all"
+#define FACES_DIR "faces"
 #define LOAD_MODE FaceLoader::Sequential
 
 void testApp::allocateGstVirtualCamera(){
@@ -87,8 +87,9 @@ void testApp::setup() {
 	ofFbo::Settings settings;
 	settings.width = video->getWidth();
 	settings.height = video->getHeight();
-	maskFbo.allocate(settings);
 	srcFbo.allocate(settings);
+	settings.internalformat = GL_LUMINANCE;
+	maskFbo.allocate(settings);
 	camTracker.setup();
 	camTracker.getTracker()->setRescale(.5);
 	camTracker.getTracker()->setIterations(10);
@@ -162,7 +163,7 @@ void testApp::update() {
 	cloneReady = camTracker.getFound();
 	bool frameProcessed = camTracker.isFrameNew();
 
-	if(cloneReady && frameProcessed) {
+	if(!isRecording && cloneReady && frameProcessed) {
 		camMesh = camTracker.getImageMesh();
 		camMesh.getTexCoords() = faceLoader.getCurrentImagePoints();
 
@@ -214,7 +215,9 @@ void testApp::update() {
 		if(gui.showVideos) blinkRecorder.update(video->getPixelsRef());
 	}
 
-	videoFader.update();
+	if(isRecording){
+		videoFader.update();
+	}
 	ofSetOrientation(orientation);
 	gui.update();
 
