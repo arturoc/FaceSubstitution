@@ -182,10 +182,6 @@ void testApp::update() {
 		camMesh.draw();
 		maskFbo.end();
 
-		if(1){
-			maskFbo.readToPixels(maskPixels);
-			autoExposure.update(video->getPixelsRef(),maskPixels);
-		}
 
 		srcFbo.begin();
 		faceLoader.getCurrentImg().bind();
@@ -198,6 +194,8 @@ void testApp::update() {
 		updateGstVirtualCamera();
 
 		if(takeSnapshotFrom>0 && ofGetElapsedTimef()-takeSnapshotFrom>1.5){
+			maskFbo.readToPixels(maskPixels);
+			autoExposure.update(video->getPixelsRef(),maskPixels);
 			clone.readToPixels(snapshot);
 			snapshotSaver.save(snapshot);
 			takeSnapshotFrom = 0;
