@@ -34,7 +34,8 @@ void Gui::setup(FaceLoader * _faceLoader, BlinkTrigger * _trigger, ofMesh * _cam
 	gui.add(showMesh.setup("show mesh",false));
 	gui.add(showVideos.setup("show videos",false));
 	gui.add(showMugs.setup("show mugs",false));
-	gui.add(rotation.setup("rotation",numInputRotations,0,3));
+	gui.add(rotationCamera.setup("rot camera",numInputRotations,0,3));
+	gui.add(rotationScreen.setup("rot screen",0,0,3));
 	gui.add(millisLongBlink.setup("millis long blink",blinkTrigger->millisLongBlink,0,1000));
 	gui.add(secsFaceLostBetweenRecordings.setup("secs between recordings",faceBlinkRecorder->secsFaceLostBetweenRecordings,0,20));
 	gui.add(secsFaceLostToDropRecording.setup("secs drop recording",faceBlinkRecorder->secsFaceLostToDropRecording,0,5));
@@ -54,7 +55,7 @@ void Gui::setup(FaceLoader * _faceLoader, BlinkTrigger * _trigger, ofMesh * _cam
 	}
 
 	faceLoaderMode.addListener(this,&Gui::faceLoaderModeChanged);
-	rotation.addListener(this,&Gui::rotationChanged);
+	rotationScreen.addListener(this,&Gui::rotationChanged);
 
 	ofAddListener(videoFader->stateChanged,this,&Gui::videoFaderStateChanged);
 
@@ -85,11 +86,11 @@ void Gui::rotationChanged(int & rot){
 	if(rot==0){
 		ofSetOrientation(OF_ORIENTATION_DEFAULT);
 	}else if(rot==1){
-		ofSetOrientation(OF_ORIENTATION_90_RIGHT);
+		ofSetOrientation(OF_ORIENTATION_90_LEFT);
 	}else if(rot==2){
 		ofSetOrientation(OF_ORIENTATION_180);
 	}else if(rot==3){
-		ofSetOrientation(OF_ORIENTATION_90_LEFT);
+		ofSetOrientation(OF_ORIENTATION_90_RIGHT);
 	}
 }
 

@@ -10,14 +10,13 @@
 
 //#define USE_GST_VIRTUAL_CAMERA
 
-#ifdef USE_GST_VIRTUAL_CAMERA
-#include <gst/app/gstappsrc.h>
-#endif
 
 #include "BlinkTrigger.h"
 #include "Gui.h"
 #include "AutoExposure.h"
 #include "SnapshotSaver.h"
+
+#include "ofxGstV4L2Sink.h"
 
 class testApp : public ofBaseApp {
 public:
@@ -68,4 +67,5 @@ public:
 
 	AutoExposure autoExposure;
 	bool adjustExposure;
+
 };

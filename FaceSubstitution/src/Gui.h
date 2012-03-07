@@ -35,7 +35,7 @@ public:
 	ofxToggle showVideos;
 	ofxToggle showMugs;
 	ofxIntSlider currentFace;
-	ofxIntSlider rotation;
+	ofxIntSlider rotationCamera,rotationScreen;
 	ofxIntSlider millisLongBlink;
 	ofxFloatSlider secsFaceLostBetweenRecordings;
 	ofxFloatSlider secsFaceLostToDropRecording;

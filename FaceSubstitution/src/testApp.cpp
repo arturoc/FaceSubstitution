@@ -1,7 +1,7 @@
 #include "testApp.h"
 
-int w = 1280;
-int h = 720;
+int w = 640;
+int h = 480;
 
 using namespace ofxCv;
 
@@ -17,6 +17,7 @@ void testApp::setup() {
 	//ofSetLogLevel(BlinkDetector::LOG_NAME,OF_LOG_VERBOSE);
 	ofSetLogLevel(FaceBlinkRecorder::LOG_NAME,OF_LOG_VERBOSE);
 	ofSetLogLevel(VideoFader::LOG_NAME,OF_LOG_VERBOSE);
+	ofSetLogLevel(ofxV4L2Settings::LOG_NAME,OF_LOG_VERBOSE);
 
 #ifdef FACES_IN_BUNDLE
 	ofSetDataPathRoot("../data/");
@@ -39,7 +40,7 @@ void testApp::setup() {
 	// video
 	live = true;
 	if(live){
-		cam.setDeviceID(1);
+		//cam.setDeviceID(1);
 		cam.initGrabber(w, h);
 		video = &cam;
 	}else{
@@ -199,23 +200,23 @@ void testApp::longBlinkTriggered(bool & eyesClosed){
 }
 
 void testApp::draw() {
-	ofOrientation orientation = ofGetOrientation();
+	/*ofOrientation orientation = ofGetOrientation();
 
 	ofSetOrientation(OF_ORIENTATION_DEFAULT);
 	ofPushView();
-	ofSetupScreenPerspective();
+	ofSetupScreenPerspective();*/
 
 	ofSetColor(255);
 	
 	float ratio = clone.getTextureRef().getHeight()/clone.getTextureRef().getWidth();
 
-	int width = ofGetWidth();
+	int width = -ofGetWidth();
 	int height = ofGetWidth()*ratio;
-	int x = 0;
+	int x = ofGetWidth();
 	int y = (ofGetHeight()-float(ofGetWidth())*ratio)*.5;
 
 
-	if(numInputRotation90==0 || numInputRotation90==1){
+	/*if(numInputRotation90==0 || numInputRotation90==1){
 		x = width;
 		width = -width;
 	}
@@ -223,7 +224,7 @@ void testApp::draw() {
 	if(numInputRotation90==3){
 		y = ofGetHeight() - y;
 		height = -height;
-	}
+	}*/
 
 	if(blinkRecorder.isRecording()){
 		videoFader.draw(x,y,width,height);
@@ -234,8 +235,8 @@ void testApp::draw() {
 			video->draw(x,y,width,height);
 		}
 	}
-	ofPopView();
-	ofSetOrientation(orientation);
+	//ofPopView();
+	//ofSetOrientation(orientation);
 
 	if(showGui){
 		gui.draw();
