@@ -164,8 +164,8 @@ void testApp::update() {
 	video->update();
 	if(video->isFrameNew()) {
 		if(numInputRotation90!=0 && numInputRotation90!=2){
-			if(video->getWidth()!=rotatedInput.getWidth()){
-				rotatedInput.allocate(video->getWidth(),video->getHeight(),3);
+			if(video->getWidth()!=rotatedInput.getHeight()){
+				rotatedInput.allocate(video->getHeight(),video->getWidth(),3);
 			}
 			video->getPixelsRef().rotate90To(rotatedInput,numInputRotation90);
 			if(gui.showInput){
