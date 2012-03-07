@@ -221,12 +221,22 @@ void testApp::draw() {
 
 	ofSetColor(255);
 	
-	float ratio = clone.getTextureRef().getHeight()/clone.getTextureRef().getWidth();
+	float ratio;
+	int width,height;
 
-	int width = -ofGetWidth();
-	int height = ofGetWidth()*ratio;
-	int x = ofGetWidth();
-	int y = (ofGetHeight()-float(ofGetWidth())*ratio)*.5;
+
+	if(numInputRotation90==0 || numInputRotation90==2){
+		ratio = clone.getTextureRef().getHeight()/clone.getTextureRef().getWidth();
+		width = -ofGetWidth();
+		height = ofGetWidth()*ratio;
+	}else{
+		ratio = clone.getTextureRef().getHeight()/clone.getTextureRef().getWidth();
+		width = -ofGetHeight();
+		height = ofGetHeight()*ratio;
+
+	}
+	//int x = ofGetWidth();
+	//int y = (ofGetHeight()-float(ofGetWidth())*ratio)*.5;
 
 
 	/*if(numInputRotation90==0 || numInputRotation90==1){
