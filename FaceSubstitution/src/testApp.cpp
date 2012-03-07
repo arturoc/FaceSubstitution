@@ -1,7 +1,7 @@
 #include "testApp.h"
 
-int w = 640;
-int h = 480;
+int w = 1280;
+int h = 720;
 
 using namespace ofxCv;
 
