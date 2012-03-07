@@ -19,7 +19,7 @@ Gui::~Gui() {
 	// TODO Auto-generated destructor stub
 }
 
-void Gui::setup(FaceLoader * _faceLoader, BlinkTrigger * _trigger, ofMesh * _camMesh, ofxFaceTrackerThreaded * _tracker, VideoFader * _videoFader, FaceBlinkRecorder * _faceBlinkRecorder, AutoExposure * _autoExposure, ofxParameter<int> numInputRotations){
+void Gui::setup(FaceLoader * _faceLoader, BlinkTrigger * _trigger, ofMesh * _camMesh, ofxFaceTrackerThreaded * _tracker, VideoFader * _videoFader, FaceBlinkRecorder * _faceBlinkRecorder, AutoExposure * _autoExposure, ofTexture * _input, ofxParameter<int> numInputRotations){
 	faceLoader = _faceLoader;
 	blinkTrigger = _trigger;
 	camMesh = _camMesh;
@@ -27,6 +27,7 @@ void Gui::setup(FaceLoader * _faceLoader, BlinkTrigger * _trigger, ofMesh * _cam
 	videoFader = _videoFader;
 	faceBlinkRecorder = _faceBlinkRecorder;
 	autoExposure = _autoExposure;
+	input = _input;
 
 	gui.setup("face substitution");
 	gui.add(faceLoaderMode.setup("face loader seq/rnd",false));
@@ -34,6 +35,7 @@ void Gui::setup(FaceLoader * _faceLoader, BlinkTrigger * _trigger, ofMesh * _cam
 	gui.add(showMesh.setup("show mesh",false));
 	gui.add(showVideos.setup("show videos",false));
 	gui.add(showMugs.setup("show mugs",false));
+	gui.add(showInput.setup("show input",false));
 	gui.add(rotationCamera.setup("rot camera",numInputRotations,0,3));
 	gui.add(rotationScreen.setup("rot screen",0,0,3));
 	gui.add(millisLongBlink.setup("millis long blink",blinkTrigger->millisLongBlink,0,1000));
@@ -55,10 +57,10 @@ void Gui::setup(FaceLoader * _faceLoader, BlinkTrigger * _trigger, ofMesh * _cam
 	}
 
 	faceLoaderMode.addListener(this,&Gui::faceLoaderModeChanged);
-	rotationScreen.addListener(this,&Gui::rotationChanged);
+	rotationScreen.addListener(this,&Gui::rotationScreenChanged);
+	rotationCamera.addListener(this,&Gui::rotationCameraChanged);
 
 	ofAddListener(videoFader->stateChanged,this,&Gui::videoFaderStateChanged);
-
 
 	gui.loadFromFile("settings.xml");
 
@@ -82,7 +84,7 @@ void Gui::update(){
 	videoFps = faceBlinkRecorder->getFps();
 }
 
-void Gui::rotationChanged(int & rot){
+void Gui::rotationScreenChanged(int & rot){
 	if(rot==0){
 		ofSetOrientation(OF_ORIENTATION_DEFAULT);
 	}else if(rot==1){
@@ -92,6 +94,9 @@ void Gui::rotationChanged(int & rot){
 	}else if(rot==3){
 		ofSetOrientation(OF_ORIENTATION_90_RIGHT);
 	}
+}
+
+void Gui::rotationCameraChanged(int & rot){
 }
 
 void Gui::draw(){
@@ -115,6 +120,11 @@ void Gui::draw(){
 	if(showMugs){
 		float ratio = faceLoader->getCurrentImg().getWidth() / faceLoader->getCurrentImg().getHeight();
 		faceLoader->getCurrentImg().draw(ofGetWidth()-ofGetWidth()/3,ofGetHeight()-ofGetWidth()/3/ratio,ofGetWidth()/3,ofGetWidth()/3/ratio);
+	}
+
+	if(showInput){
+		float ratio = input->getWidth() / input->getHeight();
+		input->draw(ofGetWidth()-ofGetWidth()/3,10,ofGetWidth()/3,ofGetWidth()/3/ratio);
 	}
 
 	if(!tracker->getFound()) {

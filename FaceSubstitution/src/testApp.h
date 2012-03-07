@@ -56,6 +56,7 @@ public:
 
 	ofxParameter<int> numInputRotation90;
 	ofPixels rotatedInput;
+	ofTexture rotatedInputTex;
 	
 	FaceBlinkRecorder blinkRecorder;
 	VideoFader videoFader;

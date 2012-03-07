@@ -62,7 +62,7 @@ void testApp::setup() {
 	settings.internalformat = GL_LUMINANCE;
 	maskFbo.allocate(settings);
 
-	rotatedInput.allocate(video->getHeight(),video->getWidth(),OF_IMAGE_COLOR);
+	rotatedInput.allocate(video->getWidth(),video->getHeight(),OF_IMAGE_COLOR);
 
 
 	// init trackers
@@ -88,7 +88,7 @@ void testApp::setup() {
 	// gui
 	showGui = false;
 	ofHideCursor();
-	gui.setup(&faceLoader,&blinkTrigger,&camMesh,&camTracker,&videoFader,&blinkRecorder, &autoExposure, numInputRotation90);
+	gui.setup(&faceLoader,&blinkTrigger,&camMesh,&camTracker,&videoFader,&blinkRecorder, &autoExposure, &rotatedInputTex, numInputRotation90);
 	gui.showVideos.addListener(this,&testApp::showVideosChanged);
 
 
@@ -165,8 +165,21 @@ void testApp::update() {
 	if(video->isFrameNew()) {
 		if(numInputRotation90!=0 && numInputRotation90!=2){
 			video->getPixelsRef().rotate90To(rotatedInput,numInputRotation90);
+			if(gui.showInput){
+				if(rotatedInputTex.getWidth()!=rotatedInput.getWidth()){
+					rotatedInputTex.allocate(rotatedInput);
+				}
+				rotatedInputTex.loadData(rotatedInput);
+			}
 			camTracker.update(toCv(rotatedInput));
 		}else{
+			if(gui.showInput){
+				rotatedInput = video->getPixelsRef();
+				if(rotatedInputTex.getWidth()!=rotatedInput.getWidth()){
+					rotatedInputTex.allocate(rotatedInput);
+				}
+				rotatedInputTex.loadData(rotatedInput);
+			}
 			camTracker.update(toCv(*video));
 		}
 		if(gui.showVideos) blinkRecorder.update(video->getPixelsRef());
@@ -226,15 +239,21 @@ void testApp::draw() {
 		height = -height;
 	}*/
 
+	ofSetRectMode(OF_RECTMODE_CENTER);
+	ofPushMatrix();
+	ofTranslate(ofGetWidth()*.5,ofGetHeight()*.5);
+	ofRotate(90*numInputRotation90,0,0,1);
 	if(blinkRecorder.isRecording()){
-		videoFader.draw(x,y,width,height);
+		videoFader.draw(0,0,width,height);
 	}else{
 		if(faceLoader.getCurrentImg().getWidth()> 0 && cloneReady) {
-			clone.draw(x,y,width,height);
+			clone.draw(0,0,width,height);
 		} else {
-			video->draw(x,y,width,height);
+			video->draw(0,0,width,height);
 		}
 	}
+	ofPopMatrix();
+	ofSetRectMode(OF_RECTMODE_CORNER);
 	//ofPopView();
 	//ofSetOrientation(orientation);
 

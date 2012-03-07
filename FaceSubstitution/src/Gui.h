@@ -20,12 +20,13 @@ public:
 	Gui();
 	virtual ~Gui();
 
-	void setup(FaceLoader * faceLoader, BlinkTrigger * trigger, ofMesh * camMesh, ofxFaceTrackerThreaded * tracker, VideoFader * videoFader, FaceBlinkRecorder * faceBlinkRecorder, AutoExposure * autoExposure, ofxParameter<int> numInputRotations);
+	void setup(FaceLoader * faceLoader, BlinkTrigger * trigger, ofMesh * camMesh, ofxFaceTrackerThreaded * tracker, VideoFader * videoFader, FaceBlinkRecorder * faceBlinkRecorder, AutoExposure * autoExposure, ofTexture * input, ofxParameter<int> numInputRotations);
 	void update();
 	void draw();
 
 	void faceLoaderModeChanged(bool & m);
-	void rotationChanged(int & rot);
+	void rotationScreenChanged(int & rot);
+	void rotationCameraChanged(int & rot);
 	void videoFaderStateChanged(VideoFader::State & state);
 
 	ofxPanel gui;
@@ -34,6 +35,7 @@ public:
 	ofxToggle showMesh;
 	ofxToggle showVideos;
 	ofxToggle showMugs;
+	ofxToggle showInput;
 	ofxIntSlider currentFace;
 	ofxIntSlider rotationCamera,rotationScreen;
 	ofxIntSlider millisLongBlink;
@@ -54,6 +56,7 @@ private:
 	VideoFader * videoFader;
 	FaceBlinkRecorder * faceBlinkRecorder;
 	AutoExposure * autoExposure;
+	ofTexture * input;
 };
 
 #endif /* GUI_H_ */
