@@ -114,7 +114,7 @@ void Gui::draw(){
 
 	if(showMugs){
 		float ratio = faceLoader->getCurrentImg().getWidth() / faceLoader->getCurrentImg().getHeight();
-		faceLoader->getCurrentImg().draw(ofGetWidth()-120,ofGetHeight()-120./ratio,120,120./ratio);
+		faceLoader->getCurrentImg().draw(ofGetWidth()-ofGetWidth()/3,ofGetHeight()-ofGetWidth()/3/ratio,ofGetWidth()/3,ofGetWidth()/3/ratio);
 	}
 
 	if(!tracker->getFound()) {
