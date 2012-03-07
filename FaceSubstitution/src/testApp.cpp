@@ -242,7 +242,7 @@ void testApp::draw() {
 	ofSetRectMode(OF_RECTMODE_CENTER);
 	ofPushMatrix();
 	ofTranslate(ofGetWidth()*.5,ofGetHeight()*.5);
-	ofRotate(90*numInputRotation90,0,0,1);
+	ofRotate(-90*numInputRotation90,0,0,1);
 	if(blinkRecorder.isRecording()){
 		videoFader.draw(0,0,width,height);
 	}else{
