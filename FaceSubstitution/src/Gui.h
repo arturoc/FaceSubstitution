@@ -45,6 +45,7 @@ public:
 	ofxFloatSlider secsToRecord;
 	ofxIntSlider fadeMillis;
 	ofxIntSlider minExposure, maxExposure;
+	ofxIntSlider screenScale;
 	ofxFloatSlider faderRemaining;
 	ofxFloatSlider videoFps;
 

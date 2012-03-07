@@ -227,12 +227,12 @@ void testApp::draw() {
 
 	if(numInputRotation90==0 || numInputRotation90==2){
 		ratio = clone.getTextureRef().getHeight()/clone.getTextureRef().getWidth();
-		width = -ofGetWidth();
-		height = ofGetWidth()*ratio;
+		width = -ofGetWidth()*gui.screenScale;
+		height = ofGetWidth()*gui.screenScale*ratio;
 	}else{
 		ratio = clone.getTextureRef().getHeight()/clone.getTextureRef().getWidth();
-		width = -ofGetHeight();
-		height = ofGetHeight()*ratio;
+		width = -ofGetHeight()*gui.screenScale;
+		height = ofGetHeight()*gui.screenScale*ratio;
 
 	}
 	//int x = ofGetWidth();
