@@ -16,8 +16,6 @@
 #include "AutoExposure.h"
 #include "SnapshotSaver.h"
 
-#include "ofxGstV4L2Sink.h"
-
 class testApp : public ofBaseApp {
 public:
 	void setup();
