@@ -62,7 +62,7 @@ void testApp::setup() {
 	settings.internalformat = GL_LUMINANCE;
 	maskFbo.allocate(settings);
 
-	rotatedInput.allocate(video->getWidth(),video->getHeight(),OF_IMAGE_COLOR);
+	rotatedInput.allocate(video->getHeight(),video->getWidth(),OF_IMAGE_COLOR);
 
 
 	// init trackers
@@ -164,6 +164,9 @@ void testApp::update() {
 	video->update();
 	if(video->isFrameNew()) {
 		if(numInputRotation90!=0 && numInputRotation90!=2){
+			if(video->getWidth()!=rotatedInput.getWidth()){
+				rotatedInput.allocate(video->getWidth(),video->getHeight(),3);
+			}
 			video->getPixelsRef().rotate90To(rotatedInput,numInputRotation90);
 			if(gui.showInput){
 				if(rotatedInputTex.getWidth()!=rotatedInput.getWidth()){
@@ -174,10 +177,11 @@ void testApp::update() {
 			camTracker.update(toCv(rotatedInput));
 		}else{
 			if(gui.showInput){
-				rotatedInput = video->getPixelsRef();
-				if(rotatedInputTex.getWidth()!=rotatedInput.getWidth()){
+				if(video->getWidth()!=rotatedInput.getWidth() || rotatedInput.getWidth()!=rotatedInputTex.getWidth()){
+					rotatedInput.allocate(video->getWidth(),video->getHeight(),3);
 					rotatedInputTex.allocate(rotatedInput);
 				}
+				rotatedInput = video->getPixelsRef();
 				rotatedInputTex.loadData(rotatedInput);
 			}
 			camTracker.update(toCv(*video));
