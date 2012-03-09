@@ -109,8 +109,8 @@ void testApp::recording(bool & rec){
 }
 
 void testApp::videoRecorded(bool & r){
-	//recordVideo = true;
-	//recorder.setup("recordings_interaction/"+ofGetTimestampString(),w,h,blinkRecorder.getFps());
+	recordVideo = true;
+	recorder.setup("recordings_interaction/"+ofGetTimestampString()+".mov",w,h,blinkRecorder.getFps());
 }
 
 void testApp::update() {
