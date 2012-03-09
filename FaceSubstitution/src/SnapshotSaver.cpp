@@ -28,7 +28,7 @@ void SnapshotSaver::setup(string _folder){
 	ftpServer = settings.getValue("server","arturocastro.net");
 	user = settings.getValue("user","user");
 	password = settings.getValue("password","password");
-	serverPath = settings.getValue("serverPath","serverPath");
+	serverPath = settings.getValue("screenshots_path","screenshots_path");
 	startThread(true,false);
 }
 
