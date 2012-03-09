@@ -28,7 +28,7 @@ void SnapshotSaver::setup(string _folder){
 	ftpServer = settings.getValue("server","arturocastro.net");
 	user = settings.getValue("user","user");
 	password = settings.getValue("password","password");
-	serverPath = settings.getValue("screenshots_path","screenshots_path");
+	serverPath = settings.getValue("screenshots_path","httpdocs/files/faces_screenshots/switzerland/");
 	startThread(true,false);
 }
 
@@ -47,9 +47,9 @@ void SnapshotSaver::threadedFunction(){
 		rgbPixels.setChannel(0,pixels->getChannel(0));
 		rgbPixels.setChannel(1,pixels->getChannel(1));
 		rgbPixels.setChannel(2,pixels->getChannel(2));
-		string snapshotPath = ofFilePath::join(folder,ofGetTimestampString()+".jpg");
-		ofSaveImage(rgbPixels,snapshotPath);
-		string ftpCommand = "curl -u " + user+ ":" + password + " -T " + ofToDataPath(snapshotPath) + " ftp://" + ofFilePath::join(ftpServer , serverPath) +" & ";
+		string snapshotPath = ofGetTimestampString()+".jpg";
+		ofSaveImage(rgbPixels,ofFilePath::join(folder,snapshotPath));
+		string ftpCommand = "curl -u " + user+ ":" + password + " -T " + ofToDataPath(ofFilePath::join(folder,snapshotPath)) + " ftp://" + ofFilePath::join(ftpServer , serverPath) + snapshotPath + " & ";
 		ofLogVerbose(LOG_NAME) << ftpCommand;
 		system(ftpCommand.c_str());
 	}
