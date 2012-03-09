@@ -36,7 +36,7 @@ void BlinkTrigger::threadedUpdate(ofEventArgs & args){
 		leftBD.update();
 		rightBD.update();
 
-		if(leftBD.isClosed() && rightBD.isClosed()){
+		if(leftBD.isClosed() && rightBD.isClosed() && !mouthDetector.isOpenned()){
 			ofLogVerbose("testApp") << "eyesClosed" << millisEyesClosed;
 			if(firstEyesClosedEvent==0){
 				firstEyesClosedEvent = ofGetElapsedTimeMillis();

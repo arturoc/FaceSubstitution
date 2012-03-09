@@ -12,6 +12,7 @@
 #include "ofEvents.h"
 #include "ofxGui.h"
 #include "ofxFaceTrackerThreaded.h"
+#include "MouthOpenDetector.h"
 
 class BlinkTrigger {
 public:
@@ -29,6 +30,7 @@ public:
 
 	ofxParameter<int> millisLongBlink;
 	BlinkDetector leftBD,rightBD;
+	MouthOpenDetector mouthDetector;
 
 private:
 	ofxFaceTrackerThreaded * tracker;

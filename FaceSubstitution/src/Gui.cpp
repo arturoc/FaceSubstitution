@@ -108,9 +108,14 @@ void Gui::draw(){
 		blinkTrigger->leftBD.graphArea.draw(x,10,50);
 		blinkTrigger->leftBD.graphDerivative.draw(x,60,50);
 		blinkTrigger->leftBD.graphBool.draw(x,110,50);
+
 		blinkTrigger->rightBD.graphArea.draw(x+130,10,50);
 		blinkTrigger->rightBD.graphDerivative.draw(x+130,60,50);
 		blinkTrigger->rightBD.graphBool.draw(x+130,110,50);
+
+		blinkTrigger->mouthDetector.graphArea.draw(x,160,50);
+		blinkTrigger->rightBD.graphDerivative.draw(x,210,50);
+		blinkTrigger->rightBD.graphBool.draw(x,260,50);
 	}
 
 	if(showMesh){

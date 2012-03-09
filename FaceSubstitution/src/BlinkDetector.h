@@ -36,7 +36,6 @@ public:
 private:
 	ofxFaceTracker * tracker;
 	ofxFaceTracker::Feature eye;
-	ofTessellator tess;
 	ofMesh mesh;
 	deque<float> latestEyeOpennes;
 	bool eyeClosed;
