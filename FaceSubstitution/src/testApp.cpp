@@ -128,6 +128,7 @@ void testApp::update() {
 
 	if(!cloneReady && recordVideo){
 		recorder.encodeVideo();
+		recordVideo = false;
 	}
 
 	if(!blinkRecorder.isRecording() && cloneReady && frameProcessed) {
