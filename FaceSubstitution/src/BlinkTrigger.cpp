@@ -21,6 +21,7 @@ void BlinkTrigger::setup(ofxFaceTrackerThreaded & _tracker){
 
 	leftBD.setup(tracker->getTracker(),ofxFaceTracker::LEFT_EYE);
 	rightBD.setup(tracker->getTracker(),ofxFaceTracker::RIGHT_EYE);
+	mouthDetector.setup(tracker->getTracker());
 
 	millisEyesClosed = 0;
 	firstEyesClosedEvent = 0;
@@ -35,6 +36,7 @@ void BlinkTrigger::threadedUpdate(ofEventArgs & args){
 	if(tracker->getFound()){
 		leftBD.update();
 		rightBD.update();
+		mouthDetector.update();
 
 		if(leftBD.isClosed() && rightBD.isClosed() && !mouthDetector.isOpenned()){
 			ofLogVerbose("testApp") << "eyesClosed" << millisEyesClosed;
