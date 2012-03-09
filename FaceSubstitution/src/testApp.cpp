@@ -126,11 +126,15 @@ void testApp::update() {
 	bool prevFound = cloneReady;
 	cloneReady = camTracker.getFound();
 	bool frameProcessed = camTracker.isFrameNew();
+	if(!prevFound && cloneReady && !frameProcessed){
+		cloneReady = false;
+	}
 
 	if(!cloneReady && recordVideo){
 		recorder.encodeVideo();
 		recordVideo = false;
 	}
+
 
 	if(!blinkRecorder.isRecording() && cloneReady && frameProcessed) {
 		camMesh = camTracker.getImageMesh();
