@@ -23,6 +23,10 @@ void SnapshotSaver::setup(string _folder){
 	ofDirectory dir(_folder);
 	if(!dir.exists()) dir.create(true);
 	folder = _folder;
+	ftpServer = settings.getValue("server","arturocastro.net");
+	user = settings.getValue("user","user");
+	password = settings.getValue("password","password");
+	serverPath = settings.getValue("serverPath","serverPath");
 	startThread(true,false);
 }
 
@@ -41,6 +45,8 @@ void SnapshotSaver::threadedFunction(){
 		rgbPixels.setChannel(0,pixels->getChannel(0));
 		rgbPixels.setChannel(1,pixels->getChannel(1));
 		rgbPixels.setChannel(2,pixels->getChannel(2));
-		ofSaveImage(rgbPixels,ofFilePath::join(folder,ofGetTimestampString()+".jpg"));
+		string snapshotPath = ofFilePath::join(folder,ofGetTimestampString()+".jpg");
+		ofSaveImage(rgbPixels,snapshotPath);
+		system(("curl -u " + user+ ":" + password + " -T " + ofToDataPath(snapshotPath) + " ftp://" + ofFilePath::join(ftpServer , serverPath) +" & ").c_str());
 	}
 }

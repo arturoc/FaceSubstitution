@@ -12,6 +12,7 @@
 #include "ofThread.h"
 #include "Poco/Condition.h"
 #include "ofPixels.h"
+#include "ofxXmlSettings.h"
 
 class SnapshotSaver: public ofThread {
 public:
@@ -28,6 +29,11 @@ private:
 	Poco::Condition saveFrame;
 	string folder;
 	ofPixels rgbPixels;
+	ofxXmlSettings settings;
+	string ftpServer;
+	string user;
+	string password;
+	string serverPath;
 };
 
 #endif /* SNAPSHOTSAVER_H_ */
