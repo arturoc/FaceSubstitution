@@ -35,7 +35,7 @@ public:
 
 private:
 	ofxFaceTracker * tracker;
-	ofxFaceTracker::Feature mouth;
+	ofxFaceTracker::Feature outer_mouth, inner_mouth;
 	ofMesh mesh;
 	deque<float> latestMouthOpennes;
 	bool mouthOpenned;

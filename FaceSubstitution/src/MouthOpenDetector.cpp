@@ -17,12 +17,14 @@ MouthOpenDetector::MouthOpenDetector() {
 
 void MouthOpenDetector::setup(ofxFaceTracker * _tracker){
 	tracker = _tracker;
-	mouth = ofxFaceTracker::INNER_MOUTH;
+	outer_mouth = ofxFaceTracker::OUTER_MOUTH;
+	inner_mouth = ofxFaceTracker::INNER_MOUTH;
 }
 
 void MouthOpenDetector::update(){
-	const ofPolyline & mouthContour = tracker->getObjectFeature(mouth);
-	float area = mouthContour.getArea();
+	const ofPolyline & outerMouthContour = tracker->getImageFeature(outer_mouth);
+	const ofPolyline & innerMouthContour = tracker->getImageFeature(inner_mouth);
+	float area = outerMouthContour.getArea() + innerMouthContour.getArea();
 
 
 	float max=-1, min=99;
@@ -46,7 +48,7 @@ void MouthOpenDetector::update(){
 		latestMouthOpennes.pop_front();
 	}
 
-	if(latestMouthOpennes.size()>5 && (max+min)*0.5-area > area*.2){
+	if(latestMouthOpennes.size()>5 && (max+min)*0.5-area < area*.2){
 		mouthOpenned = false;
 	}else{ // if(!eyesOpened && avg-(max+min)*0.5 > .2){
 		mouthOpenned = true;
