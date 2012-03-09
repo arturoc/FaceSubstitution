@@ -8,6 +8,8 @@
 #include "SnapshotSaver.h"
 #include "ofImage.h"
 
+string SnapshotSaver::LOG_NAME="SnapshotSaver";
+
 SnapshotSaver::SnapshotSaver() {
 	// TODO Auto-generated constructor stub
 
@@ -47,6 +49,8 @@ void SnapshotSaver::threadedFunction(){
 		rgbPixels.setChannel(2,pixels->getChannel(2));
 		string snapshotPath = ofFilePath::join(folder,ofGetTimestampString()+".jpg");
 		ofSaveImage(rgbPixels,snapshotPath);
-		system(("curl -u " + user+ ":" + password + " -T " + ofToDataPath(snapshotPath) + " ftp://" + ofFilePath::join(ftpServer , serverPath) +" & ").c_str());
+		string ftpCommand = "curl -u " + user+ ":" + password + " -T " + ofToDataPath(snapshotPath) + " ftp://" + ofFilePath::join(ftpServer , serverPath) +" & ";
+		ofLogVerbose(LOG_NAME) << ftpCommand;
+		system(ftpCommand.c_str());
 	}
 }

@@ -24,6 +24,8 @@ public:
 	void save(ofPixels & pixels);
 	void threadedFunction();
 
+	static string LOG_NAME;
+
 private:
 	ofPixels * pixels;
 	Poco::Condition saveFrame;
