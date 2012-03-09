@@ -36,6 +36,8 @@ public:
 	bool isRecording();
 
 	ofEvent<bool> recordingE;
+	ofEvent<bool> recordedE;
+	ofEvent<bool> droppedE;
 
 	ofxParameter<float> secsFaceLostBetweenRecordings;
 	ofxParameter<float> secsFaceLostToDropRecording;

@@ -53,7 +53,8 @@ void FaceBlinkRecorder::update(ofPixels & frame){
 			ofLogVerbose(LOG_NAME) << "eyes closed for" << t - firstEyesClosed << "seconds encoding video";
 			encodeVideo.signal();
 			recording = false;
-			ofNotifyEvent(recordingE,recording);
+			bool recorded=true;
+			ofNotifyEvent(recordedE,recorded);
 		}else if(!tracker->getFound() && t - prevFound >= secsFaceLostToDropRecording){
 			ofLogVerbose(LOG_NAME) << "face lost for" << t - prevFound << "seconds dropping video";
 			if(mutex.tryLock()){
@@ -61,7 +62,8 @@ void FaceBlinkRecorder::update(ofPixels & frame){
 				mutex.unlock();
 			}
 			recording = false;
-			ofNotifyEvent(recordingE,recording);
+			bool dropped=true;
+			ofNotifyEvent(droppedE,dropped);
 		}
 	}
 

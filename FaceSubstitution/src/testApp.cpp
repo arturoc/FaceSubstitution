@@ -78,6 +78,8 @@ void testApp::setup() {
 	ofAddListener(blinkTrigger.blinkE,this,&testApp::blinkTriggered);
 	ofAddListener(blinkTrigger.longBlinkE,this,&testApp::longBlinkTriggered);
 
+	ofAddListener(blinkRecorder.recordedE,this,&testApp::videoRecorded);
+
 
 	// init other utils classes
 	autoExposure.setup(0,w,h);
@@ -106,6 +108,11 @@ void testApp::recording(bool & rec){
 	if(rec) videoFader.setup(video);
 }
 
+void testApp::videoRecorded(bool & r){
+	recordVideo = true;
+	recorder.setup("recordings_interaction/"+ofGetTimestampString(),w,h,blinkRecorder.getFps());
+}
+
 void testApp::update() {
 	ofOrientation orientation = ofGetOrientation();
 	ofSetOrientation(OF_ORIENTATION_DEFAULT);
@@ -118,6 +125,10 @@ void testApp::update() {
 	bool prevFound = cloneReady;
 	cloneReady = camTracker.getFound();
 	bool frameProcessed = camTracker.isFrameNew();
+
+	if(!cloneReady && recordVideo){
+		recorder.encodeVideo();
+	}
 
 	if(!blinkRecorder.isRecording() && cloneReady && frameProcessed) {
 		camMesh = camTracker.getImageMesh();
@@ -148,10 +159,17 @@ void testApp::update() {
 
 		clone.update(srcFbo.getTextureReference(), video->getTextureReference(), camMesh, maskFbo.getTextureReference());
 
-		if(takeSnapshotFrom>0 && ofGetElapsedTimef()-takeSnapshotFrom>1.5){
+		bool takeSnapshot = takeSnapshotFrom>0 && ofGetElapsedTimef()-takeSnapshotFrom>1.5;
+
+		if(takeSnapshot || recordVideo){
 			clone.readToPixels(snapshot);
-			snapshotSaver.save(snapshot);
-			takeSnapshotFrom = 0;
+
+			if(takeSnapshot){
+				snapshotSaver.save(snapshot);
+				takeSnapshotFrom = 0;
+			}else{
+				recorder.addFrame(snapshot);
+			}
 		}
 
 		if(adjustExposure){

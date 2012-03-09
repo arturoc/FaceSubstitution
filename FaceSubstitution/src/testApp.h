@@ -29,6 +29,7 @@ public:
 	void keyPressed(int key);
 	void recording(bool & rec);
 	void showVideosChanged(bool & v);
+	void videoRecorded(bool & r);
 
 	ofxFaceTrackerThreaded camTracker;
 	ofVideoGrabber cam;
@@ -66,5 +67,7 @@ public:
 
 	AutoExposure autoExposure;
 	bool adjustExposure;
+	bool recordVideo;
+	ofxVideoRecorder recorder;
 
 };

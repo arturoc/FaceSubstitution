@@ -64,6 +64,7 @@ void Clone::setup(int width, int height) {
 	ofFbo::Settings settings;
 	settings.width = width;
 	settings.height = height;
+	settings.internalformat = GL_RGB;
 	
 	buffer.allocate(settings);
 	srcBlur.allocate(settings);
