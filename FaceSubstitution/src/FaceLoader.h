@@ -37,12 +37,15 @@ public:
 
 	void threadedFunction();
 
-	void loadNext();
-	void loadPrevious();
+	string loadNext();
+	string loadPrevious();
 
 	int getTotalFaces();
 	int getCurrentFace();
 
+	string getCurrentFacePath();
+
+	ofEvent<string> newFaceLoadedE;
 private:
 	void resizeAndDiscardImages(string path);
 	void loadFace(string face);

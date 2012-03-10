@@ -25,7 +25,7 @@ void SnapshotSaver::setup(string _folder){
 	ofDirectory dir(_folder);
 	if(!dir.exists()) dir.create(true);
 	folder = _folder;
-	settings.loadFile("settings.xml");
+	settings.loadFile("serversettings.xml");
 	ftpServer = settings.getValue("server","arturocastro.net");
 	user = settings.getValue("user","user");
 	password = settings.getValue("password","password");

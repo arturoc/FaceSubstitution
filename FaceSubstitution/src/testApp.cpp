@@ -80,6 +80,7 @@ void testApp::setup() {
 	ofAddListener(blinkTrigger.longBlinkE,this,&testApp::longBlinkTriggered);
 
 	ofAddListener(blinkRecorder.recordedE,this,&testApp::videoRecorded);
+	ofAddListener(faceLoader.newFaceLoadedE,this,&testApp::newFaceLoaded);
 
 
 	// init other utils classes
@@ -96,6 +97,8 @@ void testApp::setup() {
 
 
 	showVideosChanged(gui.showVideos);
+	oneSec = ofGetElapsedTimef();
+	fps = 30;
 }
 
 void testApp::showVideosChanged(bool & v){
@@ -110,8 +113,10 @@ void testApp::recording(bool & rec){
 }
 
 void testApp::videoRecorded(bool & r){
-	//recordVideo = true;
-	//recorder.setup("recordings_interaction/"+ofGetTimestampString()+".mov",w,h,blinkRecorder.getFps());
+}
+
+void testApp::newFaceLoaded(string & face){
+	interactionRecorder.changeFace(face);
 }
 
 void testApp::update() {
@@ -130,8 +135,13 @@ void testApp::update() {
 		cloneReady = false;
 	}
 
+	if(!prevFound && cloneReady && frameProcessed){
+		recordVideo = true;
+		interactionRecorder.setup(ofGetTimestampString()+".mov",faceLoader.getCurrentFacePath(),video->getWidth(), video->getHeight(), fps);
+	}
+
 	if(!cloneReady && recordVideo){
-		recorder.encodeVideo();
+		interactionRecorder.close();
 		recordVideo = false;
 	}
 
@@ -167,14 +177,12 @@ void testApp::update() {
 
 		bool takeSnapshot = takeSnapshotFrom>0 && ofGetElapsedTimef()-takeSnapshotFrom>1.5;
 
-		if(takeSnapshot || recordVideo){
+		if(takeSnapshot){
 			clone.readToPixels(snapshot);
 
 			if(takeSnapshot){
 				snapshotSaver.save(snapshot);
 				takeSnapshotFrom = 0;
-			}else{
-				recorder.addFrame(snapshot);
 			}
 		}
 
@@ -187,6 +195,15 @@ void testApp::update() {
 
 	video->update();
 	if(video->isFrameNew()) {
+
+		float t = ofGetElapsedTimef();
+		framesOneSec++;
+		if(t-oneSec >= 1){
+			fps = float(framesOneSec)/(t-oneSec);
+			framesOneSec=0;
+			oneSec = t;
+		}
+
 		if(numInputRotation90!=0 && numInputRotation90!=2){
 			if(video->getWidth()!=rotatedInput.getHeight()){
 				rotatedInput.allocate(video->getHeight(),video->getWidth(),3);
@@ -211,6 +228,8 @@ void testApp::update() {
 			camTracker.update(toCv(*video));
 		}
 		if(gui.showVideos) blinkRecorder.update(video->getPixelsRef());
+		if(recordVideo)
+			interactionRecorder.addFrame(video->getPixelsRef());
 	}
 
 	if(blinkRecorder.isRecording()){

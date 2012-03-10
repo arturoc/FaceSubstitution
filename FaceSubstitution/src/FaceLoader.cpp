@@ -101,7 +101,9 @@ void FaceLoader::threadedFunction(){
 	while(isThreadRunning()) {
 		loadNew.wait(mutex);
 		cout << "loading" << faces.getPath(currentFace) << endl;
-		loadFace(faces.getPath(currentFace));
+		string facePath = faces.getPath(currentFace);
+		loadFace(facePath);
+		ofNotifyEvent(newFaceLoadedE,facePath);
 	}
 }
 
@@ -121,6 +123,10 @@ void FaceLoader::loadFace(string face){
 	}
 }
 
+string FaceLoader::getCurrentFacePath(){
+	return faces.getPath(currentFace);
+}
+
 ofImage & FaceLoader::getCurrentImg(){
 	return *currentImg;
 }
@@ -133,7 +139,7 @@ vector<ofVec2f> & FaceLoader::getCurrentImagePoints(){
 	return *currentPoints;
 }
 
-void FaceLoader::loadNext(){
+string FaceLoader::loadNext(){
 	mutex.lock();
 	std::swap(nextPoints,currentPoints);
 	std::swap(nextImg,currentImg);
@@ -147,9 +153,10 @@ void FaceLoader::loadNext(){
 		currentFace %= faces.size();
 	}
 	loadNew.signal();
+	return faces.getPath(currentFace);
 }
 
-void FaceLoader::loadPrevious(){
+string FaceLoader::loadPrevious(){
 	mutex.lock();
 	std::swap(nextPoints,currentPoints);
 	std::swap(nextImg,currentImg);
@@ -163,7 +170,7 @@ void FaceLoader::loadPrevious(){
 		currentFace %= faces.size();
 	}
 	loadNew.signal();
-
+	return faces.getPath(currentFace);
 }
 
 int FaceLoader::getTotalFaces(){

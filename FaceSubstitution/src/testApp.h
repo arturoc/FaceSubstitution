@@ -7,6 +7,7 @@
 #include "FaceLoader.h"
 #include "FaceBlinkRecorder.h"
 #include "VideoFader.h"
+#include "InteractionRecorder.h"
 
 //#define USE_GST_VIRTUAL_CAMERA
 
@@ -30,6 +31,8 @@ public:
 	void recording(bool & rec);
 	void showVideosChanged(bool & v);
 	void videoRecorded(bool & r);
+
+	void newFaceLoaded(string & face);
 
 	ofxFaceTrackerThreaded camTracker;
 	ofVideoGrabber cam;
@@ -67,7 +70,12 @@ public:
 
 	AutoExposure autoExposure;
 	bool adjustExposure;
-	bool recordVideo;
-	ofxVideoRecorder recorder;
 
+	bool recordVideo;
+	InteractionRecorder interactionRecorder;
+
+
+	float oneSec;
+	int framesOneSec;
+	float fps;
 };
