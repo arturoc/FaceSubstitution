@@ -24,8 +24,9 @@ InteractionRecorder::~InteractionRecorder() {
 
 void InteractionRecorder::setup(string path,string currentFace, int w, int h, int fps){
 	cout << "start recording at " << path << " with current face " << currentFace;
+	recorder = ofPtr<ofxVideoRecorder>(new ofxVideoRecorder);
 	recordedVideoPath = path;
-	recorder.setup("recordings_interaction/"+recordedVideoPath,w,h,fps);
+	recorder->setup("recordings_interaction/"+recordedVideoPath,w,h,fps);
 	framesRecorded = 0;
 	ofFile recordedVideoMeta(ofFilePath::join(folder,recordedVideoPath)+".meta",ofFile::WriteOnly);
 	recordedVideoMeta << currentFace << " " << framesRecorded;
@@ -33,7 +34,7 @@ void InteractionRecorder::setup(string path,string currentFace, int w, int h, in
 }
 
 void InteractionRecorder::addFrame(ofPixels & frame){
-	recorder.addFrame(frame);
+	recorder->addFrame(frame);
 }
 
 void InteractionRecorder::changeFace(string face){
@@ -43,8 +44,8 @@ void InteractionRecorder::changeFace(string face){
 }
 
 void InteractionRecorder::close(){
-	recorder.close();
 	lock();
+	recordersQueue.push(recorder);
 	uploadQueue.push(recordedVideoPath);
 	unlock();
 	upload.signal();
@@ -56,7 +57,12 @@ void InteractionRecorder::threadedFunction(){
 		while(!uploadQueue.empty()){
 			string nextUpload = uploadQueue.front();
 			uploadQueue.pop();
-			unlock();
+			{
+				ofPtr<ofxVideoRecorder> recorder = recordersQueue.front();
+				recordersQueue.pop();
+				unlock();
+				recorder->close();
+			}
 			string ftpCommand = "curl -u " + user+ ":" + password + " -T " + ofToDataPath(ofFilePath::join(folder,nextUpload + ".mjpg")) + " ftp://" + ofFilePath::join(ftpServer , serverPath) + nextUpload + ".mjpg";
 			system(ftpCommand.c_str());
 			ftpCommand = "curl -u " + user+ ":" + password + " -T " + ofToDataPath(ofFilePath::join(folder,nextUpload + ".meta")) + " ftp://" + ofFilePath::join(ftpServer , serverPath) + nextUpload + ".meta";
