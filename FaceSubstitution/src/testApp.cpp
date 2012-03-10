@@ -129,7 +129,7 @@ void testApp::update() {
 	ofSetOrientation(OF_ORIENTATION_DEFAULT);
 
 	if(loadNextFace){
-		interactionRecorder.changeFace(faceLoader.getPreviousFacePath());
+		interactionRecorder.changeFace(faceLoader.getCurrentFacePath());
 		faceLoader.loadNext();
 		loadNextFace  = false;
 	}
