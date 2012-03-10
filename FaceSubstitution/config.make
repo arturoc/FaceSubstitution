@@ -17,18 +17,18 @@ USER_CFLAGS =
 # for example libraries like:
 # USER_LD_FLAGS = libs/libawesomelib.a
 
-USER_LDFLAGS = 
+USER_LDFLAGS = -fopenmp
 
 
 # use this to add system libraries for example:
 # USER_LIBS = -lpango
  
-USER_LIBS = -lv4l2
+USER_LIBS = -lv4l2 -ltbb
 
 
 # change this to add different compiler optimizations to your project
 
-USER_COMPILER_OPTIMIZATION = -march=native -mtune=native -Os
+USER_COMPILER_OPTIMIZATION = -march=native -mtune=native -O3 -fopenmp
 
 
 EXCLUDE_FROM_SOURCE="bin,.xcodeproj,obj,.git"
