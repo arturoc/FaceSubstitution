@@ -29,18 +29,19 @@ void InteractionRecorder::setup(string path,string currentFace, int w, int h, in
 	recorder->setup("recordings_interaction/"+recordedVideoPath,w,h,fps);
 	framesRecorded = 0;
 	ofFile recordedVideoMeta(ofFilePath::join(folder,recordedVideoPath)+".meta",ofFile::WriteOnly);
-	recordedVideoMeta << currentFace << " " << framesRecorded;
+	recordedVideoMeta << currentFace << " " << framesRecorded << endl;
 	if(!isThreadRunning()) startThread(true,false);
 }
 
 void InteractionRecorder::addFrame(ofPixels & frame){
 	recorder->addFrame(frame);
+	framesRecorded++;
 }
 
 void InteractionRecorder::changeFace(string face){
 	cout << "changed face to " << face;
 	ofFile recordedVideoMeta(ofFilePath::join(folder,recordedVideoPath)+".meta",ofFile::Append);
-	recordedVideoMeta << face << " " << framesRecorded;
+	recordedVideoMeta << face << " " << framesRecorded << endl;
 }
 
 void InteractionRecorder::close(){
