@@ -45,6 +45,7 @@ void InteractionRecorder::changeFace(string face){
 }
 
 void InteractionRecorder::close(){
+	cout << endl << "closing InteractionRecorder" << recordedVideoPath << " with " << framesRecorded << "frames" << endl;
 	lock();
 	recordersQueue.push(recorder);
 	uploadQueue.push(recordedVideoPath);
@@ -63,10 +64,10 @@ void InteractionRecorder::threadedFunction(){
 			unlock();
 			recorder->close();
 			string ftpCommand = "curl -u " + user+ ":" + password + " -T " + ofToDataPath(ofFilePath::join(folder,nextUpload + ".mjpg")) + " ftp://" + ofFilePath::join(ftpServer , serverPath) + nextUpload + ".mjpg";
-			cout << endl << ftpCommand << endl;
+			cout << endl << ftpCommand << " 2> /dev/null " << endl;
 			system(ftpCommand.c_str());
 			ftpCommand = "curl -u " + user+ ":" + password + " -T " + ofToDataPath(ofFilePath::join(folder,nextUpload + ".meta")) + " ftp://" + ofFilePath::join(ftpServer , serverPath) + nextUpload + ".meta";
-			cout << endl << ftpCommand << endl;
+			cout << endl << ftpCommand << " 2> /dev/null " << endl;
 			system(ftpCommand.c_str());
 			lock();
 		}
