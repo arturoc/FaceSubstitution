@@ -28,8 +28,8 @@ protected:
 	void threadedFunction();
 
 private:
-	queue<ofPtr<ofxVideoRecorder> > recordersQueue;
-	ofPtr<ofxVideoRecorder> recorder;
+	queue<ofxVideoRecorder*> recordersQueue;
+	ofxVideoRecorder* recorder;
 	string recordedVideoPath;
 	int framesRecorded;
 	queue<string> uploadQueue;
