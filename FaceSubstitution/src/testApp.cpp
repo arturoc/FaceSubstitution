@@ -94,6 +94,7 @@ void testApp::setup() {
 	ofHideCursor();
 	gui.setup(&faceLoader,&blinkTrigger,&camMesh,&camTracker,&videoFader,&blinkRecorder, &autoExposure, &rotatedInputTex, numInputRotation90);
 	gui.showVideos.addListener(this,&testApp::showVideosChanged);
+	gui.cloneStrenght.addListener(this,&testApp::cloneStrenghtChanged);
 
 
 	showVideosChanged(gui.showVideos);
@@ -117,6 +118,11 @@ void testApp::videoRecorded(bool & r){
 
 void testApp::newFaceLoaded(string & face){
 	interactionRecorder.changeFace(face);
+}
+
+
+void testApp::cloneStrenghtChanged(int & strenght){
+	clone.setStrength(strenght);
 }
 
 void testApp::update() {

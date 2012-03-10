@@ -48,6 +48,7 @@ public:
 	ofxFloatSlider screenScale;
 	ofxFloatSlider faderRemaining;
 	ofxFloatSlider videoFps;
+	ofxIntSlider cloneStrenght;
 
 private:
 	FaceLoader * faceLoader;

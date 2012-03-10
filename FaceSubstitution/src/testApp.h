@@ -34,6 +34,8 @@ public:
 
 	void newFaceLoaded(string & face);
 
+	void cloneStrenghtChanged(int & strenght);
+
 	ofxFaceTrackerThreaded camTracker;
 	ofVideoGrabber cam;
 	ofVideoPlayer vid;
