@@ -57,7 +57,7 @@ void InteractionRecorder::threadedFunction(){
 			string nextUpload = uploadQueue.front();
 			uploadQueue.pop();
 			unlock();
-			string ftpCommand = "curl -u " + user+ ":" + password + " -T " + ofToDataPath(ofFilePath::join(folder,nextUpload)) + " ftp://" + ofFilePath::join(ftpServer , serverPath) + nextUpload;
+			string ftpCommand = "curl -u " + user+ ":" + password + " -T " + ofToDataPath(ofFilePath::join(folder,nextUpload + ".mjpg")) + " ftp://" + ofFilePath::join(ftpServer , serverPath) + nextUpload + ".mjpg";
 			system(ftpCommand.c_str());
 			ftpCommand = "curl -u " + user+ ":" + password + " -T " + ofToDataPath(ofFilePath::join(folder,nextUpload + ".meta")) + " ftp://" + ofFilePath::join(ftpServer , serverPath) + nextUpload + ".meta";
 			system(ftpCommand.c_str());
