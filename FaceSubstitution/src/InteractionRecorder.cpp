@@ -58,12 +58,10 @@ void InteractionRecorder::threadedFunction(){
 		while(!uploadQueue.empty()){
 			string nextUpload = uploadQueue.front();
 			uploadQueue.pop();
-			{
-				ofPtr<ofxVideoRecorder> recorder = recordersQueue.front();
-				recordersQueue.pop();
-				unlock();
-				recorder->close();
-			}
+			ofPtr<ofxVideoRecorder> recorder = recordersQueue.front();
+			recordersQueue.pop();
+			unlock();
+			recorder->close();
 			string ftpCommand = "curl -u " + user+ ":" + password + " -T " + ofToDataPath(ofFilePath::join(folder,nextUpload + ".mjpg")) + " ftp://" + ofFilePath::join(ftpServer , serverPath) + nextUpload + ".mjpg";
 			cout << endl << ftpCommand << endl;
 			system(ftpCommand.c_str());
