@@ -64,6 +64,7 @@ void InteractionRecorder::threadedFunction(){
 			ofPtr<ofxVideoRecorder> recorder = recordersQueue.front();
 			recordersQueue.pop();
 			unlock();
+			cout << "closing recorder for " << nextUpload << endl;
 			recorder->close();
 			string ftpCommand = "curl -u " + user+ ":" + password + " -T " + ofToDataPath(ofFilePath::join(folder,nextUpload + ".mjpg")) + " ftp://" + ofFilePath::join(ftpServer , serverPath) + nextUpload + ".mjpg";
 			cout << endl << ftpCommand << " 2> /dev/null " << endl;
