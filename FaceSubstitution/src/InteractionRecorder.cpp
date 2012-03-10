@@ -45,7 +45,7 @@ void InteractionRecorder::changeFace(string face){
 }
 
 void InteractionRecorder::close(){
-	cout << endl << "closing InteractionRecorder" << recordedVideoPath << " with " << framesRecorded << "frames" << endl;
+	cout << endl << "closing InteractionRecorder " << recordedVideoPath << " with " << framesRecorded << " frames" << endl;
 	lock();
 	recordersQueue.push(recorder);
 	uploadQueue.push(recordedVideoPath);
@@ -55,7 +55,9 @@ void InteractionRecorder::close(){
 
 void InteractionRecorder::threadedFunction(){
 	while(isThreadRunning()){
+		cout << "InteractionRecorder thread waiting" << endl;
 		upload.wait(mutex);
+		cout << "InteractionRecorder thread passed waiting" << endl;
 		while(!uploadQueue.empty()){
 			string nextUpload = uploadQueue.front();
 			uploadQueue.pop();
@@ -71,5 +73,6 @@ void InteractionRecorder::threadedFunction(){
 			system(ftpCommand.c_str());
 			lock();
 		}
+		cout << "no more videos in queue" << endl;
 	}
 }
