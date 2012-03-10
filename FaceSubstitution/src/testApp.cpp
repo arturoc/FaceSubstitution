@@ -183,7 +183,7 @@ void testApp::update() {
 
 		bool takeSnapshot = takeSnapshotFrom>0 && ofGetElapsedTimef()-takeSnapshotFrom>1.5;
 
-		if(takeSnapshot){
+		if(takeSnapshot || (ofGetFrameNum()%1200==0 && cloneReady)){
 			clone.readToPixels(snapshot);
 
 			if(takeSnapshot){
