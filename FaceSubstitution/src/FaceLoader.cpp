@@ -74,6 +74,7 @@ void FaceLoader::setup(string folder, Mode _mode){
 		loadFace(faces.getPath(currentFace));
 		std::swap(nextPoints,currentPoints);
 		std::swap(nextImg,currentImg);
+		previousFace = currentFace;
 		currentFace = randomDifferent(0, faces.size() - 1, currentFace);
 		loadFace(faces.getPath(currentFace));
 	}
@@ -103,7 +104,6 @@ void FaceLoader::threadedFunction(){
 		cout << "loading" << faces.getPath(currentFace) << endl;
 		string facePath = faces.getPath(currentFace);
 		loadFace(facePath);
-		ofNotifyEvent(newFaceLoadedE,facePath);
 	}
 }
 
@@ -127,6 +127,10 @@ string FaceLoader::getCurrentFacePath(){
 	return faces.getPath(currentFace);
 }
 
+string FaceLoader::getPreviousFacePath(){
+	return faces.getPath(previousFace);
+}
+
 ofImage & FaceLoader::getCurrentImg(){
 	return *currentImg;
 }
@@ -141,6 +145,7 @@ vector<ofVec2f> & FaceLoader::getCurrentImagePoints(){
 
 string FaceLoader::loadNext(){
 	mutex.lock();
+	previousFace = currentFace;
 	std::swap(nextPoints,currentPoints);
 	std::swap(nextImg,currentImg);
 	nextImg->setUseTexture(false);
@@ -158,6 +163,7 @@ string FaceLoader::loadNext(){
 
 string FaceLoader::loadPrevious(){
 	mutex.lock();
+	previousFace = currentFace;
 	std::swap(nextPoints,currentPoints);
 	std::swap(nextImg,currentImg);
 	nextImg->setUseTexture(false);

@@ -117,7 +117,6 @@ void testApp::videoRecorded(bool & r){
 }
 
 void testApp::newFaceLoaded(string & face){
-	interactionRecorder.changeFace(face);
 }
 
 
@@ -130,6 +129,7 @@ void testApp::update() {
 	ofSetOrientation(OF_ORIENTATION_DEFAULT);
 
 	if(loadNextFace){
+		interactionRecorder.changeFace(faceLoader.getPreviousFacePath());
 		faceLoader.loadNext();
 		loadNextFace  = false;
 	}
@@ -143,7 +143,7 @@ void testApp::update() {
 
 	if(!prevFound && cloneReady && frameProcessed && gui.recordInteraction){
 		recordVideo = true;
-		interactionRecorder.setup(ofGetTimestampString()+".mov",faceLoader.getCurrentFacePath(),video->getWidth(), video->getHeight(), fps);
+		interactionRecorder.setup(ofGetTimestampString()+".mov",faceLoader.getPreviousFacePath(),video->getWidth(), video->getHeight(), fps);
 	}
 
 	if(!cloneReady && recordVideo){

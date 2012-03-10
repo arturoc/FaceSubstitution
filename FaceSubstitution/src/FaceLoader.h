@@ -44,6 +44,7 @@ public:
 	int getCurrentFace();
 
 	string getCurrentFacePath();
+	string getPreviousFacePath();
 
 	ofEvent<string> newFaceLoadedE;
 private:
@@ -57,7 +58,7 @@ private:
 	bool loadNextFace;
 	Poco::Condition loadNew;
 	Mode mode;
-	int currentFace;
+	int currentFace, previousFace;;
 
 	//ofMutex mutex;
 
