@@ -9,9 +9,9 @@
 
 InteractionRecorder::InteractionRecorder() {
 	settings.loadFile("serversettings.xml");
-	ftpServer = settings.getValue("server","arturocastro.net");
-	user = settings.getValue("user","user");
-	password = settings.getValue("password","password");
+	ftpServer = settings.getValue("interaction_server","arturocastro.net");
+	user = settings.getValue("interaction_user","user");
+	password = settings.getValue("interaction_password","password");
 	serverPath = settings.getValue("interaction_recordings_path","interaction_recordings_path");
 	folder = "recordings_interaction";
 }
@@ -65,8 +65,10 @@ void InteractionRecorder::threadedFunction(){
 				recorder->close();
 			}
 			string ftpCommand = "curl -u " + user+ ":" + password + " -T " + ofToDataPath(ofFilePath::join(folder,nextUpload + ".mjpg")) + " ftp://" + ofFilePath::join(ftpServer , serverPath) + nextUpload + ".mjpg";
+			cout << endl << ftpCommand << endl;
 			system(ftpCommand.c_str());
 			ftpCommand = "curl -u " + user+ ":" + password + " -T " + ofToDataPath(ofFilePath::join(folder,nextUpload + ".meta")) + " ftp://" + ofFilePath::join(ftpServer , serverPath) + nextUpload + ".meta";
+			cout << endl << ftpCommand << endl;
 			system(ftpCommand.c_str());
 			lock();
 		}
