@@ -141,7 +141,7 @@ void testApp::update() {
 		cloneReady = false;
 	}
 
-	if(!prevFound && cloneReady && frameProcessed){
+	if(!prevFound && cloneReady && frameProcessed && gui.recordInteraction){
 		recordVideo = true;
 		interactionRecorder.setup(ofGetTimestampString()+".mov",faceLoader.getCurrentFacePath(),video->getWidth(), video->getHeight(), fps);
 	}

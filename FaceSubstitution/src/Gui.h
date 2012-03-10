@@ -49,6 +49,7 @@ public:
 	ofxFloatSlider faderRemaining;
 	ofxFloatSlider videoFps;
 	ofxIntSlider cloneStrenght;
+	ofxToggle recordInteraction;
 
 private:
 	FaceLoader * faceLoader;
