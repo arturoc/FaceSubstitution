@@ -46,16 +46,17 @@ void InteractionRecorder::changeFace(string face){
 
 void InteractionRecorder::close(){
 	cout << endl << "closing InteractionRecorder " << recordedVideoPath << " with " << framesRecorded << " frames" << endl;
-	lock();
+
 	if(framesRecorded>60){
+		lock();
 		recordersQueue.push(recorder);
 		uploadQueue.push(recordedVideoPath);
+		unlock();
+		upload.signal();
 	}else{
 		recorder->discard();
 		delete recorder;
 	}
-	unlock();
-	upload.signal();
 }
 
 void InteractionRecorder::threadedFunction(){
