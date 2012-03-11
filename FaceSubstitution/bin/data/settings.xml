@@ -25,7 +25,7 @@
 <secs_to_record>3</secs_to_record>
 <fade_millis>2000</fade_millis>
 <min_exposure>270</min_exposure>
-<max_exposure>565</max_exposure>
+<max_exposure>540</max_exposure>
 <screen_scale>1</screen_scale>
 <Backlight_Compensation>1</Backlight_Compensation>
 <Brightness>2</Brightness>
