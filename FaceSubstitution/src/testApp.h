@@ -11,6 +11,9 @@
 
 //#define USE_GST_VIRTUAL_CAMERA
 
+#ifdef TARGET_OSX
+#include "ofxQTKitVideoGrabber.h"
+#endif
 
 #include "BlinkTrigger.h"
 #include "Gui.h"
@@ -37,7 +40,12 @@ public:
 	void cloneStrenghtChanged(int & strenght);
 
 	ofxFaceTrackerThreaded camTracker;
+#ifdef TARGET_OSX
+	ofxQTKitVideoGrabber cam;
+#else
 	ofVideoGrabber cam;
+#endif
+
 	ofVideoPlayer vid;
 	
 	bool cloneReady;

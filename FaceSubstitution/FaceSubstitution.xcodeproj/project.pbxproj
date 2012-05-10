@@ -16,6 +16,9 @@
 		2705B4C0143D6F0400F2A09E /* Tracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2705B4B8143D6F0400F2A09E /* Tracker.cpp */; };
 		2705B4C1143D6F0400F2A09E /* Utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2705B4B9143D6F0400F2A09E /* Utilities.cpp */; };
 		2705B4C2143D6F0400F2A09E /* Wrappers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2705B4BA143D6F0400F2A09E /* Wrappers.cpp */; };
+		271E242F155C2FA000C6E3BB /* ofxQTKitVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = 271E2426155C2FA000C6E3BB /* ofxQTKitVideoGrabber.mm */; };
+		271E2463155C307900C6E3BB /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 271E2462155C307900C6E3BB /* QTKit.framework */; };
+		271E2467155C308200C6E3BB /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 271E2466155C308200C6E3BB /* CoreVideo.framework */; };
 		2751AADF143D78A100605D00 /* CLM.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2751AAC8143D78A100605D00 /* CLM.cc */; };
 		2751AAE0143D78A100605D00 /* FCheck.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2751AACA143D78A100605D00 /* FCheck.cc */; };
 		2751AAE1143D78A100605D00 /* FDet.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2751AACC143D78A100605D00 /* FDet.cc */; };
@@ -219,6 +222,10 @@
 		2705B4B8143D6F0400F2A09E /* Tracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tracker.cpp; path = ../../../addons/ofxCv/libs/ofxCv/src/Tracker.cpp; sourceTree = SOURCE_ROOT; };
 		2705B4B9143D6F0400F2A09E /* Utilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Utilities.cpp; path = ../../../addons/ofxCv/libs/ofxCv/src/Utilities.cpp; sourceTree = SOURCE_ROOT; };
 		2705B4BA143D6F0400F2A09E /* Wrappers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Wrappers.cpp; path = ../../../addons/ofxCv/libs/ofxCv/src/Wrappers.cpp; sourceTree = SOURCE_ROOT; };
+		271E2425155C2FA000C6E3BB /* ofxQTKitVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxQTKitVideoGrabber.h; path = ../../../addons/ofxQTKitVideoGrabber/src/ofxQTKitVideoGrabber.h; sourceTree = SOURCE_ROOT; };
+		271E2426155C2FA000C6E3BB /* ofxQTKitVideoGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ofxQTKitVideoGrabber.mm; path = ../../../addons/ofxQTKitVideoGrabber/src/ofxQTKitVideoGrabber.mm; sourceTree = SOURCE_ROOT; };
+		271E2462155C307900C6E3BB /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
+		271E2466155C308200C6E3BB /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = /System/Library/Frameworks/CoreVideo.framework; sourceTree = "<absolute>"; };
 		2751AAC7143D78A100605D00 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = .gitignore; path = ../../../addons/ofxFaceTracker/libs/Tracker/.gitignore; sourceTree = SOURCE_ROOT; };
 		2751AAC8143D78A100605D00 /* CLM.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CLM.cc; path = ../../../addons/ofxFaceTracker/libs/Tracker/CLM.cc; sourceTree = SOURCE_ROOT; };
 		2751AAC9143D78A100605D00 /* CLM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLM.h; path = ../../../addons/ofxFaceTracker/libs/Tracker/CLM.h; sourceTree = SOURCE_ROOT; };
@@ -422,6 +429,8 @@
 				E4C2424810CC5A17004149E2 /* Cocoa.framework in Frameworks */,
 				E4C2424910CC5A17004149E2 /* IOKit.framework in Frameworks */,
 				2705B477143D6E6600F2A09E /* opencv.a in Frameworks */,
+				271E2463155C307900C6E3BB /* QTKit.framework in Frameworks */,
+				271E2467155C308200C6E3BB /* CoreVideo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -732,6 +741,25 @@
 			);
 			name = src;
 			path = ../../../addons/ofxCv/libs/ofxCv/src;
+			sourceTree = SOURCE_ROOT;
+		};
+		271E239B155C2F9F00C6E3BB /* ofxQTKitVideoGrabber */ = {
+			isa = PBXGroup;
+			children = (
+				271E2424155C2FA000C6E3BB /* src */,
+			);
+			name = ofxQTKitVideoGrabber;
+			path = ../../../addons/ofxQTKitVideoGrabber;
+			sourceTree = SOURCE_ROOT;
+		};
+		271E2424155C2FA000C6E3BB /* src */ = {
+			isa = PBXGroup;
+			children = (
+				271E2425155C2FA000C6E3BB /* ofxQTKitVideoGrabber.h */,
+				271E2426155C2FA000C6E3BB /* ofxQTKitVideoGrabber.mm */,
+			);
+			name = src;
+			path = ../../../addons/ofxQTKitVideoGrabber/src;
 			sourceTree = SOURCE_ROOT;
 		};
 		2751AAC3143D789300605D00 /* ofxFaceTracker */ = {
@@ -1206,6 +1234,7 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				271E239B155C2F9F00C6E3BB /* ofxQTKitVideoGrabber */,
 				278A0DCA155B498D00EC428C /* ofxPlaymodes */,
 				278A0CD4155B48AD00EC428C /* ofxVideoRecorder */,
 				279FA7A91507BB0C0078659E /* ofxOsc */,
@@ -1232,6 +1261,8 @@
 				E45BE9770E8CC7DD009D7055 /* CoreServices.framework */,
 				E45BE9790E8CC7DD009D7055 /* OpenGL.framework */,
 				E45BE97A0E8CC7DD009D7055 /* QuickTime.framework */,
+				271E2462155C307900C6E3BB /* QTKit.framework */,
+				271E2466155C308200C6E3BB /* CoreVideo.framework */,
 			);
 			name = "system frameworks";
 			sourceTree = "<group>";
@@ -1445,6 +1476,7 @@
 				278A0F9E155B4F3300EC428C /* SnapshotSaver.cpp in Sources */,
 				278A0F9F155B4F3300EC428C /* testApp.cpp in Sources */,
 				278A0FA0155B4F3300EC428C /* VideoFader.cpp in Sources */,
+				271E242F155C2FA000C6E3BB /* ofxQTKitVideoGrabber.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
