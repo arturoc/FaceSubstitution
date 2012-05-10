@@ -53,11 +53,12 @@ void Gui::setup(FaceLoader * _faceLoader, BlinkTrigger * _trigger, ofMesh * _cam
 	gui.add(faderRemaining.setup("fader remaining",videoFader->getRemainingPct(),0,videoFader->getDuration()));
 	gui.add(videoFps.setup("video fps",faceBlinkRecorder->getFps(),0,60));
 
-
+#ifdef TARGET_LINUX
 	map<string,ofxV4L2Settings::Control>::iterator it;
 	for(it=autoExposure->settings.controls.begin();it!=autoExposure->settings.controls.end();it++){
 		gui.add(new ofxIntSlider(it->second.parameter.getName(),it->second.parameter,it->second.minimum,it->second.maximum));
 	}
+#endif
 
 	faceLoaderMode.addListener(this,&Gui::faceLoaderModeChanged);
 	rotationScreen.addListener(this,&Gui::rotationScreenChanged);

@@ -17,7 +17,9 @@ void testApp::setup() {
 	//ofSetLogLevel(BlinkDetector::LOG_NAME,OF_LOG_VERBOSE);
 	ofSetLogLevel(FaceBlinkRecorder::LOG_NAME,OF_LOG_VERBOSE);
 	ofSetLogLevel(VideoFader::LOG_NAME,OF_LOG_VERBOSE);
+#ifdef TARGET_LINUX
 	ofSetLogLevel(ofxV4L2Settings::LOG_NAME,OF_LOG_VERBOSE);
+#endif
 
 #ifdef FACES_IN_BUNDLE
 	ofSetDataPathRoot("../data/");
