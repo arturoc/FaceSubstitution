@@ -18,13 +18,17 @@ AutoExposure::~AutoExposure() {
 }
 
 bool AutoExposure::setup(int device, int w, int h){
+#ifdef TARGET_LINUX
 	if(!settings.setup("/dev/video" + ofToString(device))){
 		return false;
 	}
+#endif
 	grayPixels.allocate(w,h,1);
 	grayPixelsMask.allocate(w,h,1);
 
+#ifdef TARGET_LINUX
 	settings["Exposure, Auto"] = 1;
+#endif
 	//settings["Exposure (Absolute)"] = 1033;
 
 	// thinkpad
@@ -51,5 +55,7 @@ void AutoExposure::update(ofPixels & frame, ofPixels & mask){
 
 	int exposure = ofMap(mean.val[0],40,200,maxExposure,minExposure);
 
+#ifdef TARGET_LINUX
 	settings["Exposure (Absolute)"] = exposure;
+#endif
 }

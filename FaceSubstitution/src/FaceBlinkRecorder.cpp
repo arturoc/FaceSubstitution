@@ -121,7 +121,7 @@ VideoFrame * FaceBlinkRecorder::getNextVideoFrame(){
     return vframe;
 }
 
-int FaceBlinkRecorder::getFps(){
+float FaceBlinkRecorder::getFps(){
 	return fps;
 }
 

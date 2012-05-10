@@ -27,7 +27,7 @@ public:
 	void setEyesClosed(bool closed);
 
 	ofxPm::VideoFrame * getNextVideoFrame();
-    int getFps();
+    float getFps();
 
 	static string LOG_NAME;
 
