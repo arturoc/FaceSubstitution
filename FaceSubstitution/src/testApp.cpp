@@ -62,7 +62,7 @@ void testApp::setup() {
 	settings.height = video->getHeight();
 	srcFbo.allocate(settings);
 
-	settings.internalformat = GL_LUMINANCE;
+	//settings.internalformat = GL_LUMINANCE;
 	maskFbo.allocate(settings);
 
 	rotatedInput.allocate(video->getHeight(),video->getWidth(),OF_IMAGE_COLOR);
