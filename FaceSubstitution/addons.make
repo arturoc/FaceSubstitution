@@ -7,3 +7,4 @@ ofxXmlSettings
 ofxPlaymodes
 ofxOsc
 ofxV4L2Settings
+ofxGstV4L2Sink

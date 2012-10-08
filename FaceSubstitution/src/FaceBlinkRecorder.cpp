@@ -12,7 +12,6 @@ using namespace ofxPm;
 string FaceBlinkRecorder::LOG_NAME = "FaceBlinkRecorder";
 
 FaceBlinkRecorder::FaceBlinkRecorder() {
-	vframe = NULL;
 
 }
 
@@ -73,9 +72,8 @@ void FaceBlinkRecorder::update(ofPixels & frame){
 
 
 	if(recording && mutex.tryLock()){
-		if(vframe) vframe->release();
 		vframe = VideoFrame::newVideoFrame(frame);
-		newFrameEvent.notify(this,*vframe);
+		newFrameEvent.notify(this,vframe);
 		mutex.unlock();
 	}
 }
@@ -88,19 +86,16 @@ void FaceBlinkRecorder::threadedFunction(){
 		int initFrame = int(buffer.size())-framesToSave;
 		if(initFrame>=0){
 			ofLogVerbose(LOG_NAME) << "start recording" << framesToSave << "frames at " << fps*1.2 << "fps";
-			recorder.setup("recordings/" + ofGetTimestampString()+".mp4",vframe->getWidth(),vframe->getHeight(),fps*1.2,false);
+			recorder.setup("recordings/" + ofGetTimestampString()+".mp4",vframe.getWidth(),vframe.getHeight(),fps*1.2,false);
 			for(int i=initFrame;i<(int)buffer.size();i++){
-				VideoFrame * frame = buffer.getVideoFrame(i);
-				recorder.addFrame(frame->getPixelsRef());
-				frame->release();
+				VideoFrame frame = buffer.getVideoFrame(i);
+				recorder.addFrame(frame.getPixelsRef());
 			}
 			recorder.encodeVideo();
 		}else{
 			ofLogVerbose(LOG_NAME) << "eyes clsed to sson only" << framesToSave << "frames at " << fps << "fps, dropping video";
 		}
 		buffer.clear();
-		vframe->release();
-		vframe = NULL;
 		encoding = false;
 	}
 }
@@ -117,11 +112,11 @@ void FaceBlinkRecorder::setEyesClosed(bool closed){
 	eyesClosed = closed;
 }
 
-VideoFrame * FaceBlinkRecorder::getNextVideoFrame(){
+VideoFrame FaceBlinkRecorder::getNextVideoFrame(){
     return vframe;
 }
 
-int FaceBlinkRecorder::getFps(){
+float FaceBlinkRecorder::getFps(){
 	return fps;
 }
 

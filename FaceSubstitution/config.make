@@ -23,7 +23,7 @@ USER_LDFLAGS = -fopenmp
 # use this to add system libraries for example:
 # USER_LIBS = -lpango
  
-USER_LIBS = -lv4l2 -ltbb
+USER_LIBS = -lv4l2
 
 
 # change this to add different compiler optimizations to your project

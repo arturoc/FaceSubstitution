@@ -26,8 +26,8 @@ public:
 
 	void setEyesClosed(bool closed);
 
-	ofxPm::VideoFrame * getNextVideoFrame();
-    int getFps();
+	ofxPm::VideoFrame getNextVideoFrame();
+    float getFps();
 
 	static string LOG_NAME;
 
@@ -53,7 +53,7 @@ private:
 	bool recording;
 	bool eyesClosed;
 	ofxPm::VideoBuffer buffer;
-	ofxPm::VideoFrame * vframe;
+	ofxPm::VideoFrame vframe;
 	bool encoding;
 
 	float oneSec;
