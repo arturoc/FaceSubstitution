@@ -1,0 +1,7 @@
+ofxCv
+ofxFaceTracker
+ofxOpenCv
+ofxV4L2Settings
+ofxGui
+ofxXmlSettings
+ofxTween
