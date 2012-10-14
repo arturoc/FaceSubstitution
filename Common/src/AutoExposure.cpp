@@ -41,7 +41,10 @@ bool AutoExposure::setup(int device, int w, int h){
 void AutoExposure::update(ofPixels & frame, ofPixels & mask){
 	ofxCv::convertColor(frame,grayPixels,CV_RGB2GRAY);
 	cv::Scalar mean;
-	if(mask.getNumChannels()==3){
+	if(mask.getNumChannels()==4){
+		ofxCv::convertColor(mask,grayPixelsMask,CV_RGBA2GRAY);
+		mean = cv::mean(ofxCv::toCv(grayPixels),ofxCv::toCv(grayPixelsMask));
+	}else if(mask.getNumChannels()==3){
 		ofxCv::convertColor(mask,grayPixelsMask,CV_RGB2GRAY);
 		mean = cv::mean(ofxCv::toCv(grayPixels),ofxCv::toCv(grayPixelsMask));
 	}else if(mask.getNumChannels()==1){

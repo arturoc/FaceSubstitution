@@ -23,7 +23,7 @@ public:
 
 	ofxV4L2Settings settings;
 
-	ofxParameter<int> minExposure, maxExposure;
+	ofParameter<int> minExposure, maxExposure;
 
 private:
 	ofPixels grayPixels,grayPixelsMask;

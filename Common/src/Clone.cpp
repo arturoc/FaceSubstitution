@@ -79,6 +79,8 @@ void Clone::setup(int width, int height) {
 	cloneShader.setupShaderFromSource(GL_FRAGMENT_SHADER, cloneShaderSource);
 	cloneShader.linkProgram();
 	
+	strength.addListener(this,&Clone::setStrength);
+	strength.set("strength",7,0,30);
 }
 
 void Clone::maskedBlur(ofTexture& tex, ofMesh& mask, ofTexture & maskTex, ofFbo& result, bool dst) {
@@ -105,7 +107,7 @@ void Clone::maskedBlur(ofTexture& tex, ofMesh& mask, ofTexture & maskTex, ofFbo&
 	result.end();
 }
 
-void Clone::setStrength(int strength) {
+void Clone::setStrength(int & strength) {
 	this->strength = strength;
 	maskBlurShaderH.unload();
 	maskBlurShaderV.unload();

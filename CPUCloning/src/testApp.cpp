@@ -37,6 +37,7 @@ void testApp::maskedBlur(ofImage& tex, ofImage& mask, ofImage& result) {
 	
 	int rows = resultMat.rows;
 	int cols = resultMat.cols;
+	#pragma omp parallel for
 	for(int row = 0; row < rows; row++) {
 		for(int col = 0; col < cols; col++) {
 			if(maskMat.at<uchar>(row, col) > 0) {
