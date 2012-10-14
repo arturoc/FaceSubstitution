@@ -5,6 +5,8 @@
 #include "Clone.h"
 #include "ofxGui.h"
 #include "MouthOpenDetector.h"
+#include "InteractionRecorder.h"
+#include "AutoExposure.h"
 
 class testApp : public ofBaseApp{
 
@@ -26,6 +28,8 @@ class testApp : public ofBaseApp{
 		void setVideoPosition(float & position);
 		void vSyncPressed(bool & pressed);
 
+		void newBuffer(ofPixels & buffer);
+
 
 		ofxFaceTracker faceTracker1, faceTracker2;
 		ofxFaceTrackerThreaded threadedFaceTracker1, threadedFaceTracker2;
@@ -35,18 +39,21 @@ class testApp : public ofBaseApp{
 		ofBaseVideoDraws * video;
 		ofImage half1,half2,half1Src,half2Src;
 		ofMesh mesh1, mesh2;
-		ofVboMesh combinedMesh;
+		ofVboMesh vboMesh1,vboMesh2;
 		MouthOpenDetector mouthOpenDetector1,mouthOpenDetector2;
 
 		bool meshesInitialized;
+		bool vbosInitialized;
 
 
 		bool cloneReady;
 		Clone clone1,clone2;
 		ofFbo src1Fbo, mask1Fbo;
 		ofFbo src2Fbo, mask2Fbo;
-		ofPixels maskPixels;
 		bool found;
+		ofMutex videoMutex;
+		bool newFrame;
+		bool half1NeedsUpdate, half2NeedsUpdate;
 
 		ofxPanel gui;
 		ofParameter<bool> vSync;
@@ -60,5 +67,13 @@ class testApp : public ofBaseApp{
 		ofParameter<int> maxStrength;
 		ofVec2f lastOrientation1,lastOrientation2;
 		bool lastOrientationMouthOpenness1,lastOrientationMouthOpenness2;
-		float lastTimeFace;
+		u_long lastTimeFaceFound, lastTimeFaceDetected;
+
+		InteractionRecorder recorder;
+		bool playerRecorderShutdown;
+
+		AutoExposure exposure;
+		ofPixels mask1, mask2, maskPixels;
+		ofPixels pixelsCombined;
+		u_int videoFrame;
 };
