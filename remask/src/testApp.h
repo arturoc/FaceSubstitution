@@ -27,6 +27,8 @@ class testApp : public ofBaseApp{
 
 		void setVideoPosition(float & position);
 		void vSyncPressed(bool & pressed);
+		void dottedLineSegmentsChanged(int & segments);
+		void dottedLineWidthChanged(int & width);
 
 		void newBuffer(ofPixels & buffer);
 
@@ -65,6 +67,10 @@ class testApp : public ofBaseApp{
 		ofParameter<float> noSwapMS;
 		ofParameter<float> rampStrenghtMS;
 		ofParameter<int> maxStrength;
+		ofParameter<int> dottedLineSegments;
+		ofParameter<int> dottedLineWidth;
+		ofParameter<ofColor> dottedLineColor;
+		ofParameter<ofColor> meshColor;
 		ofVec2f lastOrientation1,lastOrientation2;
 		bool lastOrientationMouthOpenness1,lastOrientationMouthOpenness2;
 		u_long lastTimeFaceFound, lastTimeFaceDetected;
@@ -78,4 +84,6 @@ class testApp : public ofBaseApp{
 		u_int videoFrame;
 
 		u_long now;
+
+		ofVboMesh dottedLine;
 };
