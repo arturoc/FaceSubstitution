@@ -8,9 +8,9 @@ using namespace ofxCv;
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	bool usePlayer = true;
+	bool usePlayer = false;
 	if(usePlayer){
-		player.loadMovie("fullrt.avi");
+		player.loadMovie("recordings_interaction/2012-10-15-12-54-49-971.mov");
 		player.play();
 		video = &player;
 		ofAddListener(((ofGstVideoPlayer*)player.getPlayer().get())->getGstVideoUtils()->bufferEvent,this,&testApp::newBuffer);
@@ -41,11 +41,15 @@ void testApp::setup(){
 
 	vSync.addListener(this,&testApp::vSyncPressed);
 
+	exposure.setup(0,1280,720);
+
 	clone1.strength=0;
 	clone2.strength=0;
 	gui.add(clone1.strength);
 	gui.add(clone2.strength);
-	gui.add(updateOnLessOrientation.set("updateOnLessOrientation",true));
+	gui.add(updateOnLessOrientation.set("updateOnLessOrientation",false));
+	gui.add(thresholdFaceRot.set("thresholdFaceRot",3.5,0,90));
+
 	gui.add(videoPosition.set("videoPosition",0,0,1));
 	gui.add(vSync.set("vSync",true));
 	gui.add(showDebug.set("showDebug",false));
@@ -56,6 +60,9 @@ void testApp::setup(){
 	gui.add(rampStrenghtMS.set("rampStrenghtMS",1500,0,5000));
 	gui.add(noSwapMS.set("noSwapMS",1000,0,5000));
 	gui.add(maxStrength.set("maxStrength",7,0,100));
+	gui.add(exposure.maxExposure);
+	gui.add(exposure.minExposure);
+	gui.add(exposure.settings.parameters);
 
 
 	videoPosition.addListener(this,&testApp::setVideoPosition);
@@ -72,8 +79,9 @@ void testApp::setup(){
 	playerRecorderShutdown = false;
 	videoFrame = 0;
 
+	currentFaceTracker1 = &threadedFaceTracker1;
+	currentFaceTracker2 = &threadedFaceTracker2;
 	ofEnableAlphaBlending();
-	exposure.setup(0,1280,720);
 	//ofSetFrameRate(30);
 }
 
@@ -86,14 +94,6 @@ void testApp::setVideoPosition(float & position){
 }
 
 void testApp::newBuffer(ofPixels & buffer){
-	if(!found){
-		currentFaceTracker1 = &threadedFaceTracker1;
-		currentFaceTracker2 = &threadedFaceTracker2;
-	}else{
-		currentFaceTracker1 = &threadedFaceTracker1;
-		currentFaceTracker2 = &threadedFaceTracker2;
-	}
-
 	videoMutex.lock();
 	#pragma omp parallel sections num_threads(2)
 	{
@@ -133,7 +133,9 @@ void testApp::newBuffer(ofPixels & buffer){
 		mouthOpenDetector2.update();
 
 		ofVec2f currentOrientation1(fabs(currentFaceTracker1->getOrientation().x),fabs(currentFaceTracker1->getOrientation().y));
-		if(!updateOnLessOrientation || (currentOrientation1.x<lastOrientation1.x && currentOrientation1.y<lastOrientation1.y) || (lastOrientationMouthOpenness1 > mouthOpenDetector1.getOpennes())){
+		if((!updateOnLessOrientation && ofRadToDeg(currentOrientation1.y)<thresholdFaceRot)||
+				(currentOrientation1.x<lastOrientation1.x && currentOrientation1.y<lastOrientation1.y) ||
+				(lastOrientationMouthOpenness1 > mouthOpenDetector1.getOpennes())){
 			half1Src.getPixelsRef() = half1.getPixelsRef();
 			mesh2.getTexCoords() = currentFaceTracker1->getImagePoints();
 			lastOrientation1 = currentOrientation1;
@@ -142,7 +144,9 @@ void testApp::newBuffer(ofPixels & buffer){
 		}
 
 		ofVec2f currentOrientation2(fabs(currentFaceTracker2->getOrientation().x),fabs(currentFaceTracker2->getOrientation().y));
-		if(!updateOnLessOrientation || (currentOrientation2.x<lastOrientation2.x && currentOrientation2.y<lastOrientation2.y) || (lastOrientationMouthOpenness2 > mouthOpenDetector2.getOpennes())){
+		if((!updateOnLessOrientation && ofRadToDeg(currentOrientation2.y)<thresholdFaceRot) ||
+				(currentOrientation2.x<lastOrientation2.x && currentOrientation2.y<lastOrientation2.y) ||
+				(lastOrientationMouthOpenness2 > mouthOpenDetector2.getOpennes())){
 			half2Src.getPixelsRef() = half2.getPixelsRef();
 			mesh1.getTexCoords() = currentFaceTracker2->getImagePoints();
 			lastOrientation2 = currentOrientation2;
@@ -257,7 +261,7 @@ void testApp::update(){
 			}
 			lastTimeFaceDetected = now;
 		}else{
-			if(now-lastTimeFaceDetected>2000){
+			if(lastTimeFaceFound!=0 && now-lastTimeFaceDetected>2000){
 				lastOrientation1.set(359,359);
 				lastOrientation2.set(359,359);
 				lastTimeFaceFound = 0;
@@ -275,10 +279,10 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	video->draw(0,0);
+	video->draw(1280,0,-1280,720);
 	if(found){
-		clone1.draw(0,0);
-		clone2.draw(640,0);
+		clone1.draw(1280,0,-640,720);
+		clone2.draw(640,0,-640,720);
 	}
 	if(showDebug){
 		mask1Fbo.draw(150,0,320,360);
@@ -303,6 +307,10 @@ void testApp::draw(){
 
 	ofSetColor(255,255,255);
 	ofDrawBitmapString(ofToString(ofGetFrameRate()),ofGetWidth()-100,20);
+	if(currentFaceTracker1->getFound()){
+		ofVec3f degRot(ofRadToDeg(currentFaceTracker1->getOrientation().x),ofRadToDeg(currentFaceTracker1->getOrientation().y),ofRadToDeg(currentFaceTracker1->getOrientation().z));
+		ofDrawBitmapString(ofToString(degRot),ofGetWidth()-300,40);
+	}
 	gui.draw();
 }
 

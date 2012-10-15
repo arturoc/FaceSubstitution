@@ -59,6 +59,7 @@ class testApp : public ofBaseApp{
 		ofParameter<bool> vSync;
 		ofParameter<bool> updateOnLessOrientation;
 		ofParameter<float> videoPosition;
+		ofParameter<float> thresholdFaceRot;
 		ofParameter<bool> showDebug;
 		ofParameter<bool> drawMesh1,drawMesh2;
 		ofParameter<bool> found1, found2;
