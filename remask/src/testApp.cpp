@@ -54,7 +54,7 @@ void testApp::setup(){
 	gui.add(found1.set("found1",false));
 	gui.add(found2.set("found2",false));
 	gui.add(rampStrenghtMS.set("rampStrenghtMS",1500,0,5000));
-	gui.add(noSwapMS.set("noSwapMS",1000,0,5000));
+	gui.add(noSwapMS.set("noSwapMS",2500,0,10000));
 	gui.add(maxStrength.set("maxStrength",20,0,100));
 	gui.add(exposure.maxExposure);
 	gui.add(exposure.minExposure);
@@ -166,6 +166,7 @@ void testApp::newBuffer(ofPixels & buffer){
 
 //--------------------------------------------------------------
 void testApp::update(){
+	now = ofGetElapsedTimeMillis();
 	video->update();
 
 	videoMutex.lock();
@@ -175,19 +176,7 @@ void testApp::update(){
 	videoMutex.unlock();
 
 	if(isNewFrame){
-		u_long now = ofGetElapsedTimeMillis();
 		if(foundFaces){
-			if(lastTimeFaceFound==0){
-				recorder.setup(ofGetTimestampString()+".mov","",1280,720,30);
-				lastTimeFaceFound = now;
-			}else if (now - lastTimeFaceFound>noSwapMS){
-				ofxEasingQuart easing;
-				int s = ofxTween::map(now-lastTimeFaceFound,0,rampStrenghtMS,0,maxStrength,true,easing,ofxTween::easeIn);
-				clone1.strength = s;
-				clone2.strength = s;
-			}
-			recorder.addFrame(video->getPixelsRef());
-
 			videoMutex.lock();
 			half1.update();
 			half2.update();
@@ -214,6 +203,29 @@ void testApp::update(){
 				vboMesh2.getIndices() = mesh2.getIndices();
 			}
 			videoMutex.unlock();
+
+
+			if(lastTimeFaceFound==0){
+				recorder.setup(ofGetTimestampString()+".mov","",1280,720,30);
+				lastTimeFaceFound = now;
+			}else if(now-lastTimeFaceFound<noSwapMS){
+				float pct = double(now-lastTimeFaceFound)/double(noSwapMS);
+				interpolatedMesh1 = vboMesh1;
+				for(int i=0;i<interpolatedMesh1.getNumVertices();i++){
+					interpolatedMesh1.getVertices()[i].interpolate(vboMesh2.getVertices()[i],pct);
+				}
+				interpolatedMesh2 = vboMesh2;
+				for(int i=0;i<interpolatedMesh2.getNumVertices();i++){
+					interpolatedMesh2.getVertices()[i].interpolate(vboMesh1.getVertices()[i],pct);
+				}
+			}if (now - lastTimeFaceFound>noSwapMS){
+				ofxEasingQuart easing;
+				int s = ofxTween::map(now-lastTimeFaceFound-noSwapMS,0,rampStrenghtMS,0,maxStrength,true,easing,ofxTween::easeIn);
+				clone1.strength = s;
+				clone2.strength = s;
+			}
+			recorder.addFrame(video->getPixelsRef());
+
 
 			mask1Fbo.begin();
 			ofClear(0, 255);
@@ -277,7 +289,40 @@ void testApp::draw(){
 	if(found){
 		clone1.draw(1280,0,-640,720);
 		clone2.draw(640,0,-640,720);
+		if (now - lastTimeFaceFound<noSwapMS){
+			ofSetColor(255);
+			float pct = double(now-lastTimeFaceFound)/double(noSwapMS);
+			pct*=pct;
+			pct*=pct;
+			ofPushMatrix();
+			ofTranslate(ofGetWidth(),0);
+			ofScale(-1,1);
+			ofPushMatrix();
+			ofTranslate(640*pct,0);
+			interpolatedMesh1.drawWireframe();
+			ofPopMatrix();
+			ofPushMatrix();
+			ofTranslate(640-640*pct,0);
+			interpolatedMesh2.drawWireframe();
+			ofPopMatrix();
+			ofPopMatrix();
+		}else if(now -lastTimeFaceFound>noSwapMS && now -lastTimeFaceFound<noSwapMS + rampStrenghtMS){
+			float pct = double(now-lastTimeFaceFound-noSwapMS)/double(rampStrenghtMS);
+			pct *= pct;
+			pct *= pct;
+			ofSetColor(255,255-255*pct);
+			ofPushMatrix();
+			ofTranslate(ofGetWidth(),0);
+			ofScale(-1,1);
+			ofPushMatrix();
+			ofTranslate(640,0);
+			interpolatedMesh1.drawWireframe();
+			ofPopMatrix();
+			interpolatedMesh2.drawWireframe();
+			ofPopMatrix();
+		}
 	}
+	ofSetColor(255);
 	if(showDebug){
 		mask1Fbo.draw(150,0,320,360);
 		src1Fbo.draw(150+320,0,320,360);

@@ -38,6 +38,7 @@ class testApp : public ofBaseApp{
 		ofImage half1,half2,half1Src,half2Src;
 		ofMesh mesh1, mesh2;
 		ofVboMesh vboMesh1,vboMesh2;
+		ofVboMesh interpolatedMesh1,interpolatedMesh2;
 		MouthOpenDetector mouthOpenDetector1,mouthOpenDetector2;
 
 		bool meshesInitialized;
@@ -75,4 +76,6 @@ class testApp : public ofBaseApp{
 		ofPixels mask1, mask2, maskPixels;
 		ofPixels pixelsCombined;
 		u_int videoFrame;
+
+		u_long now;
 };
