@@ -218,7 +218,9 @@ void testApp::update(){
 				for(int i=0;i<interpolatedMesh2.getNumVertices();i++){
 					interpolatedMesh2.getVertices()[i].interpolate(vboMesh1.getVertices()[i],pct);
 				}
-			}if (now - lastTimeFaceFound>noSwapMS){
+			}if (now - lastTimeFaceFound>noSwapMS && now - lastTimeFaceFound - noSwapMS<rampStrenghtMS){
+				interpolatedMesh1.getVertices()=vboMesh2.getVertices();
+				interpolatedMesh2.getVertices()=vboMesh1.getVertices();
 				ofxEasingQuart easing;
 				int s = ofxTween::map(now-lastTimeFaceFound-noSwapMS,0,rampStrenghtMS,0,maxStrength,true,easing,ofxTween::easeIn);
 				clone1.strength = s;
