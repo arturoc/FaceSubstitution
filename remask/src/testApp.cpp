@@ -22,10 +22,6 @@ void testApp::setup(){
 
 	faceTracker1.setup();
 	faceTracker2.setup();
-	threadedFaceTracker1.setup();
-	threadedFaceTracker2.setup();
-	//threadedFaceTracker1.threadedIfFound = true;
-	//threadedFaceTracker2.threadedIfFound = true;
 
 
 	half1.allocate(640,720,OF_IMAGE_COLOR);
@@ -59,15 +55,15 @@ void testApp::setup(){
 	gui.add(found2.set("found2",false));
 	gui.add(rampStrenghtMS.set("rampStrenghtMS",1500,0,5000));
 	gui.add(noSwapMS.set("noSwapMS",1000,0,5000));
-	gui.add(maxStrength.set("maxStrength",7,0,100));
+	gui.add(maxStrength.set("maxStrength",20,0,100));
 	gui.add(exposure.maxExposure);
 	gui.add(exposure.minExposure);
 	gui.add(exposure.settings.parameters);
 
 
 	videoPosition.addListener(this,&testApp::setVideoPosition);
-	mouthOpenDetector1.setup(&threadedFaceTracker1.tracker);
-	mouthOpenDetector2.setup(&threadedFaceTracker2.tracker);
+	mouthOpenDetector1.setup(&faceTracker2.tracker);
+	mouthOpenDetector2.setup(&faceTracker2.tracker);
 
 	lastOrientation1.set(359,359);
 	lastOrientation2.set(359,359);
@@ -79,8 +75,6 @@ void testApp::setup(){
 	playerRecorderShutdown = false;
 	videoFrame = 0;
 
-	currentFaceTracker1 = &threadedFaceTracker1;
-	currentFaceTracker2 = &threadedFaceTracker2;
 	ofEnableAlphaBlending();
 	//ofSetFrameRate(30);
 }
@@ -114,41 +108,41 @@ void testApp::newBuffer(ofPixels & buffer){
 	{
 		#pragma omp section
 		{
-			currentFaceTracker1->update(toCv(half1));
+			faceTracker1.update(toCv(half1));
 		}
 
 		#pragma omp section
 		{
-			currentFaceTracker2->update(toCv(half2));
+			faceTracker2.update(toCv(half2));
 		}
 	}
 
 
 	videoMutex.lock();
-	found1 = currentFaceTracker1->getFound();
-	found2 = currentFaceTracker2->getFound();
+	found1 = faceTracker1.getFound();
+	found2 = faceTracker2.getFound();
 	found = found1 && found2;
 	if(found){
 		mouthOpenDetector1.update();
 		mouthOpenDetector2.update();
 
-		ofVec2f currentOrientation1(fabs(currentFaceTracker1->getOrientation().x),fabs(currentFaceTracker1->getOrientation().y));
+		ofVec2f currentOrientation1(fabs(faceTracker1.getOrientation().x),fabs(faceTracker1.getOrientation().y));
 		if((!updateOnLessOrientation && ofRadToDeg(currentOrientation1.y)<thresholdFaceRot)||
 				(currentOrientation1.x<lastOrientation1.x && currentOrientation1.y<lastOrientation1.y) ||
 				(lastOrientationMouthOpenness1 > mouthOpenDetector1.getOpennes())){
 			half1Src.getPixelsRef() = half1.getPixelsRef();
-			mesh2.getTexCoords() = currentFaceTracker1->getImagePoints();
+			mesh2.getTexCoords() = faceTracker1.getImagePoints();
 			lastOrientation1 = currentOrientation1;
 			lastOrientationMouthOpenness1 = mouthOpenDetector1.getOpennes();
 			half1NeedsUpdate = true;
 		}
 
-		ofVec2f currentOrientation2(fabs(currentFaceTracker2->getOrientation().x),fabs(currentFaceTracker2->getOrientation().y));
+		ofVec2f currentOrientation2(fabs(faceTracker2.getOrientation().x),fabs(faceTracker2.getOrientation().y));
 		if((!updateOnLessOrientation && ofRadToDeg(currentOrientation2.y)<thresholdFaceRot) ||
 				(currentOrientation2.x<lastOrientation2.x && currentOrientation2.y<lastOrientation2.y) ||
 				(lastOrientationMouthOpenness2 > mouthOpenDetector2.getOpennes())){
 			half2Src.getPixelsRef() = half2.getPixelsRef();
-			mesh1.getTexCoords() = currentFaceTracker2->getImagePoints();
+			mesh1.getTexCoords() = faceTracker2.getImagePoints();
 			lastOrientation2 = currentOrientation2;
 			lastOrientationMouthOpenness2 = mouthOpenDetector2.getOpennes();
 			half2NeedsUpdate = true;
@@ -156,14 +150,14 @@ void testApp::newBuffer(ofPixels & buffer){
 
 
 		if(!meshesInitialized){
-			mesh1 = currentFaceTracker1->getImageMesh();
-			mesh2 = currentFaceTracker2->getImageMesh();
+			mesh1 = faceTracker1.getImageMesh();
+			mesh2 = faceTracker2.getImageMesh();
 			meshesInitialized = true;
 		}else{
-			mesh1.getVertices() = currentFaceTracker1->getImageMesh().getVertices();
-			mesh2.getVertices() = currentFaceTracker2->getImageMesh().getVertices();
-			mesh1.getIndices() = threadedFaceTracker1.tracker.getMesh(threadedFaceTracker1.getImagePoints()).getIndices();
-			mesh2.getIndices() = threadedFaceTracker2.tracker.getMesh(threadedFaceTracker2.getImagePoints()).getIndices();
+			mesh1.getVertices() = faceTracker1.getImageMesh().getVertices();
+			mesh2.getVertices() = faceTracker2.getImageMesh().getVertices();
+			mesh1.getIndices() = faceTracker1.tracker.getMesh(faceTracker2.getImagePoints()).getIndices();
+			mesh2.getIndices() = faceTracker2.tracker.getMesh(faceTracker2.getImagePoints()).getIndices();
 		}
 	}
 	newFrame = true;
@@ -307,8 +301,8 @@ void testApp::draw(){
 
 	ofSetColor(255,255,255);
 	ofDrawBitmapString(ofToString(ofGetFrameRate()),ofGetWidth()-100,20);
-	if(currentFaceTracker1->getFound()){
-		ofVec3f degRot(ofRadToDeg(currentFaceTracker1->getOrientation().x),ofRadToDeg(currentFaceTracker1->getOrientation().y),ofRadToDeg(currentFaceTracker1->getOrientation().z));
+	if(faceTracker1.getFound()){
+		ofVec3f degRot(ofRadToDeg(faceTracker1.getOrientation().x),ofRadToDeg(faceTracker1.getOrientation().y),ofRadToDeg(faceTracker1.getOrientation().z));
 		ofDrawBitmapString(ofToString(degRot),ofGetWidth()-300,40);
 	}
 	gui.draw();

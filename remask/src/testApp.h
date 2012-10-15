@@ -31,9 +31,7 @@ class testApp : public ofBaseApp{
 		void newBuffer(ofPixels & buffer);
 
 
-		ofxFaceTracker faceTracker1, faceTracker2;
-		ofxFaceTrackerThreaded threadedFaceTracker1, threadedFaceTracker2;
-		ofxFaceTracker *currentFaceTracker1, *currentFaceTracker2;
+		ofxFaceTrackerThreaded faceTracker1, faceTracker2;
 		ofVideoGrabber grabber;
 		ofVideoPlayer player;
 		ofBaseVideoDraws * video;
