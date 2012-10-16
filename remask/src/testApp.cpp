@@ -52,7 +52,7 @@ void testApp::setup(){
 
 	gui.add(videoPosition.set("videoPosition",0,0,1));
 	gui.add(vSync.set("vSync",true));
-	gui.add(showSecondScreen.set("showSecondScreen",true));
+	gui.add(showSecondScreen.set("showSecondScreen",false));
 	gui.add(showDebug.set("showDebug",false));
 	gui.add(drawMesh1.set("drawMesh1",false));
 	gui.add(drawMesh2.set("drawMesh2",false));
@@ -392,7 +392,10 @@ void testApp::drawOutput(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+	ofPushMatrix();
+	ofTranslate((ofGetWidth()-1280)*.5,(ofGetHeight()-720)*.5);
 	drawOutput();
+	ofPopMatrix();
 	if(showSecondScreen){
 		ofPushMatrix();
 		ofTranslate(1280,(768-720*1024./1280.)*.5);
