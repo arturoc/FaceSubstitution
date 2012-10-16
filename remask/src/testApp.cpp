@@ -156,8 +156,8 @@ void testApp::newBuffer(ofPixels & buffer){
 		}else{
 			mesh1.getVertices() = faceTracker1.getImageMesh().getVertices();
 			mesh2.getVertices() = faceTracker2.getImageMesh().getVertices();
-			mesh1.getIndices() = faceTracker1.tracker.getMesh(faceTracker2.getImagePoints()).getIndices();
-			mesh2.getIndices() = faceTracker2.tracker.getMesh(faceTracker2.getImagePoints()).getIndices();
+			mesh1.getIndices() = faceTracker1.getImageMesh().getIndices();
+			mesh2.getIndices() = faceTracker2.getImageMesh().getIndices();
 		}
 	}
 	newFrame = true;
