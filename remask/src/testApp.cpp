@@ -88,6 +88,10 @@ void testApp::setup(){
 	videoFrame = 0;
 	showGui = false;
 
+	exposure.settings.set("Focus, Auto",0);
+	exposure.settings.set("Focus (absolute)",70);
+	exposure.settings.set("Zoom, Absolute",2);
+
 	ofEnableAlphaBlending();
 	ofSetFullscreen(true);
 	ofHideCursor();
