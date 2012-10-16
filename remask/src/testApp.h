@@ -64,8 +64,9 @@ class testApp : public ofBaseApp{
 		ofParameter<bool> showDebug;
 		ofParameter<bool> drawMesh1,drawMesh2;
 		ofParameter<bool> found1, found2;
-		ofParameter<float> noSwapMS;
-		ofParameter<float> rampStrenghtMS;
+		ofParameter<int> showWireMS;
+		ofParameter<int> noSwapMS;
+		ofParameter<int> rampStrenghtMS;
 		ofParameter<int> maxStrength;
 		ofParameter<int> dottedLineSegments;
 		ofParameter<int> dottedLineWidth;
