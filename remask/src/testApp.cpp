@@ -48,7 +48,7 @@ void testApp::setup(){
 	gui.add(clone1.strength);
 	gui.add(clone2.strength);
 	gui.add(updateOnLessOrientation.set("updateOnLessOrientation",false));
-	gui.add(thresholdFaceRot.set("thresholdFaceRot",3.5,0,90));
+	gui.add(thresholdFaceRot.set("thresholdFaceRot",10,0,90));
 
 	gui.add(videoPosition.set("videoPosition",0,0,1));
 	gui.add(vSync.set("vSync",true));
@@ -64,8 +64,8 @@ void testApp::setup(){
 	gui.add(maxStrength.set("maxStrength",20,0,100));
 	gui.add(dottedLineSegments.set("dottedLineSegments",30,0,100));
 	gui.add(dottedLineWidth.set("dottedLineWidth",4,0,15));
-	gui.add(dottedLineColor.set("dottedLineColor",ofColor(255,0,0),ofColor(0,0),ofColor(255)));
-	gui.add(meshColor.set("meshColor",ofColor(255,100),ofColor(0,0),ofColor(255)));
+	gui.add(dottedLineColor.set("dottedLineColor",ofColor(255,188,0),ofColor(0,0),ofColor(255)));
+	gui.add(meshColor.set("meshColor",ofColor(255,188,0,100),ofColor(0,0),ofColor(255)));
 
 	gui.add(exposure.maxExposure);
 	gui.add(exposure.minExposure);
@@ -96,13 +96,13 @@ void testApp::setup(){
 void testApp::dottedLineSegmentsChanged(int & segments){
 	ofPath dottedLinePath;
 	dottedLinePath.setStrokeWidth(0);
-	float height = double(ofGetHeight())/double(segments*2);
-	float heightEmpty = double(ofGetHeight()-int(height)*segments)/double(segments-1);
+	float height = double(720)/double(segments*2);
+	float heightEmpty = double(720-int(height)*segments)/double(segments-1);
 	for(int i=0;i<segments+1;i++){
-		dottedLinePath.moveTo(ofVec3f(ofGetWidth()*.5-dottedLineWidth*.5,height*i+heightEmpty*i));
-		dottedLinePath.lineTo(ofVec3f(ofGetWidth()*.5+dottedLineWidth*.5,height*i+heightEmpty*i));
-		dottedLinePath.lineTo(ofVec3f(ofGetWidth()*.5+dottedLineWidth*.5,height*(i+1)+heightEmpty*i));
-		dottedLinePath.lineTo(ofVec3f(ofGetWidth()*.5-dottedLineWidth*.5,height*(i+1)+heightEmpty*i));
+		dottedLinePath.moveTo(ofVec3f(1280*.5-dottedLineWidth*.5,height*i+heightEmpty*i));
+		dottedLinePath.lineTo(ofVec3f(1280*.5+dottedLineWidth*.5,height*i+heightEmpty*i));
+		dottedLinePath.lineTo(ofVec3f(1280*.5+dottedLineWidth*.5,height*(i+1)+heightEmpty*i));
+		dottedLinePath.lineTo(ofVec3f(1280*.5-dottedLineWidth*.5,height*(i+1)+heightEmpty*i));
 		dottedLinePath.close();
 	}
 	dottedLine = dottedLinePath.getTessellation();
@@ -244,7 +244,11 @@ void testApp::update(){
 				lastTimeFaceFound = now;
 				clone1.strength = 0;
 				clone2.strength = 0;
+			}else if(now-lastTimeFaceFound<showWireMS){
+				interpolatedMesh1 = vboMesh1;
+				interpolatedMesh2 = vboMesh2;
 			}else if(now-lastTimeFaceFound>showWireMS && now-lastTimeFaceFound<noSwapMS+showWireMS){
+
 				float pct = double(now-lastTimeFaceFound-showWireMS)/double(noSwapMS);
 				interpolatedMesh1 = vboMesh1;
 				for(int i=0;i<interpolatedMesh1.getNumVertices();i++){
@@ -336,7 +340,7 @@ void testApp::draw(){
 			pct*=pct;
 			ofSetColor(meshColor,meshColor->a*pct);
 			ofPushMatrix();
-			ofTranslate(ofGetWidth(),0);
+			ofTranslate(1280,0);
 			ofScale(-1,1);
 			interpolatedMesh1.drawWireframe();
 			ofPushMatrix();
