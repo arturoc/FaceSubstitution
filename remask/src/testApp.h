@@ -25,6 +25,8 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
+		void drawOutput();
+
 		void setVideoPosition(float & position);
 		void vSyncPressed(bool & pressed);
 		void dottedLineSegmentsChanged(int & segments);
@@ -58,6 +60,7 @@ class testApp : public ofBaseApp{
 
 		ofxPanel gui;
 		ofParameter<bool> vSync;
+		ofParameter<bool> showSecondScreen;
 		ofParameter<bool> updateOnLessOrientation;
 		ofParameter<float> videoPosition;
 		ofParameter<float> thresholdFaceRot;

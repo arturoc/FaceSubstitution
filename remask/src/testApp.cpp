@@ -52,6 +52,7 @@ void testApp::setup(){
 
 	gui.add(videoPosition.set("videoPosition",0,0,1));
 	gui.add(vSync.set("vSync",true));
+	gui.add(showSecondScreen.set("showSecondScreen",true));
 	gui.add(showDebug.set("showDebug",false));
 	gui.add(drawMesh1.set("drawMesh1",false));
 	gui.add(drawMesh2.set("drawMesh2",false));
@@ -90,7 +91,10 @@ void testApp::setup(){
 	ofEnableAlphaBlending();
 	ofSetFullscreen(true);
 	ofHideCursor();
+	ofBackground(0);
 	//ofSetFrameRate(30);
+	//ofSetWindowPosition(0,-10);
+	//ofSetWindowShape(1280+1024,768);
 }
 
 void testApp::dottedLineSegmentsChanged(int & segments){
@@ -328,8 +332,7 @@ void testApp::update(){
 	}
 }
 
-//--------------------------------------------------------------
-void testApp::draw(){
+void testApp::drawOutput(){
 	video->draw(1280,0,-1280,720);
 	if(found){
 		clone1.draw(1280,0,-640,720);
@@ -381,6 +384,19 @@ void testApp::draw(){
 			ofPopMatrix();
 		}
 	}
+}
+
+//--------------------------------------------------------------
+void testApp::draw(){
+	drawOutput();
+	if(showSecondScreen){
+		ofPushMatrix();
+		ofTranslate(1280,(768-720*1024./1280.)*.5);
+		ofScale(1024./1280.,1024./1280.);
+		drawOutput();
+		ofPopMatrix();
+	}
+
 	ofSetColor(255);
 	if(showDebug){
 		mask1Fbo.draw(150,0,320,360);
