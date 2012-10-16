@@ -83,6 +83,7 @@ void testApp::setup(){
 	newFrame = false;
 	playerRecorderShutdown = false;
 	videoFrame = 0;
+	showGui = false;
 
 	ofEnableAlphaBlending();
 	//ofSetFrameRate(30);
@@ -381,19 +382,31 @@ void testApp::draw(){
 	ofSetColor(dottedLineColor);
 	dottedLine.draw();
 
-	ofSetColor(255,255,255);
-	ofDrawBitmapString(ofToString(ofGetFrameRate()),ofGetWidth()-100,20);
-	if(faceTracker1.getFound()){
-		ofVec3f degRot(ofRadToDeg(faceTracker1.getOrientation().x),ofRadToDeg(faceTracker1.getOrientation().y),ofRadToDeg(faceTracker1.getOrientation().z));
-		ofDrawBitmapString(ofToString(degRot),ofGetWidth()-300,40);
-	}
+	ofSetColor(255);
+	if(showGui){
+		ofDrawBitmapString(ofToString(ofGetFrameRate()),ofGetWidth()-100,20);
+		if(faceTracker1.getFound()){
+			ofVec3f degRot(ofRadToDeg(faceTracker1.getOrientation().x),ofRadToDeg(faceTracker1.getOrientation().y),ofRadToDeg(faceTracker1.getOrientation().z));
+			ofDrawBitmapString(ofToString(degRot),ofGetWidth()-300,40);
+		}
 
-	gui.draw();
+		gui.draw();
+	}
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-
+	if(key=='g'){
+		showGui = !showGui;
+		if(!showGui){
+			ofHideCursor();
+		}else{
+			ofShowCursor();
+		}
+	}
+	if(key=='f'){
+		ofToggleFullscreen();
+	}
 }
 
 //--------------------------------------------------------------

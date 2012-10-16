@@ -86,4 +86,6 @@ class testApp : public ofBaseApp{
 		u_long now;
 
 		ofVboMesh dottedLine;
+
+		bool showGui;
 };
