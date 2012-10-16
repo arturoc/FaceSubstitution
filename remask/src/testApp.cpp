@@ -88,6 +88,8 @@ void testApp::setup(){
 	showGui = false;
 
 	ofEnableAlphaBlending();
+	ofSetFullscreen(true);
+	ofHideCursor();
 	//ofSetFrameRate(30);
 }
 
@@ -206,11 +208,9 @@ void testApp::update(){
 	bool isNewFrame = newFrame;
 	bool foundFaces = found;
 	newFrame = false;
-	videoMutex.unlock();
 
 	if(isNewFrame){
 		if(foundFaces){
-			videoMutex.lock();
 			half1.update();
 			half2.update();
 			if(half1NeedsUpdate){
@@ -238,10 +238,13 @@ void testApp::update(){
 			videoMutex.unlock();
 
 
+			
 			if(lastTimeFaceFound==0){
 				recorder.setup(ofGetTimestampString()+".mov","",1280,720,30);
 				lastTimeFaceFound = now;
-			}else if(now-lastTimeFaceFound>showWireMS && now-lastTimeFaceFound<noSwapMS){
+				clone1.strength = 0;
+				clone2.strength = 0;
+			}else if(now-lastTimeFaceFound>showWireMS && now-lastTimeFaceFound<noSwapMS+showWireMS){
 				float pct = double(now-lastTimeFaceFound-showWireMS)/double(noSwapMS);
 				interpolatedMesh1 = vboMesh1;
 				for(int i=0;i<interpolatedMesh1.getNumVertices();i++){
@@ -302,6 +305,7 @@ void testApp::update(){
 			}
 			lastTimeFaceDetected = now;
 		}else{
+			videoMutex.unlock();
 			if(lastTimeFaceFound!=0 && now-lastTimeFaceDetected>2000){
 				lastOrientation1.set(359,359);
 				lastOrientation2.set(359,359);
@@ -310,6 +314,8 @@ void testApp::update(){
 			}
 		}
 		videoFrame++;
+	}else{
+		videoMutex.unlock();
 	}
 
 	if(video==&player && !playerRecorderShutdown && player.getIsMovieDone()){
@@ -324,7 +330,6 @@ void testApp::draw(){
 	if(found){
 		clone1.draw(1280,0,-640,720);
 		clone2.draw(640,0,-640,720);
-
 		if(now -lastTimeFaceFound<showWireMS){
 			float pct = double(now-lastTimeFaceFound)/double(showWireMS);
 			pct*=pct;
@@ -345,7 +350,7 @@ void testApp::draw(){
 			pct*=pct;
 			pct*=pct;
 			ofPushMatrix();
-			ofTranslate(ofGetWidth(),0);
+			ofTranslate(1280,0);
 			ofScale(-1,1);
 			ofPushMatrix();
 			ofTranslate(640*pct,0);
@@ -362,7 +367,7 @@ void testApp::draw(){
 			pct *= pct;
 			ofSetColor(meshColor,meshColor->a-meshColor->a*pct);
 			ofPushMatrix();
-			ofTranslate(ofGetWidth(),0);
+			ofTranslate(1280,0);
 			ofScale(-1,1);
 			ofPushMatrix();
 			ofTranslate(640,0);
