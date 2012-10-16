@@ -20,6 +20,8 @@ void testApp::setup(){
 		ofAddListener(((ofGstVideoGrabber*)grabber.getGrabber().get())->getGstVideoUtils()->bufferEvent,this,&testApp::newBuffer);
 	}
 
+
+
 	faceTracker1.setup();
 	faceTracker2.setup();
 
@@ -36,6 +38,8 @@ void testApp::setup(){
 	maskPixels.allocate(1280,720,3);
 
 	vSync.addListener(this,&testApp::vSyncPressed);
+	dottedLineSegments.addListener(this,&testApp::dottedLineSegmentsChanged);
+	dottedLineWidth.addListener(this,&testApp::dottedLineWidthChanged);
 
 	exposure.setup(0,1280,720);
 
@@ -56,6 +60,11 @@ void testApp::setup(){
 	gui.add(rampStrenghtMS.set("rampStrenghtMS",1500,0,5000));
 	gui.add(noSwapMS.set("noSwapMS",2500,0,10000));
 	gui.add(maxStrength.set("maxStrength",20,0,100));
+	gui.add(dottedLineSegments.set("dottedLineSegments",30,0,100));
+	gui.add(dottedLineWidth.set("dottedLineWidth",4,0,15));
+	gui.add(dottedLineColor.set("dottedLineColor",ofColor(255,0,0),ofColor(0,0),ofColor(255)));
+	gui.add(meshColor.set("meshColor",ofColor(255,100),ofColor(0,0),ofColor(255)));
+
 	gui.add(exposure.maxExposure);
 	gui.add(exposure.minExposure);
 	gui.add(exposure.settings.parameters);
@@ -77,6 +86,27 @@ void testApp::setup(){
 
 	ofEnableAlphaBlending();
 	//ofSetFrameRate(30);
+}
+
+void testApp::dottedLineSegmentsChanged(int & segments){
+	ofPath dottedLinePath;
+	dottedLinePath.setStrokeWidth(0);
+	float height = double(ofGetHeight())/double(segments*2);
+	float heightEmpty = double(ofGetHeight()-int(height)*segments)/double(segments-1);
+	for(int i=0;i<segments+1;i++){
+		dottedLinePath.moveTo(ofVec3f(ofGetWidth()*.5-dottedLineWidth*.5,height*i+heightEmpty*i));
+		dottedLinePath.lineTo(ofVec3f(ofGetWidth()*.5+dottedLineWidth*.5,height*i+heightEmpty*i));
+		dottedLinePath.lineTo(ofVec3f(ofGetWidth()*.5+dottedLineWidth*.5,height*(i+1)+heightEmpty*i));
+		dottedLinePath.lineTo(ofVec3f(ofGetWidth()*.5-dottedLineWidth*.5,height*(i+1)+heightEmpty*i));
+		dottedLinePath.close();
+	}
+	dottedLine = dottedLinePath.getTessellation();
+}
+
+
+void testApp::dottedLineWidthChanged(int & width){
+	int segments = dottedLineSegments;
+	dottedLineSegmentsChanged(segments);
 }
 
 void testApp::vSyncPressed(bool & pressed){
@@ -218,7 +248,9 @@ void testApp::update(){
 				for(int i=0;i<interpolatedMesh2.getNumVertices();i++){
 					interpolatedMesh2.getVertices()[i].interpolate(vboMesh1.getVertices()[i],pct);
 				}
-			}if (now - lastTimeFaceFound>noSwapMS){
+			}if (now - lastTimeFaceFound>noSwapMS && now - lastTimeFaceFound - noSwapMS<rampStrenghtMS){
+				interpolatedMesh1.getVertices()=vboMesh2.getVertices();
+				interpolatedMesh2.getVertices()=vboMesh1.getVertices();
 				ofxEasingQuart easing;
 				int s = ofxTween::map(now-lastTimeFaceFound-noSwapMS,0,rampStrenghtMS,0,maxStrength,true,easing,ofxTween::easeIn);
 				clone1.strength = s;
@@ -290,7 +322,7 @@ void testApp::draw(){
 		clone1.draw(1280,0,-640,720);
 		clone2.draw(640,0,-640,720);
 		if (now - lastTimeFaceFound<noSwapMS){
-			ofSetColor(255);
+			ofSetColor(meshColor);
 			float pct = double(now-lastTimeFaceFound)/double(noSwapMS);
 			pct*=pct;
 			pct*=pct;
@@ -310,7 +342,7 @@ void testApp::draw(){
 			float pct = double(now-lastTimeFaceFound-noSwapMS)/double(rampStrenghtMS);
 			pct *= pct;
 			pct *= pct;
-			ofSetColor(255,255-255*pct);
+			ofSetColor(meshColor,meshColor->a-meshColor->a*pct);
 			ofPushMatrix();
 			ofTranslate(ofGetWidth(),0);
 			ofScale(-1,1);
@@ -335,14 +367,19 @@ void testApp::draw(){
 
 	ofSetColor(255,255,255,50);
 	if(drawMesh1){
+		ofSetColor(meshColor);
 		vboMesh1.drawWireframe();
 	}
 	if(drawMesh2){
+		ofSetColor(meshColor);
 		ofPushMatrix();
 		ofTranslate(640,0);
 		vboMesh2.drawWireframe();
 		ofPopMatrix();
 	}
+
+	ofSetColor(dottedLineColor);
+	dottedLine.draw();
 
 	ofSetColor(255,255,255);
 	ofDrawBitmapString(ofToString(ofGetFrameRate()),ofGetWidth()-100,20);
@@ -350,6 +387,7 @@ void testApp::draw(){
 		ofVec3f degRot(ofRadToDeg(faceTracker1.getOrientation().x),ofRadToDeg(faceTracker1.getOrientation().y),ofRadToDeg(faceTracker1.getOrientation().z));
 		ofDrawBitmapString(ofToString(degRot),ofGetWidth()-300,40);
 	}
+
 	gui.draw();
 }
 
