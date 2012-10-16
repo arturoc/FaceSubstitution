@@ -86,6 +86,8 @@ void testApp::setup(){
 	showGui = false;
 
 	ofEnableAlphaBlending();
+	ofSetFullscreen(true);
+	ofHideCursor();
 	//ofSetFrameRate(30);
 }
 
@@ -204,11 +206,9 @@ void testApp::update(){
 	bool isNewFrame = newFrame;
 	bool foundFaces = found;
 	newFrame = false;
-	videoMutex.unlock();
 
 	if(isNewFrame){
 		if(foundFaces){
-			videoMutex.lock();
 			half1.update();
 			half2.update();
 			if(half1NeedsUpdate){
@@ -239,15 +239,19 @@ void testApp::update(){
 			if(lastTimeFaceFound==0){
 				recorder.setup(ofGetTimestampString()+".mov","",1280,720,30);
 				lastTimeFaceFound = now;
+				clone1.strength = 0;
+				clone2.strength = 0;
 			}else if(now-lastTimeFaceFound<noSwapMS){
-				float pct = double(now-lastTimeFaceFound)/double(noSwapMS);
-				interpolatedMesh1 = vboMesh1;
-				for(int i=0;i<interpolatedMesh1.getNumVertices();i++){
-					interpolatedMesh1.getVertices()[i].interpolate(vboMesh2.getVertices()[i],pct);
-				}
-				interpolatedMesh2 = vboMesh2;
-				for(int i=0;i<interpolatedMesh2.getNumVertices();i++){
-					interpolatedMesh2.getVertices()[i].interpolate(vboMesh1.getVertices()[i],pct);
+				if(vboMesh1.getNumVertices()==vboMesh2.getNumVertices()){
+					float pct = double(now-lastTimeFaceFound)/double(noSwapMS);
+					interpolatedMesh1 = vboMesh1;
+					for(int i=0;i<interpolatedMesh1.getNumVertices();i++){
+						interpolatedMesh1.getVertices()[i].interpolate(vboMesh2.getVertices()[i],pct);
+					}
+					interpolatedMesh2 = vboMesh2;
+					for(int i=0;i<interpolatedMesh2.getNumVertices();i++){
+						interpolatedMesh2.getVertices()[i].interpolate(vboMesh1.getVertices()[i],pct);
+					}
 				}
 			}if (now - lastTimeFaceFound>noSwapMS && now - lastTimeFaceFound - noSwapMS<rampStrenghtMS){
 				interpolatedMesh1.getVertices()=vboMesh2.getVertices();
@@ -300,6 +304,7 @@ void testApp::update(){
 			}
 			lastTimeFaceDetected = now;
 		}else{
+			videoMutex.unlock();
 			if(lastTimeFaceFound!=0 && now-lastTimeFaceDetected>2000){
 				lastOrientation1.set(359,359);
 				lastOrientation2.set(359,359);
@@ -308,6 +313,8 @@ void testApp::update(){
 			}
 		}
 		videoFrame++;
+	}else{
+		videoMutex.unlock();
 	}
 
 	if(video==&player && !playerRecorderShutdown && player.getIsMovieDone()){
@@ -328,7 +335,7 @@ void testApp::draw(){
 			pct*=pct;
 			pct*=pct;
 			ofPushMatrix();
-			ofTranslate(ofGetWidth(),0);
+			ofTranslate(1280,0);
 			ofScale(-1,1);
 			ofPushMatrix();
 			ofTranslate(640*pct,0);
@@ -345,7 +352,7 @@ void testApp::draw(){
 			pct *= pct;
 			ofSetColor(meshColor,meshColor->a-meshColor->a*pct);
 			ofPushMatrix();
-			ofTranslate(ofGetWidth(),0);
+			ofTranslate(1280,0);
 			ofScale(-1,1);
 			ofPushMatrix();
 			ofTranslate(640,0);
