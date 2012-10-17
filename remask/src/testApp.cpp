@@ -109,10 +109,10 @@ void testApp::dottedLineSegmentsChanged(int & segments){
 	float height = double(720)/double(segments*2);
 	float heightEmpty = double(720-int(height)*segments)/double(segments-1);
 	for(int i=0;i<segments+1;i++){
-		dottedLinePath.moveTo(ofVec3f(1280*.5-dottedLineWidth*.5,height*i+heightEmpty*i));
-		dottedLinePath.lineTo(ofVec3f(1280*.5+dottedLineWidth*.5,height*i+heightEmpty*i));
-		dottedLinePath.lineTo(ofVec3f(1280*.5+dottedLineWidth*.5,height*(i+1)+heightEmpty*i));
-		dottedLinePath.lineTo(ofVec3f(1280*.5-dottedLineWidth*.5,height*(i+1)+heightEmpty*i));
+		dottedLinePath.moveTo(ofVec3f(ofGetWidth()*.5-dottedLineWidth*.5,height*i+heightEmpty*i));
+		dottedLinePath.lineTo(ofVec3f(ofGetWidth()*.5+dottedLineWidth*.5,height*i+heightEmpty*i));
+		dottedLinePath.lineTo(ofVec3f(ofGetWidth()*.5+dottedLineWidth*.5,height*(i+1)+heightEmpty*i));
+		dottedLinePath.lineTo(ofVec3f(ofGetWidth()*.5-dottedLineWidth*.5,height*(i+1)+heightEmpty*i));
 		dottedLinePath.close();
 	}
 	dottedLine = dottedLinePath.getTessellation();
@@ -226,6 +226,8 @@ void testApp::update(){
 				vboMesh2 = mesh2;
 				vboMesh2.setUsage(GL_DYNAMIC_DRAW);
 				vbosInitialized = true;
+				int segments = dottedLineSegments;
+				dottedLineSegmentsChanged(segments);
 			}
 
 			if(found1){
