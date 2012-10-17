@@ -255,7 +255,7 @@ void testApp::update(){
 
 			if(found){
 				if(lastTimeFaceFound==0){
-					recorder.setup(ofGetTimestampString()+".mov","",1280,720,30);
+					recorder.setup(ofGetTimestampString()+".avi","",1280,720,30);
 					lastTimeFaceFound = now;
 					clone1.strength = 0;
 					clone2.strength = 0;
