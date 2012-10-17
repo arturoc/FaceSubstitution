@@ -92,7 +92,7 @@ void testApp::setup(){
 
 	exposure.settings.set("Focus, Auto",0);
 	exposure.settings.set("Focus (absolute)",60);
-	exposure.settings.set("Zoom, Absolute",2);
+	exposure.settings.set("Zoom, Absolute",1);
 
 	ofEnableAlphaBlending();
 	ofSetFullscreen(true);
