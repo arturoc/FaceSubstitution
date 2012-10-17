@@ -93,6 +93,8 @@ void testApp::setup(){
 	exposure.settings.set("Focus, Auto",0);
 	exposure.settings.set("Focus (absolute)",60);
 	exposure.settings.set("Zoom, Absolute",1);
+	exposure.maxExposure = 450;
+	exposure.minExposure = 300;
 
 	ofEnableAlphaBlending();
 	ofSetFullscreen(true);
@@ -226,8 +228,6 @@ void testApp::update(){
 				vboMesh2 = mesh2;
 				vboMesh2.setUsage(GL_DYNAMIC_DRAW);
 				vbosInitialized = true;
-				int segments = dottedLineSegments;
-				dottedLineSegmentsChanged(segments);
 			}
 
 			if(found1){
@@ -501,7 +501,8 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
-
+	int segments = dottedLineSegments;
+	dottedLineSegmentsChanged(segments);
 }
 
 //--------------------------------------------------------------
