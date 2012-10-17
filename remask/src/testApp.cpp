@@ -24,6 +24,8 @@ void testApp::setup(){
 
 	faceTracker1.setup();
 	faceTracker2.setup();
+	faceTracker1.setIterations(15);
+	faceTracker2.setIterations(15);
 
 
 	half1.allocate(640,720,OF_IMAGE_COLOR);
