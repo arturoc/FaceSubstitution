@@ -213,34 +213,36 @@ void testApp::update(){
 	video->update();
 
 	videoMutex.lock();
-	bool isNewFrame = newFrame;
-	bool foundFaces = found;
-	newFrame = false;
-
-	if(isNewFrame){
-		if(foundFaces){
-			half1.update();
-			half2.update();
-			if(half1NeedsUpdate){
-				half1Src.update();
-				half1NeedsUpdate=false;
-				vboMesh2.getTexCoords() = mesh2.getTexCoords();
-			}
-			if(half2NeedsUpdate){
-				half2Src.update();
-				half2NeedsUpdate=false;
-				vboMesh1.getTexCoords() = mesh1.getTexCoords();
-			}
+	if(newFrame){
+		newFrame = false;
+		if(found || (vbosInitialized && lastTimeFaceFound>0 && (found1 || found2))){
 			if(!vbosInitialized){
 				vboMesh1 = mesh1;
 				vboMesh1.setUsage(GL_DYNAMIC_DRAW);
 				vboMesh2 = mesh2;
 				vboMesh2.setUsage(GL_DYNAMIC_DRAW);
 				vbosInitialized = true;
-			}else{
+			}
+
+			if(found1){
+				half1.update();
+				if(half1NeedsUpdate){
+					half1Src.update();
+					half1NeedsUpdate=false;
+					vboMesh2.getTexCoords() = mesh2.getTexCoords();
+				}
 				vboMesh1.getVertices() = mesh1.getVertices();
-				vboMesh2.getVertices() = mesh2.getVertices();
 				vboMesh1.getIndices() = mesh1.getIndices();
+
+			}
+			if(found2){
+				half2.update();
+				if(half2NeedsUpdate){
+					half2Src.update();
+					half2NeedsUpdate=false;
+					vboMesh1.getTexCoords() = mesh1.getTexCoords();
+				}
+				vboMesh2.getVertices() = mesh2.getVertices();
 				vboMesh2.getIndices() = mesh2.getIndices();
 			}
 			videoMutex.unlock();
@@ -256,7 +258,6 @@ void testApp::update(){
 				interpolatedMesh1 = vboMesh1;
 				interpolatedMesh2 = vboMesh2;
 			}else if(now-lastTimeFaceFound>showWireMS && now-lastTimeFaceFound<noSwapMS+showWireMS){
-
 				float pct = double(now-lastTimeFaceFound-showWireMS)/double(noSwapMS);
 				interpolatedMesh1 = vboMesh1;
 				for(int i=0;i<interpolatedMesh1.getNumVertices();i++){
@@ -277,40 +278,49 @@ void testApp::update(){
 			recorder.addFrame(video->getPixelsRef());
 
 
-			mask1Fbo.begin();
-			ofClear(0, 255);
-			vboMesh1.draw();
-			mask1Fbo.end();
+			if(found1){
+				mask1Fbo.begin();
+				ofClear(0, 255);
+				vboMesh1.draw();
+				mask1Fbo.end();
 
-			mask2Fbo.begin();
-			ofClear(0, 255);
-			vboMesh2.draw();
-			mask2Fbo.end();
+				src1Fbo.begin();
+				ofClear(0, 255);
+				half2Src.getTextureReference().bind();
+				vboMesh1.draw();
+				half2Src.getTextureReference().unbind();
+				src1Fbo.end();
 
-			src1Fbo.begin();
-			ofClear(0, 255);
-			half2Src.getTextureReference().bind();
-			vboMesh1.draw();
-			half2Src.getTextureReference().unbind();
-			src1Fbo.end();
+				clone1.update(src1Fbo.getTextureReference(), half1.getTextureReference(), mesh1, mask1Fbo.getTextureReference());
+			}
 
-			src2Fbo.begin();
-			ofClear(0, 255);
-			half1Src.getTextureReference().bind();
-			vboMesh2.draw();
-			half1Src.getTextureReference().unbind();
-			src2Fbo.end();
+			if(found2){
+				mask2Fbo.begin();
+				ofClear(0, 255);
+				vboMesh2.draw();
+				mask2Fbo.end();
 
-			clone1.update(src1Fbo.getTextureReference(), half1.getTextureReference(), mesh1, mask1Fbo.getTextureReference());
-			clone2.update(src2Fbo.getTextureReference(), half2.getTextureReference(), mesh2, mask2Fbo.getTextureReference());
+				src2Fbo.begin();
+				ofClear(0, 255);
+				half1Src.getTextureReference().bind();
+				vboMesh2.draw();
+				half1Src.getTextureReference().unbind();
+				src2Fbo.end();
+
+				clone2.update(src2Fbo.getTextureReference(), half2.getTextureReference(), mesh2, mask2Fbo.getTextureReference());
+			}
 
 			if(videoFrame%10==0){
-				mask1Fbo.readToPixels(mask1);
-				mask2Fbo.readToPixels(mask2);
-				mask1.pasteInto(maskPixels,0,0);
-				mask2.pasteInto(maskPixels,0,0);
-				half1.getPixelsRef().pasteInto(pixelsCombined,0,0);
-				half2.getPixelsRef().pasteInto(pixelsCombined,0,0);
+				if(found1){
+					mask1Fbo.readToPixels(mask1);
+					mask1.pasteInto(maskPixels,0,0);
+					half1.getPixelsRef().pasteInto(pixelsCombined,0,0);
+				}
+				if(found2){
+					mask2Fbo.readToPixels(mask2);
+					mask2.pasteInto(maskPixels,0,0);
+					half2.getPixelsRef().pasteInto(pixelsCombined,0,0);
+				}
 				if(video==&grabber){
 					exposure.update(pixelsCombined,maskPixels);
 				}
@@ -338,9 +348,9 @@ void testApp::update(){
 
 void testApp::drawOutput(){
 	video->draw(1280,0,-1280,720);
-	if(found){
-		clone1.draw(1280,0,-640,720);
-		clone2.draw(640,0,-640,720);
+	if(found  || (lastTimeFaceFound>0 && (found1 || found2))){
+		if(found1) clone1.draw(1280,0,-640,720);
+		if(found2) clone2.draw(640,0,-640,720);
 		if(now -lastTimeFaceFound<showWireMS){
 			float pct = double(now-lastTimeFaceFound)/double(showWireMS);
 			pct*=pct;
