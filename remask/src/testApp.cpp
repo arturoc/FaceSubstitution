@@ -334,11 +334,13 @@ void testApp::update(){
 			lastTimeFaceDetected = now;
 		}else{
 			videoMutex.unlock();
-			if(lastTimeFaceFound!=0 && now-lastTimeFaceDetected>2000){
+			if(lastTimeFaceFound>0 && now-lastTimeFaceDetected>2000){
 				lastOrientation1.set(359,359);
 				lastOrientation2.set(359,359);
 				lastTimeFaceFound = 0;
 				recorder.close();
+			}else if(lastTimeFaceFound>0){
+				recorder.addFrame(video->getPixelsRef());
 			}
 		}
 		videoFrame++;
