@@ -98,6 +98,11 @@ void ofxGstVideoRecorder::tcpStreamTo(string host, int port){
 	bIsTcpStream = true;
 }
 
+void ofxGstVideoRecorder::setUseAudio(bool useAudio, string device){
+	if(useAudio) audioDevice = device;
+	else audioDevice="";
+}
+
 void ofxGstVideoRecorder::setup(int width, int height, int bpp, string file, Codec _codec, int fps){
 	shutdown();
 	ofGstUtils::startGstMainLoop();
@@ -114,14 +119,14 @@ void ofxGstVideoRecorder::setup(int width, int height, int bpp, string file, Cod
 		sink= "filesink name=video-sink sync=false location=" + file;
 
 	string encoder;
-	string muxer = "avimux ! ";
+	string muxer = "avimux name=mux ! ";
 	string colorspaceconversion = " ffmpegcolorspace ! ";
 
-	if(ofFilePath(file).getExtension()=="avi") muxer = "avimux ! ";
-	else if(ofFilePath(file).getExtension()=="mp4") muxer = "mp4mux ! ";
-	else if(ofFilePath(file).getExtension()=="mov") muxer = "qtmux ! ";
-	else if(ofFilePath(file).getExtension()=="mkv") muxer = "matroskamux ! ";
-	else if(ofFilePath(file).getExtension()=="ogg" || ofFilePath(file).getExtension()=="ogv") muxer = " oggmux ! ";
+	if(ofFilePath(file).getExtension()=="avi") muxer = "avimux name=mux ! ";
+	else if(ofFilePath(file).getExtension()=="mp4") muxer = "mp4mux name=mux ! ";
+	else if(ofFilePath(file).getExtension()=="mov") muxer = "qtmux name=mux ! ";
+	else if(ofFilePath(file).getExtension()=="mkv") muxer = "matroskamux name=mux ! ";
+	else if(ofFilePath(file).getExtension()=="ogg" || ofFilePath(file).getExtension()=="ogv") muxer = " oggmux name=mux ! ";
 
 	stringstream encoderformat;
 	string pay = "";
@@ -131,7 +136,7 @@ void ofxGstVideoRecorder::setup(int width, int height, int bpp, string file, Cod
 	case THEORA:
 		encoderformat << " video/x-raw-yuv, format=(fourcc)I420, width=" << width << ", height=" << height;
 		encoder = "theoraenc quality=63 ! ";
-		muxer = "oggmux ! ";
+		muxer = "oggmux name=mux ! ";
 		pay = "rtptheorapay pt=96 ! ";
 	break;
 	case H264:
@@ -191,12 +196,12 @@ void ofxGstVideoRecorder::setup(int width, int height, int bpp, string file, Cod
 	case FLV:
 		encoderformat << " video/x-raw-yuv, format=(fourcc)I420, width=" << width << ", height=" << height;
 		encoder = "ffenc_flv ! ";
-		muxer = "flvmux ! ";
+		muxer = "flvmux name=mux ! ";
 	break;
 	case FLV_H264:
 		encoderformat << " video/x-raw-yuv, format=(fourcc)I420, width=" << width << ", height=" << height;
 		encoder = "x264enc ! ";
-		muxer = "flvmux ! ";
+		muxer = "flvmux name=mux ! ";
 		pay = "rtph264pay pt=96 ! ";
 	break;
 	case YUV:
@@ -262,10 +267,15 @@ void ofxGstVideoRecorder::setup(int width, int height, int bpp, string file, Cod
 	}
 	string encoderformatstr = (encoderformat.str()!="" ? encoderformat.str() : input_format) + ", framerate=" +ofToString(fps) + "/1 ! ";
 
+	string audio = "";
+	if(audioDevice!=""){
+		audio=" mux. pulsesrc device=" + audioDevice + " ! audio/x-raw-int ! queue ! audioconvert ! lamemp3enc ! mux. ";
+	}
+
 	string pipeline_string = src + " ! " +
 									"queue ! " + colorspaceconversion + videorateformat +
 									videorate + encoderformatstr +
-									encoder + muxer +
+									encoder + audio + muxer +
 									sink;
 
 	ofLogVerbose() << "gstreamer pipeline: " << pipeline_string;

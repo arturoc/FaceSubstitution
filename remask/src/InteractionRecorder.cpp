@@ -27,6 +27,7 @@ void InteractionRecorder::setup(string path,string currentFace, int w, int h, in
 	cout << "start recording at " << path << " with current face " << currentFace;
 	recorder = new ofxGstVideoRecorder;
 	recordedVideoPath = path;
+	recorder->setUseAudio(true,"alsa_input.usb-046d_HD_Webcam_C525_4AB5B2F0-00-C525.analog-mono");
 	recorder->setup(w,h,24,"recordings_interaction/"+recordedVideoPath,ofxGstVideoRecorder::H264,fps);
 	framesRecorded = 0;
 

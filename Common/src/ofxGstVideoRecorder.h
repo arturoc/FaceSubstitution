@@ -39,6 +39,7 @@ public:
 	void tcpStreamTo(string host, int port);
 	void pipeTo(string command);
 
+	void setUseAudio(bool useAudio,string device="");
 	void setup(int width, int height, int bpp, string file, Codec codec, int fps=30);
 
 	void shutdown();
@@ -57,6 +58,7 @@ protected:
 	Codec codec;
 	ofxGstBufferPool * bufferPool;
 	bool closed;
+	string audioDevice;
 
 };
 
