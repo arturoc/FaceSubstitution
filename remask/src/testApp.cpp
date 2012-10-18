@@ -279,7 +279,7 @@ void testApp::update(){
 					int s = ofxTween::map(now-lastTimeFaceFound-noSwapMS-showWireMS,0,rampStrenghtMS,0,maxStrength,true,easing,ofxTween::easeIn);
 					clone1.strength = s;
 					clone2.strength = s;
-				}else{
+				}else if (now - lastTimeFaceFound - noSwapMS - showWireMS>rampStrenghtMS){
 					clone1.strength = maxStrength;
 					clone2.strength = maxStrength;
 				}
