@@ -140,7 +140,7 @@ void ofxGstVideoRecorder::setup(int width, int height, int bpp, string file, Cod
 		encoder = "vtenc_h264 ! ";
 #else
 		encoderformat << " video/x-raw-yuv, format=(fourcc)I420, width=" << width << ", height=" << height;
-		encoder = "x264enc bitrate=1024 ! ";
+		encoder = "x264enc bitrate=2048 ! ";
 #endif
 		pay = "rtph264pay pt=96 ! ";
 	break;
