@@ -269,7 +269,7 @@ void ofxGstVideoRecorder::setup(int width, int height, int bpp, string file, Cod
 
 	string audio = "";
 	if(audioDevice!=""){
-		audio=" mux. pulsesrc device=" + audioDevice + " ! audio/x-raw-int ! queue ! audioconvert ! vorbisenc ! mux. ";
+		audio=" mux. pulsesrc device=" + audioDevice + " ! audio/x-raw-int ! queue ! audioconvert ! voaacenc ! mux. ";
 	}
 
 	string pipeline_string = src + " ! " +
