@@ -39,6 +39,7 @@ void InteractionRecorder::setup(string path,string currentFace, int w, int h, in
 }
 
 void InteractionRecorder::addFrame(ofPixels & frame){
+	if(!recorder) return;
 	recorder->newFrame(frame);
 	framesRecorded++;
 }

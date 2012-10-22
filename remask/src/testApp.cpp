@@ -257,7 +257,7 @@ void testApp::update(){
 
 			if(found){
 				if(lastTimeFaceFound==0){
-					if(record)recorder.setup(ofGetTimestampString()+".avi","",1280,720,30);
+					if(record) recorder.setup(ofGetTimestampString()+".avi","",1280,720,30);
 					lastTimeFaceFound = now;
 					clone1.strength = 0;
 					clone2.strength = 0;
@@ -349,9 +349,9 @@ void testApp::update(){
 				lastTimeFaceFound = 0;
 				clone1.strength = 0;
 				clone2.strength = 0;
-				if(record)recorder.close();
+				if(record) recorder.close();
 			}else if(lastTimeFaceFound>0){
-				if(record)recorder.addFrame(video->getPixelsRef());
+				if(record) recorder.addFrame(video->getPixelsRef());
 			}
 		}
 		videoFrame++;
@@ -361,7 +361,7 @@ void testApp::update(){
 
 	if(video==&player && !playerRecorderShutdown && player.getIsMovieDone()){
 		playerRecorderShutdown = true;
-		recorder.close();
+		if(record) recorder.close();
 	}
 }
 
