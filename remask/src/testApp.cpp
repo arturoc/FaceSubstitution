@@ -8,7 +8,8 @@ using namespace ofxCv;
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	bool usePlayer = true;
+	bool usePlayer = false;
+	record = true;
 	if(usePlayer){
 		player.loadMovie("testVideo.mov");
 		player.play();
@@ -100,7 +101,6 @@ void testApp::setup(){
 	ofSetFullscreen(true);
 	ofHideCursor();
 	ofBackground(0);
-	record = false;
 	//ofSetFrameRate(30);
 	//ofSetWindowPosition(0,-10);
 	//ofSetWindowShape(1280+1024,768);
@@ -177,41 +177,49 @@ void testApp::newBuffer(ofPixels & buffer){
 		meshesInitialized = true;
 	}
 
-	if(meshesInitialized && found1){
-		mouthOpenDetector1.update();
-		ofVec2f currentOrientation1(fabs(faceTracker1.getOrientation().x),fabs(faceTracker1.getOrientation().y));
-		if((!updateOnLessOrientation && ofRadToDeg(currentOrientation1.y)<thresholdFaceRot)||
-				(currentOrientation1.x<lastOrientation1.x && currentOrientation1.y<lastOrientation1.y) ||
-				(lastOrientationMouthOpenness1 > mouthOpenDetector1.getOpennes())){
-		//if(now-lastTimeFaceFound > showWireMS && now-lastTimeFaceFound<noSwapMS+showWireMS){
-			half1Src.getPixelsRef() = half1.getPixelsRef();
-			mesh2.getTexCoords() = faceTracker1.getImagePoints();
-			lastOrientation1 = currentOrientation1;
-			lastOrientationMouthOpenness1 = mouthOpenDetector1.getOpennes();
-			half1NeedsUpdate = true;
+	#pragma omp parallel sections num_threads(2)
+	{
+		#pragma omp section
+		{
+			if(meshesInitialized && found1){
+				mouthOpenDetector1.update();
+				ofVec2f currentOrientation1(fabs(faceTracker1.getOrientation().x),fabs(faceTracker1.getOrientation().y));
+				if((!updateOnLessOrientation && ofRadToDeg(currentOrientation1.y)<thresholdFaceRot)||
+						(currentOrientation1.x<lastOrientation1.x && currentOrientation1.y<lastOrientation1.y) ||
+						(lastOrientationMouthOpenness1 > mouthOpenDetector1.getOpennes())){
+				//if(now-lastTimeFaceFound > showWireMS && now-lastTimeFaceFound<noSwapMS+showWireMS){
+					half1Src.getPixelsRef() = half1.getPixelsRef();
+					mesh2.getTexCoords() = faceTracker1.getImagePoints();
+					lastOrientation1 = currentOrientation1;
+					lastOrientationMouthOpenness1 = mouthOpenDetector1.getOpennes();
+					half1NeedsUpdate = true;
+				}
+				mesh1.getVertices() = faceTracker1.getImageMesh().getVertices();
+				mesh1.getIndices() = faceTracker1.getImageMesh().getIndices();
+			}
 		}
-		mesh1.getVertices() = faceTracker1.getImageMesh().getVertices();
-		mesh1.getIndices() = faceTracker1.getImageMesh().getIndices();
-	}
 
-	if(meshesInitialized && found2){
-		mouthOpenDetector2.update();
-		ofVec2f currentOrientation2(fabs(faceTracker2.getOrientation().x),fabs(faceTracker2.getOrientation().y));
-		if((!updateOnLessOrientation && ofRadToDeg(currentOrientation2.y)<thresholdFaceRot) ||
-				(currentOrientation2.x<lastOrientation2.x && currentOrientation2.y<lastOrientation2.y) ||
-				(lastOrientationMouthOpenness2 > mouthOpenDetector2.getOpennes())){
+		#pragma omp section
+		{
+			if(meshesInitialized && found2){
+				mouthOpenDetector2.update();
+				ofVec2f currentOrientation2(fabs(faceTracker2.getOrientation().x),fabs(faceTracker2.getOrientation().y));
+				if((!updateOnLessOrientation && ofRadToDeg(currentOrientation2.y)<thresholdFaceRot) ||
+						(currentOrientation2.x<lastOrientation2.x && currentOrientation2.y<lastOrientation2.y) ||
+						(lastOrientationMouthOpenness2 > mouthOpenDetector2.getOpennes())){
 
-		//if(now-lastTimeFaceFound > showWireMS && now-lastTimeFaceFound<noSwapMS+showWireMS){
-			half2Src.getPixelsRef() = half2.getPixelsRef();
-			mesh1.getTexCoords() = faceTracker2.getImagePoints();
-			lastOrientation2 = currentOrientation2;
-			lastOrientationMouthOpenness2 = mouthOpenDetector2.getOpennes();
-			half2NeedsUpdate = true;
+				//if(now-lastTimeFaceFound > showWireMS && now-lastTimeFaceFound<noSwapMS+showWireMS){
+					half2Src.getPixelsRef() = half2.getPixelsRef();
+					mesh1.getTexCoords() = faceTracker2.getImagePoints();
+					lastOrientation2 = currentOrientation2;
+					lastOrientationMouthOpenness2 = mouthOpenDetector2.getOpennes();
+					half2NeedsUpdate = true;
+				}
+				mesh2.getVertices() = faceTracker2.getImageMesh().getVertices();
+				mesh2.getIndices() = faceTracker2.getImageMesh().getIndices();
+			}
 		}
-		mesh2.getVertices() = faceTracker2.getImageMesh().getVertices();
-		mesh2.getIndices() = faceTracker2.getImageMesh().getIndices();
 	}
-
 
 	newFrame = true;
 	videoMutex.unlock();
