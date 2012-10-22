@@ -179,11 +179,11 @@ void testApp::newBuffer(ofPixels & buffer){
 
 	if(meshesInitialized && found1){
 		mouthOpenDetector1.update();
-		//ofVec2f currentOrientation1(fabs(faceTracker1.getOrientation().x),fabs(faceTracker1.getOrientation().y));
+		ofVec2f currentOrientation1(fabs(faceTracker1.getOrientation().x),fabs(faceTracker1.getOrientation().y));
 		if((!updateOnLessOrientation && ofRadToDeg(currentOrientation1.y)<thresholdFaceRot)||
 				(currentOrientation1.x<lastOrientation1.x && currentOrientation1.y<lastOrientation1.y) ||
 				(lastOrientationMouthOpenness1 > mouthOpenDetector1.getOpennes())){
-		if(now-lastTimeFaceFound > showWireMS && now-lastTimeFaceFound<noSwapMS+showWireMS){
+		//if(now-lastTimeFaceFound > showWireMS && now-lastTimeFaceFound<noSwapMS+showWireMS){
 			half1Src.getPixelsRef() = half1.getPixelsRef();
 			mesh2.getTexCoords() = faceTracker1.getImagePoints();
 			lastOrientation1 = currentOrientation1;
@@ -196,12 +196,12 @@ void testApp::newBuffer(ofPixels & buffer){
 
 	if(meshesInitialized && found2){
 		mouthOpenDetector2.update();
-		//ofVec2f currentOrientation2(fabs(faceTracker2.getOrientation().x),fabs(faceTracker2.getOrientation().y));
+		ofVec2f currentOrientation2(fabs(faceTracker2.getOrientation().x),fabs(faceTracker2.getOrientation().y));
 		if((!updateOnLessOrientation && ofRadToDeg(currentOrientation2.y)<thresholdFaceRot) ||
 				(currentOrientation2.x<lastOrientation2.x && currentOrientation2.y<lastOrientation2.y) ||
 				(lastOrientationMouthOpenness2 > mouthOpenDetector2.getOpennes())){
 
-		if(now-lastTimeFaceFound > showWireMS && now-lastTimeFaceFound<noSwapMS+showWireMS){
+		//if(now-lastTimeFaceFound > showWireMS && now-lastTimeFaceFound<noSwapMS+showWireMS){
 			half2Src.getPixelsRef() = half2.getPixelsRef();
 			mesh1.getTexCoords() = faceTracker2.getImagePoints();
 			lastOrientation2 = currentOrientation2;
