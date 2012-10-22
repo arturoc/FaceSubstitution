@@ -92,4 +92,5 @@ class testApp : public ofBaseApp{
 		ofVboMesh dottedLine;
 
 		bool showGui;
+		bool record;
 };

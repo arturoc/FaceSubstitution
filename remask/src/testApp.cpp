@@ -8,9 +8,9 @@ using namespace ofxCv;
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	bool usePlayer = false;
+	bool usePlayer = true;
 	if(usePlayer){
-		player.loadMovie("recordings_interaction/2012-10-15-12-54-49-971.mov");
+		player.loadMovie("testVideo.mov");
 		player.play();
 		video = &player;
 		ofAddListener(((ofGstVideoPlayer*)player.getPlayer().get())->getGstVideoUtils()->bufferEvent,this,&testApp::newBuffer);
@@ -24,8 +24,8 @@ void testApp::setup(){
 
 	faceTracker1.setup();
 	faceTracker2.setup();
-	faceTracker1.setIterations(15);
-	faceTracker2.setIterations(15);
+	faceTracker1.tracker.setIterations(25);
+	faceTracker2.tracker.setIterations(25);
 
 
 	half1.allocate(640,720,OF_IMAGE_COLOR);
@@ -100,6 +100,7 @@ void testApp::setup(){
 	ofSetFullscreen(true);
 	ofHideCursor();
 	ofBackground(0);
+	record = false;
 	//ofSetFrameRate(30);
 	//ofSetWindowPosition(0,-10);
 	//ofSetWindowShape(1280+1024,768);
@@ -178,10 +179,11 @@ void testApp::newBuffer(ofPixels & buffer){
 
 	if(meshesInitialized && found1){
 		mouthOpenDetector1.update();
-		ofVec2f currentOrientation1(fabs(faceTracker1.getOrientation().x),fabs(faceTracker1.getOrientation().y));
+		//ofVec2f currentOrientation1(fabs(faceTracker1.getOrientation().x),fabs(faceTracker1.getOrientation().y));
 		if((!updateOnLessOrientation && ofRadToDeg(currentOrientation1.y)<thresholdFaceRot)||
 				(currentOrientation1.x<lastOrientation1.x && currentOrientation1.y<lastOrientation1.y) ||
 				(lastOrientationMouthOpenness1 > mouthOpenDetector1.getOpennes())){
+		if(now-lastTimeFaceFound > showWireMS && now-lastTimeFaceFound<noSwapMS+showWireMS){
 			half1Src.getPixelsRef() = half1.getPixelsRef();
 			mesh2.getTexCoords() = faceTracker1.getImagePoints();
 			lastOrientation1 = currentOrientation1;
@@ -194,10 +196,12 @@ void testApp::newBuffer(ofPixels & buffer){
 
 	if(meshesInitialized && found2){
 		mouthOpenDetector2.update();
-		ofVec2f currentOrientation2(fabs(faceTracker2.getOrientation().x),fabs(faceTracker2.getOrientation().y));
+		//ofVec2f currentOrientation2(fabs(faceTracker2.getOrientation().x),fabs(faceTracker2.getOrientation().y));
 		if((!updateOnLessOrientation && ofRadToDeg(currentOrientation2.y)<thresholdFaceRot) ||
 				(currentOrientation2.x<lastOrientation2.x && currentOrientation2.y<lastOrientation2.y) ||
 				(lastOrientationMouthOpenness2 > mouthOpenDetector2.getOpennes())){
+
+		if(now-lastTimeFaceFound > showWireMS && now-lastTimeFaceFound<noSwapMS+showWireMS){
 			half2Src.getPixelsRef() = half2.getPixelsRef();
 			mesh1.getTexCoords() = faceTracker2.getImagePoints();
 			lastOrientation2 = currentOrientation2;
@@ -221,7 +225,7 @@ void testApp::update(){
 	videoMutex.lock();
 	if(newFrame){
 		newFrame = false;
-		if(found || (vbosInitialized && lastTimeFaceFound>0 && (found1 || found2))){
+		if(found || (vbosInitialized && now - lastTimeFaceFound > noSwapMS + showWireMS + rampStrenghtMS && (found1 || found2))){
 			if(found && !vbosInitialized){
 				vboMesh1 = mesh1;
 				vboMesh1.setUsage(GL_DYNAMIC_DRAW);
@@ -255,14 +259,16 @@ void testApp::update(){
 
 			if(found){
 				if(lastTimeFaceFound==0){
-					recorder.setup(ofGetTimestampString()+".avi","",1280,720,30);
+					if(record)recorder.setup(ofGetTimestampString()+".avi","",1280,720,30);
 					lastTimeFaceFound = now;
 					clone1.strength = 0;
 					clone2.strength = 0;
-				}else if(now-lastTimeFaceFound<showWireMS){
+				}else if(now-lastTimeFaceFound < showWireMS){
 					interpolatedMesh1 = vboMesh1;
 					interpolatedMesh2 = vboMesh2;
-				}else if(now-lastTimeFaceFound>showWireMS && now-lastTimeFaceFound<noSwapMS+showWireMS){
+					clone1.strength = 0;
+					clone2.strength = 0;
+				}else if(now-lastTimeFaceFound > showWireMS && now-lastTimeFaceFound<noSwapMS+showWireMS){
 					float pct = double(now-lastTimeFaceFound-showWireMS)/double(noSwapMS);
 					interpolatedMesh1 = vboMesh1;
 					for(int i=0;i<interpolatedMesh1.getNumVertices();i++){
@@ -272,19 +278,21 @@ void testApp::update(){
 					for(int i=0;i<interpolatedMesh2.getNumVertices();i++){
 						interpolatedMesh2.getVertices()[i].interpolate(vboMesh1.getVertices()[i],pct);
 					}
-				}else if (now - lastTimeFaceFound - noSwapMS - showWireMS<rampStrenghtMS){
+					clone1.strength = 0;
+					clone2.strength = 0;
+				}else if(now - lastTimeFaceFound < rampStrenghtMS + noSwapMS + showWireMS){
 					interpolatedMesh1.getVertices()=vboMesh2.getVertices();
 					interpolatedMesh2.getVertices()=vboMesh1.getVertices();
 					ofxEasingQuart easing;
 					int s = ofxTween::map(now-lastTimeFaceFound-noSwapMS-showWireMS,0,rampStrenghtMS,0,maxStrength,true,easing,ofxTween::easeIn);
 					clone1.strength = s;
 					clone2.strength = s;
-				}else if (now - lastTimeFaceFound - noSwapMS - showWireMS>rampStrenghtMS){
-					clone1.strength = maxStrength;
-					clone2.strength = maxStrength;
+				}else if(now - lastTimeFaceFound > rampStrenghtMS + noSwapMS + showWireMS){
+					clone1.strength = (int)maxStrength;
+					clone2.strength = (int)maxStrength;
 				}
 			}
-			recorder.addFrame(video->getPixelsRef());
+			if(record)recorder.addFrame(video->getPixelsRef());
 
 
 			if(found1){
@@ -337,13 +345,15 @@ void testApp::update(){
 			lastTimeFaceDetected = now;
 		}else{
 			videoMutex.unlock();
-			if(lastTimeFaceFound>0 && now-lastTimeFaceDetected>2000){
+			if(lastTimeFaceFound>0 && (now-lastTimeFaceDetected>2000 || now - lastTimeFaceFound < noSwapMS + showWireMS + rampStrenghtMS) ){
 				lastOrientation1.set(359,359);
 				lastOrientation2.set(359,359);
 				lastTimeFaceFound = 0;
-				recorder.close();
+				clone1.strength = 0;
+				clone2.strength = 0;
+				if(record)recorder.close();
 			}else if(lastTimeFaceFound>0){
-				recorder.addFrame(video->getPixelsRef());
+				if(record)recorder.addFrame(video->getPixelsRef());
 			}
 		}
 		videoFrame++;
