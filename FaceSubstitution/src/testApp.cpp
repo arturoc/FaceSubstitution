@@ -8,7 +8,7 @@ void testApp::setup() {
 #endif
 	ofSetVerticalSync(true);
 	cloneReady = false;
-	cam.initGrabber(640, 480);
+	cam.initGrabber(1280, 720);
 	clone.setup(cam.getWidth(), cam.getHeight());
 	ofFbo::Settings settings;
 	settings.width = cam.getWidth();
@@ -27,6 +27,8 @@ void testApp::setup() {
 	if(faces.size()!=0){
 		loadFace(faces.getPath(currentFace));
 	}
+
+	clone.strength = 16;
 }
 
 void testApp::update() {
@@ -52,8 +54,7 @@ void testApp::update() {
 			src.unbind();
 			srcFbo.end();
 			
-			clone.setStrength(16);
-			clone.update(srcFbo.getTextureReference(), cam.getTextureReference(), maskFbo.getTextureReference());
+			clone.update(srcFbo.getTextureReference(), cam.getTextureReference(), camMesh, maskFbo.getTextureReference());
 		}
 	}
 }
@@ -62,9 +63,9 @@ void testApp::draw() {
 	ofSetColor(255);
 	
 	if(src.getWidth() > 0 && cloneReady) {
-		clone.draw(0, 0);
+		clone.draw(0, 0, ofGetWidth(), ofGetHeight());
 	} else {
-		cam.draw(0, 0);
+		cam.draw(0, 0, ofGetWidth(),ofGetHeight());
 	}
 	
 	if(!camTracker.getFound()) {
