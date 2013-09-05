@@ -5,6 +5,7 @@ if [ -f .lock ]; then
     return 0
 fi
 touch .lock
+echo $(date) >> run.log
 changed=0
 git pull origin installation_simple | grep -q -v 'Already up-to-date.' && changed=1 
 if [ $changed -eq 1 ]; then
@@ -12,10 +13,7 @@ if [ $changed -eq 1 ]; then
     ret=$?
     if [ $ret -eq 0 ]; then
         killall FaceSubstitution &
-        sleep 3
-        bin/FaceSubstitution &
     else
-        killall FaceSubstitution
         notify-send "Faces" "error while compiling"
     fi
 fi
