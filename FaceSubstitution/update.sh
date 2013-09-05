@@ -9,7 +9,7 @@ if [ $changed -eq 1 ]; then
     if [ $ret -eq 0 ]; then
         killall FaceSubstitution
         sleep 1
-        make run
+        bin/FaceSubstitution &
     else
         killall FaceSubstitution
         notify-send "Faces" "error while compiling"
