@@ -7,8 +7,8 @@ if [ $changed -eq 1 ]; then
     make > make.log
     ret=$?
     if [ $ret -eq 0 ]; then
-        killall FaceSubstitution
-        sleep 1
+        killall FaceSubstitution &
+        sleep 3
         bin/FaceSubstitution &
     else
         killall FaceSubstitution
