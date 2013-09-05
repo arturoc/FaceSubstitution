@@ -1,3 +1,5 @@
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $DIR
 changed=0
 git pull origin installation_simple | grep -q -v 'Already up-to-date.' && changed=1 
 if [ $changed -eq 1 ]; then
