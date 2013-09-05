@@ -12,7 +12,7 @@ if [ $changed -eq 1 ]; then
     make > make.log
     ret=$?
     if [ $ret -eq 0 ]; then
-    	killall FaceSubstitution
+        killall FaceSubstitution -9
     else
         notify-send "Faces" "error while compiling"
     fi
