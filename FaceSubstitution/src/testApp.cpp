@@ -22,6 +22,8 @@ void testApp::setup() {
 	clone.strength = 7;
 	lastFound = 0;
 	faceChanged = false;
+
+	ofHideCursor();
 }
 
 void testApp::update() {
