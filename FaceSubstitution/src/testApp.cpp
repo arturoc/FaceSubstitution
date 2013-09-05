@@ -23,6 +23,8 @@ void testApp::setup() {
 	lastFound = 0;
 	faceChanged = false;
 
+
+
 	ofHideCursor();
 }
 
