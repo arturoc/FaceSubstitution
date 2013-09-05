@@ -76,7 +76,7 @@
 # add a runtime path to search for those shared libraries, since they aren't 
 # incorporated directly into the final executable application binary.
 ################################################################################
-PROJECT_LDFLAGS=-lv4l2
+PROJECT_LDFLAGS=-lv4l2 -fopenmp
 
 ################################################################################
 # PROJECT DEFINES
@@ -104,7 +104,7 @@ PROJECT_LDFLAGS=-lv4l2
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-# PROJECT_CFLAGS = 
+PROJECT_CFLAGS = -fopenmp
 
 ################################################################################
 # PROJECT OPTIMIZATION CFLAGS
