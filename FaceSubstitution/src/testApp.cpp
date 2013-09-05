@@ -16,23 +16,17 @@ void testApp::setup() {
 	maskFbo.allocate(settings);
 	srcFbo.allocate(settings);
 	camTracker.setup();
-	srcTracker.setup();
-	srcTracker.setIterations(25);
-	srcTracker.setAttempts(4);
 
-	faces.allowExt("jpg");
-	faces.allowExt("png");
-	faces.listDir("faces");
-	currentFace = 0;
-	if(faces.size()!=0){
-		loadFace(faces.getPath(currentFace));
-	}
+	faceLoader.setup("faces",FaceLoader::Random);
 
 	clone.strength = 16;
+	lastFound = 0;
+	faceChanged = false;
 }
 
 void testApp::update() {
 	cam.update();
+	faceLoader.update();
 	if(cam.isFrameNew()) {
 		camTracker.update(toCv(cam));
 		
@@ -40,7 +34,7 @@ void testApp::update() {
 		if(cloneReady) {
 			camMesh = camTracker.getImageMesh();
 			camMesh.clearTexCoords();
-			camMesh.addTexCoords(srcPoints);
+			camMesh.addTexCoords(faceLoader.getCurrentImagePoints());
 			
 			maskFbo.begin();
 			ofClear(0, 255);
@@ -49,12 +43,23 @@ void testApp::update() {
 			
 			srcFbo.begin();
 			ofClear(0, 255);
-			src.bind();
+			faceLoader.getCurrentImg().bind();
 			camMesh.draw();
-			src.unbind();
+			faceLoader.getCurrentImg().unbind();
 			srcFbo.end();
 			
 			clone.update(srcFbo.getTextureReference(), cam.getTextureReference(), camMesh, maskFbo.getTextureReference());
+			lastFound = 0;
+			faceChanged = false;
+		}else{
+			if(!faceChanged){
+				lastFound++;
+				if(lastFound>5){
+					faceLoader.loadNext();
+					faceChanged = true;
+					lastFound = 0;
+				}
+			}
 		}
 	}
 }
@@ -62,37 +67,21 @@ void testApp::update() {
 void testApp::draw() {
 	ofSetColor(255);
 	
-	if(src.getWidth() > 0 && cloneReady) {
+	if(faceLoader.getCurrentImg().getWidth() > 0 && cloneReady) {
 		clone.draw(0, 0, ofGetWidth(), ofGetHeight());
 	} else {
 		cam.draw(0, 0, ofGetWidth(),ofGetHeight());
 	}
 }
 
-void testApp::loadFace(string face){
-	src.loadImage(face);
-	if(src.getWidth() > 0) {
-		srcTracker.update(toCv(src));
-		if(ofFile(face+".ply").exists()){
-			srcMesh.load(face+".ply");
-			srcPoints = srcMesh.getTexCoords();
-		}else{
-			srcPoints = srcTracker.getImagePoints();
-		}
-	}
-}
 
 void testApp::keyPressed(int key){
 	switch(key){
 	case OF_KEY_UP:
-		currentFace++;
+		faceLoader.loadNext();
 		break;
 	case OF_KEY_DOWN:
-		currentFace--;
+		faceLoader.loadPrevious();
 		break;
-	}
-	currentFace = ofClamp(currentFace,0,faces.size());
-	if(faces.size()!=0){
-		loadFace(faces.getPath(currentFace));
 	}
 }

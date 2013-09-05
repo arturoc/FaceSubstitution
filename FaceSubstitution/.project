@@ -24,4 +24,16 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>ofxCv</name>
+			<type>2</type>
+			<locationURI>$%7BPARENT-3-PROJECT_LOC%7D/addons/ofxCv</locationURI>
+		</link>
+		<link>
+			<name>ofxFaceTracker</name>
+			<type>2</type>
+			<locationURI>$%7BPARENT-3-PROJECT_LOC%7D/addons/ofxFaceTracker</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>
