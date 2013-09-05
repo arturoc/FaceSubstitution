@@ -12,8 +12,6 @@ if [ $changed -eq 1 ]; then
     ret=$?
     if [ $ret -eq 0 ]; then
         killall FaceSubstitution
-        sleep 1
-        bin/FaceSubstitution &
     else
         killall FaceSubstitution
         notify-send "Faces" "error while compiling"
