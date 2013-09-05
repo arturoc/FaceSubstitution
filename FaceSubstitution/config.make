@@ -127,7 +127,7 @@ PROJECT_LDFLAGS=-lv4l2
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-# PROJECT_OPTIMIZATION_CFLAGS_RELEASE =
+PROJECT_OPTIMIZATION_CFLAGS_RELEASE = -march=native -mtune=native -g3
 # PROJECT_OPTIMIZATION_CFLAGS_DEBUG = 
 
 ################################################################################
