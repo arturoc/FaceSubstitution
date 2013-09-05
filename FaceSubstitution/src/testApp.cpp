@@ -38,7 +38,7 @@ void testApp::update() {
 		
 		cloneReady = camTracker.getFound();
 		if(cloneReady) {
-			ofMesh camMesh = camTracker.getImageMesh();
+			camMesh = camTracker.getImageMesh();
 			camMesh.clearTexCoords();
 			camMesh.addTexCoords(srcPoints);
 			
@@ -67,27 +67,19 @@ void testApp::draw() {
 	} else {
 		cam.draw(0, 0, ofGetWidth(),ofGetHeight());
 	}
-	
-	if(!camTracker.getFound()) {
-		drawHighlightString("camera face not found", 10, 10);
-	}
-	if(src.getWidth() == 0) {
-		drawHighlightString("drag an image here", 10, 30);
-	} else if(!srcTracker.getFound()) {
-		drawHighlightString("image face not found", 10, 30);
-	}
 }
 
 void testApp::loadFace(string face){
 	src.loadImage(face);
 	if(src.getWidth() > 0) {
 		srcTracker.update(toCv(src));
-		srcPoints = srcTracker.getImagePoints();
+		if(ofFile(face+".ply").exists()){
+			srcMesh.load(face+".ply");
+			srcPoints = srcMesh.getTexCoords();
+		}else{
+			srcPoints = srcTracker.getImagePoints();
+		}
 	}
-}
-
-void testApp::dragEvent(ofDragInfo dragInfo) {
-	loadFace(dragInfo.files[0]);
 }
 
 void testApp::keyPressed(int key){

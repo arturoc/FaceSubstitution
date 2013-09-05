@@ -11,7 +11,6 @@ public:
 	void setup();
 	void update();
 	void draw();
-	void dragEvent(ofDragInfo dragInfo);
 	void loadFace(string face);
 	
 	void keyPressed(int key);
@@ -29,4 +28,7 @@ public:
 
 	ofDirectory faces;
 	int currentFace;
+
+	ofVboMesh camMesh;
+	ofMesh srcMesh;
 };
