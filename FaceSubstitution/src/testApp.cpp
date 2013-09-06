@@ -63,6 +63,7 @@ void testApp::update() {
 
 void testApp::draw() {
 	ofSetColor(255);
+	ofPushMatrix();
 	ofTranslate(ofGetWidth(),0);
 	
 	if(faceLoader.getCurrentImg().getWidth() > 0 && cloneReady) {
@@ -72,6 +73,8 @@ void testApp::draw() {
 	} else {
 		cam.draw(0, 0, -ofGetWidth(),ofGetHeight());
 	}
+	ofPopMatrix();
+	ofDrawBitmapString(ofToString((int)ofGetFrameRate()),20,20);
 }
 
 
