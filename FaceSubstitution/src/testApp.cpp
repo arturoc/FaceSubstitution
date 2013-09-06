@@ -18,7 +18,7 @@ void testApp::setup() {
 
 	faceLoader.setup("faces",FaceLoader::Random);
 
-	clone.strength = 7;
+	clone.strength = 3;
 	lastFound = 0;
 	faceChanged = false;
 
