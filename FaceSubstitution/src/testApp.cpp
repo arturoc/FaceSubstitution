@@ -18,7 +18,7 @@ void testApp::setup() {
 
 	faceLoader.setup("faces",FaceLoader::Random);
 
-	clone.strength = 3;
+	clone.strength = 5;
 	lastFound = 0;
 	faceChanged = false;
 
@@ -36,8 +36,7 @@ void testApp::update() {
 		cloneReady = camTracker.getFound();
 		if(cloneReady) {
 			camMesh = camTracker.getImageMesh();
-			camMesh.clearTexCoords();
-			camMesh.addTexCoords(faceLoader.getCurrentImagePoints());
+			camMesh.getTexCoords() = faceLoader.getCurrentImagePoints();
 			
 			srcFbo.begin();
 			ofClear(0, 0);
@@ -45,8 +44,8 @@ void testApp::update() {
 			camMesh.draw();
 			faceLoader.getCurrentImg().unbind();
 			srcFbo.end();
-			
-			clone.update(srcFbo.getTextureReference(), cam.getTextureReference(), camMesh);
+
+			//clone.update(srcFbo.getTextureReference(), cam.getTextureReference(), camMesh);
 			lastFound = 0;
 			faceChanged = false;
 		}else{
@@ -66,7 +65,9 @@ void testApp::draw() {
 	ofSetColor(255);
 	
 	if(faceLoader.getCurrentImg().getWidth() > 0 && cloneReady) {
-		clone.draw(0, 0, ofGetWidth(), ofGetHeight());
+		//clone.draw(0, 0, ofGetWidth(), ofGetHeight());
+		ofScale(ofGetWidth()/960.,ofGetWidth()/960.,1);
+		clone.update(srcFbo.getTextureReference(), cam.getTextureReference(), camTracker.getImageMesh());
 	} else {
 		cam.draw(0, 0, ofGetWidth(),ofGetHeight());
 	}

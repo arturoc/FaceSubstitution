@@ -52,7 +52,7 @@ char cloneShaderSource[] =
 "#extension GL_ARB_texture_rectangle : enable\n"
 "uniform sampler2DRect src, srcBlur, dstBlur;\
 void main() {\
-	vec2 pos = gl_FragCoord.xy;	\
+	vec2 pos = gl_TexCoord[0].st;//vec2(gl_FragCoord.x,900.-gl_FragCoord.y);\n	\
 	vec4 srcColorBlur = texture2DRect(srcBlur, pos);\
 	vec3 srcColor = texture2DRect(src, pos).rgb;\
 	vec4 dstColorBlur = texture2DRect(dstBlur, pos);\
@@ -83,13 +83,13 @@ void Clone::setup(int width, int height) {
 	strength.set("strength",7,0,30);
 }
 
-void Clone::maskedBlur(ofTexture& tex, ofMesh& mask, ofTexture & maskTex, ofFbo& result, bool dst) {
+void Clone::maskedBlur(ofTexture& tex, const ofMesh& mask, ofTexture & maskTex, ofFbo& result, bool dst) {
 	buffer.begin();
 	ofClear(0, 0);
 	maskBlurShaderH.begin();
 	maskBlurShaderH.setUniformTexture("mask", maskTex, 0);
 	maskBlurShaderH.setUniformTexture("tex", tex, 1);
-	mask.draw();
+	((ofMesh & )mask).draw();
 	maskBlurShaderH.end();
 	buffer.end();
 	
@@ -102,7 +102,7 @@ void Clone::maskedBlur(ofTexture& tex, ofMesh& mask, ofTexture & maskTex, ofFbo&
 	maskBlurShaderV.begin();
 	maskBlurShaderV.setUniformTexture("mask", maskTex, 0);
 	maskBlurShaderV.setUniformTexture("tex", buffer, 1);
-	mask.draw();
+	((ofMesh & )mask).draw();
 	maskBlurShaderV.end();
 	result.end();
 }
@@ -117,24 +117,24 @@ void Clone::setStrength(int & strength) {
 	maskBlurShaderV.linkProgram();
 }
 
-void Clone::update(ofTexture& src, ofTexture& dst, ofMesh& mask) {
+void Clone::update(ofTexture& src, ofTexture& dst, const ofMesh& mask) {
 	maskedBlur(src, mask, src, srcBlur, false);
 	maskedBlur(dst, mask, src, dstBlur, true);
 	
-	buffer.begin();
+	//buffer.begin();
 	//dstBlur.draw(0,0);
 	ofPushStyle();
 	ofEnableAlphaBlending();
-	dst.draw(0, 0);	
+	dst.draw(0, 0);
 	cloneShader.begin();
 	cloneShader.setUniformTexture("src", src, 0);
 	cloneShader.setUniformTexture("srcBlur", srcBlur, 1);
 	cloneShader.setUniformTexture("dstBlur", dstBlur, 2);
-	mask.draw();
+	((ofMesh & )mask).draw();
 	cloneShader.end();
 	ofDisableAlphaBlending();
 	ofPopStyle();
-	buffer.end();
+	//buffer.end();
 }
 
 void Clone::draw(float x, float y) {
