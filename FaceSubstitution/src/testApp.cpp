@@ -23,7 +23,6 @@ void testApp::setup() {
 	lastFound = 0;
 	faceChanged = false;
 
-	gray.allocate(960,544,1);
 
 	/*ofGstVideoUtils * gst = ((ofGstVideoGrabber*)cam.getGrabber().get())->getGstVideoUtils();
 	gst->*/
@@ -35,11 +34,6 @@ void testApp::update() {
 	cam.update();
 	faceLoader.update();
 	if(cam.isFrameNew()) {
-		int size = cam.getPixelsRef().getWidth()*cam.getPixelsRef().getHeight();
-		unsigned char * pixels = cam.getPixels();
-		for(int i=0;i<size;i++,pixels+=3){
-			gray[i] = *pixels;
-		}
 		camTracker.update(toCv(cam));
 		
 		cloneReady = camTracker.getFound();
