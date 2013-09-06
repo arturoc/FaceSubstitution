@@ -15,6 +15,7 @@ void testApp::setup() {
 	settings.height = cam.getHeight();
 	srcFbo.allocate(settings);
 	camTracker.setup();
+	camTracker.setIterations(3);
 
 	faceLoader.setup("faces",FaceLoader::Random);
 
@@ -23,6 +24,8 @@ void testApp::setup() {
 	faceChanged = false;
 
 
+	/*ofGstVideoUtils * gst = ((ofGstVideoGrabber*)cam.getGrabber().get())->getGstVideoUtils();
+	gst->*/
 
 	ofHideCursor();
 }
