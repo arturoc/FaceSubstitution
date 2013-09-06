@@ -9,8 +9,8 @@ string getMaskBlurShaderSourceH(int strenght){
 		vec4 sum = texture2DRect(tex, pos);\
 		int samples=0;\
 		int i = 2;\
-		for(; i < " +  ofToString(strenght) + "; i+=4) {\
-			vec2 curOffset = vec2(float(i),0);\
+		for(; i < " +  ofToString(strenght) + "; i+=2) {\
+			vec2 curOffset = vec2(float(i)- .5,0);\
 			vec4 maskL = texture2DRect(mask, pos- curOffset);\
 			vec4 maskR = texture2DRect(mask, pos+ curOffset);\
 			if(maskL.r==1. && maskR.r==1.){\
@@ -21,7 +21,7 @@ string getMaskBlurShaderSourceH(int strenght){
 				break;\
 			}\
 		}\
-        samples = 1 + (i - 1) * 2 / 4; \
+        samples = 1 + (i - 2); \
 		gl_FragColor = sum / float(samples);\
 	}";
 }
@@ -35,8 +35,8 @@ string getMaskBlurShaderSourceV(int strenght){
 		vec4 sum = texture2DRect(tex, pos);\
 		int samples=0;\
 		int i = 2;\
-		for(;i < " +  ofToString(strenght) + "; i+=4) {\
-			vec2 curOffset = vec2(0,float(i));\
+		for(;i < " +  ofToString(strenght) + "; i+=2) {\
+			vec2 curOffset = vec2(0,float(i) - .5);\
 			vec4 maskL = texture2DRect(mask, pos- curOffset);\
 			vec4 maskR = texture2DRect(mask, pos+ curOffset);\
 			if(maskL.r==1. && maskR.r==1.){\
@@ -47,7 +47,7 @@ string getMaskBlurShaderSourceV(int strenght){
 				break;\
 			}\
 		}\
-        samples = 1 + (i - 1) * 2 / 4; \
+        samples = 1 + (i - 2); \
 		gl_FragColor = sum / float(samples);\
 	}";
 }
