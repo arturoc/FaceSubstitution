@@ -27,4 +27,6 @@ public:
 	FaceLoader faceLoader;
 	int lastFound;
 	bool faceChanged;
+
+	ofPixels gray;
 };
