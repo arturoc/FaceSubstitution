@@ -16,6 +16,8 @@ void testApp::setup() {
 	maskFbo.allocate(settings);
 	srcFbo.allocate(settings);
 	camTracker.setup();
+	camTracker.setIterations(10);
+	camTracker.setAttempts(2);
 
 	faceLoader.setup("faces",FaceLoader::Random);
 

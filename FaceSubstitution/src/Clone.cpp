@@ -8,7 +8,8 @@ string getMaskBlurShaderSourceH(int strenght){
 		vec2 pos = gl_FragCoord.xy;\
 		vec4 sum = texture2DRect(tex, pos);\
 		int samples=0;\
-		for(int i = 1; i < " +  ofToString(strenght) + "; i++) {\
+		int i = 2;\
+		for(; i < " +  ofToString(strenght) + "; i+=4) {\
 			vec2 curOffset = vec2(float(i),0);\
 			vec4 maskL = texture2DRect(mask, pos- curOffset);\
 			vec4 maskR = texture2DRect(mask, pos+ curOffset);\
@@ -20,7 +21,8 @@ string getMaskBlurShaderSourceH(int strenght){
 				break;\
 			}\
 		}\
-		gl_FragColor = sum / float(samples*2+1);\
+        samples = 1 + (i - 1) * 2 / 4; \
+		gl_FragColor = sum / float(samples);\
 	}";
 }
 
@@ -32,7 +34,8 @@ string getMaskBlurShaderSourceV(int strenght){
 		vec2 pos = gl_FragCoord.xy;\
 		vec4 sum = texture2DRect(tex, pos);\
 		int samples=0;\
-		for(int i = 1; i < " +  ofToString(strenght) + "; i++) {\
+		int i = 2;\
+		for(;i < " +  ofToString(strenght) + "; i+=4) {\
 			vec2 curOffset = vec2(0,float(i));\
 			vec4 maskL = texture2DRect(mask, pos- curOffset);\
 			vec4 maskR = texture2DRect(mask, pos+ curOffset);\
@@ -44,7 +47,8 @@ string getMaskBlurShaderSourceV(int strenght){
 				break;\
 			}\
 		}\
-		gl_FragColor = sum / float(samples*2+1);\
+        samples = 1 + (i - 1) * 2 / 4; \
+		gl_FragColor = sum / float(samples);\
 	}";
 }
 
@@ -127,9 +131,9 @@ void Clone::update(ofTexture& src, ofTexture& dst, ofMesh& mask, ofTexture & tex
 	ofEnableAlphaBlending();
 	dst.draw(0, 0);	
 	cloneShader.begin();
-	cloneShader.setUniformTexture("src", src, 1);
-	cloneShader.setUniformTexture("srcBlur", srcBlur, 2);
-	cloneShader.setUniformTexture("dstBlur", dstBlur, 3);
+	cloneShader.setUniformTexture("src", src, 0);
+	cloneShader.setUniformTexture("srcBlur", srcBlur, 1);
+	cloneShader.setUniformTexture("dstBlur", dstBlur, 2);
 	mask.draw();
 	cloneShader.end();
 	ofDisableAlphaBlending();
