@@ -20,7 +20,7 @@ public:
 	
 	bool cloneReady;
 	Clone clone;
-	ofFbo srcFbo, maskFbo;
+	ofFbo srcFbo;
 
 	ofVboMesh camMesh;
 

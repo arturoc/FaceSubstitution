@@ -12,7 +12,7 @@ string getMaskBlurShaderSourceH(int strenght){
 			vec2 curOffset = vec2(float(i),0);\
 			vec4 maskL = texture2DRect(mask, pos- curOffset);\
 			vec4 maskR = texture2DRect(mask, pos+ curOffset);\
-			if(maskL.r==1. && maskR.r==1.){\
+			if(maskL.a>0. && maskR.a>0.){\
 				sum += (texture2DRect(tex, pos + curOffset)+\
 					   texture2DRect(tex, pos - curOffset));\
 				samples++;\
@@ -36,7 +36,7 @@ string getMaskBlurShaderSourceV(int strenght){
 			vec2 curOffset = vec2(0,float(i));\
 			vec4 maskL = texture2DRect(mask, pos- curOffset);\
 			vec4 maskR = texture2DRect(mask, pos+ curOffset);\
-			if(maskL.r==1. && maskR.r==1.){\
+			if(maskL.a>0. && maskR.a>0.){\
 				sum += (texture2DRect(tex, pos + curOffset)+\
 					   texture2DRect(tex, pos - curOffset));\
 				samples++;\
@@ -117,9 +117,9 @@ void Clone::setStrength(int & strength) {
 	maskBlurShaderV.linkProgram();
 }
 
-void Clone::update(ofTexture& src, ofTexture& dst, ofMesh& mask, ofTexture & texMask) {
-	maskedBlur(src, mask, texMask, srcBlur, false);
-	maskedBlur(dst, mask, texMask, dstBlur, true);
+void Clone::update(ofTexture& src, ofTexture& dst, ofMesh& mask) {
+	maskedBlur(src, mask, src, srcBlur, false);
+	maskedBlur(dst, mask, src, dstBlur, true);
 	
 	buffer.begin();
 	//dstBlur.draw(0,0);

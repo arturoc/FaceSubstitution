@@ -13,7 +13,6 @@ void testApp::setup() {
 	ofFbo::Settings settings;
 	settings.width = cam.getWidth();
 	settings.height = cam.getHeight();
-	maskFbo.allocate(settings);
 	srcFbo.allocate(settings);
 	camTracker.setup();
 
@@ -40,19 +39,14 @@ void testApp::update() {
 			camMesh.clearTexCoords();
 			camMesh.addTexCoords(faceLoader.getCurrentImagePoints());
 			
-			maskFbo.begin();
-			ofClear(0, 255);
-			camMesh.draw();
-			maskFbo.end();
-			
 			srcFbo.begin();
-			ofClear(0, 255);
+			ofClear(0, 0);
 			faceLoader.getCurrentImg().bind();
 			camMesh.draw();
 			faceLoader.getCurrentImg().unbind();
 			srcFbo.end();
 			
-			clone.update(srcFbo.getTextureReference(), cam.getTextureReference(), camMesh, maskFbo.getTextureReference());
+			clone.update(srcFbo.getTextureReference(), cam.getTextureReference(), camMesh);
 			lastFound = 0;
 			faceChanged = false;
 		}else{
