@@ -12,7 +12,7 @@ if [ $changed -eq 1 ]; then
     make > make.log
     ret=$?
     if [ $ret -eq 0 ]; then
-        killall FaceSubstitution -9
+        sudo reboot
     else
         notify-send "Faces" "error while compiling"
     fi

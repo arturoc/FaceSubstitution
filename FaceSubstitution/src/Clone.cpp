@@ -117,7 +117,7 @@ void Clone::setStrength(int & strength) {
 	maskBlurShaderV.linkProgram();
 }
 
-void Clone::update(ofTexture& src, ofTexture& dst, const ofMesh& mask) {
+void Clone::draw(ofTexture& src, ofTexture& dst, const ofMesh& mask) {
 	maskedBlur(src, mask, src, srcBlur, false);
 	maskedBlur(dst, mask, src, dstBlur, true);
 	
@@ -137,18 +137,3 @@ void Clone::update(ofTexture& src, ofTexture& dst, const ofMesh& mask) {
 	//buffer.end();
 }
 
-void Clone::draw(float x, float y) {
-	buffer.draw(x, y);
-}
-
-void Clone::draw(float x, float y, float w, float h){
-	buffer.draw(x,y,w,h);
-}
-
-ofTexture & Clone::getTextureRef(){
-	return buffer.getTextureReference();
-}
-
-void Clone::readToPixels(ofPixels & pix){
-	buffer.readToPixels(pix);
-}

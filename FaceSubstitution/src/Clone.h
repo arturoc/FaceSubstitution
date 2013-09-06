@@ -5,12 +5,7 @@
 class Clone {
 public:
 	void setup(int width, int height);
-	void update(ofTexture& src, ofTexture& dst, const ofMesh& mask);
-	void draw(float x, float y);
-	void draw(float x, float y, float w, float h);
-	
-	ofTexture & getTextureRef();
-	void readToPixels(ofPixels & pix);
+	void draw(ofTexture& src, ofTexture& dst, const ofMesh& mask);
 	ofParameter<int> strength;
 
 protected:

@@ -63,13 +63,14 @@ void testApp::update() {
 
 void testApp::draw() {
 	ofSetColor(255);
+	ofTranslate(ofGetWidth(),0);
 	
 	if(faceLoader.getCurrentImg().getWidth() > 0 && cloneReady) {
 		//clone.draw(0, 0, ofGetWidth(), ofGetHeight());
-		ofScale(ofGetWidth()/960.,ofGetWidth()/960.,1);
-		clone.update(srcFbo.getTextureReference(), cam.getTextureReference(), camTracker.getImageMesh());
+		ofScale(-ofGetWidth()/cam.getWidth(),ofGetWidth()/cam.getWidth(),1);
+		clone.draw(srcFbo.getTextureReference(), cam.getTextureReference(), camTracker.getImageMesh());
 	} else {
-		cam.draw(0, 0, ofGetWidth(),ofGetHeight());
+		cam.draw(0, 0, -ofGetWidth(),ofGetHeight());
 	}
 }
 
