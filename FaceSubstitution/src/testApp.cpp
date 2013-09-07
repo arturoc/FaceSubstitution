@@ -28,7 +28,7 @@ void testApp::setup() {
 	ofSetBackgroundAuto(false);
 
 	ofGstVideoUtils * gst = ((ofGstVideoGrabber*)cam.getGrabber().get())->getGstVideoUtils();
-	//ofAddListener(gst->bufferEvent,this,&testApp::onNewFrame);
+	ofAddListener(gst->bufferEvent,this,&testApp::onNewFrame);
 
 	ofHideCursor();
 
