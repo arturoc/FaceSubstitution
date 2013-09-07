@@ -32,4 +32,5 @@ public:
 
 	ofMutex mutex;
 	Poco::Condition condition;
+	bool refreshOnNewFrameOnly;
 };

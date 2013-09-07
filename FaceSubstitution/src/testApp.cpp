@@ -28,9 +28,11 @@ void testApp::setup() {
 	ofSetBackgroundAuto(false);
 
 	ofGstVideoUtils * gst = ((ofGstVideoGrabber*)cam.getGrabber().get())->getGstVideoUtils();
-	ofAddListener(gst->bufferEvent,this,&testApp::onNewFrame);
+	//ofAddListener(gst->bufferEvent,this,&testApp::onNewFrame);
 
 	ofHideCursor();
+
+	refreshOnNewFrameOnly = true;
 	mutex.lock();
 }
 
@@ -39,12 +41,12 @@ void testApp::onNewFrame(ofPixels & pixels){
 }
 
 void testApp::update() {
-	condition.wait(mutex);
+	if(refreshOnNewFrameOnly) condition.wait(mutex);
 
 	cam.update();
 	faceLoader.update();
 	camTracker.update(toCv(cam));
-
+	if(cam.isFrameNew()){
 	cloneReady = camTracker.getFound();
 	if(cloneReady) {
 		camMesh = camTracker.getImageMesh();
@@ -70,6 +72,7 @@ void testApp::update() {
 				lastFound = 0;
 			}
 		}
+	}
 	}
 }
 
@@ -97,6 +100,9 @@ void testApp::keyPressed(int key){
 		break;
 	case OF_KEY_DOWN:
 		faceLoader.loadPrevious();
+		break;
+	case ' ':
+		refreshOnNewFrameOnly = !refreshOnNewFrameOnly;
 		break;
 	}
 }
