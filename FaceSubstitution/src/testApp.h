@@ -6,6 +6,7 @@
 #include "ofxFaceTracker.h"
 #include "ofxFaceTrackerThreaded.h"
 #include "FaceLoader.h"
+#include "ofxFPS.h"
 
 class testApp : public ofBaseApp {
 public:
@@ -33,4 +34,6 @@ public:
 	ofMutex mutex;
 	Poco::Condition condition;
 	bool refreshOnNewFrameOnly;
+
+	ofxFPS camFPS;
 };

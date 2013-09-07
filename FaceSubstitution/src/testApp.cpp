@@ -45,34 +45,35 @@ void testApp::update() {
 
 	cam.update();
 	faceLoader.update();
-	camTracker.update(toCv(cam));
-	if(cam.isFrameNew()){
-	cloneReady = camTracker.getFound();
-	if(cloneReady) {
-		camMesh = camTracker.getImageMesh();
-		camMeshWithPicTexCoords = camMesh;
-		camMeshWithPicTexCoords.getTexCoords() = faceLoader.getCurrentImagePoints();
-		
-		srcFbo.begin();
-		ofClear(0, 0);
-		faceLoader.getCurrentImg().bind();
-		camMeshWithPicTexCoords.draw();
-		faceLoader.getCurrentImg().unbind();
-		srcFbo.end();
+	if(refreshOnNewFrameOnly || cam.isFrameNew()){
+		camFPS.newFrame();
+		camTracker.update(toCv(cam));
+		cloneReady = camTracker.getFound();
+		if(cloneReady) {
+			camMesh = camTracker.getImageMesh();
+			camMeshWithPicTexCoords = camMesh;
+			camMeshWithPicTexCoords.getTexCoords() = faceLoader.getCurrentImagePoints();
 
-		lastFound = 0;
-		faceChanged = false;
-	}else{
-		camTex.loadData(cam.getPixelsRef());
-		if(!faceChanged){
-			lastFound++;
-			if(lastFound>5){
-				faceLoader.loadNext();
-				faceChanged = true;
-				lastFound = 0;
+			srcFbo.begin();
+			ofClear(0, 0);
+			faceLoader.getCurrentImg().bind();
+			camMeshWithPicTexCoords.draw();
+			faceLoader.getCurrentImg().unbind();
+			srcFbo.end();
+
+			lastFound = 0;
+			faceChanged = false;
+		}else{
+			camTex.loadData(cam.getPixelsRef());
+			if(!faceChanged){
+				lastFound++;
+				if(lastFound>5){
+					faceLoader.loadNext();
+					faceChanged = true;
+					lastFound = 0;
+				}
 			}
 		}
-	}
 	}
 }
 
@@ -90,6 +91,7 @@ void testApp::draw() {
 	}
 	ofPopMatrix();
 	ofDrawBitmapString(ofToString((int)ofGetFrameRate()),20,20);
+	ofDrawBitmapString(ofToString((int)camFPS.getFPS()),20,40);
 }
 
 
