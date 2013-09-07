@@ -32,6 +32,7 @@ void testApp::setup() {
 
 	ofHideCursor();
 
+	autoExposure.setup(0,cam.getWidth(),cam.getHeight());
 	refreshOnNewFrameOnly = false;
 	mutex.lock();
 }
@@ -47,8 +48,9 @@ void testApp::update() {
 	cam.update();
 	faceLoader.update();
 	if(refreshOnNewFrameOnly || cam.isFrameNew()){
+		convertColor(cam,grayPixels,CV_RGB2GRAY);
 		camFPS.newFrame();
-		camTracker.update(toCv(cam));
+		camTracker.update(toCv(grayPixels));
 		cloneReady = camTracker.getFound();
 		if(cloneReady) {
 			camMesh = camTracker.getImageMesh();
@@ -64,6 +66,10 @@ void testApp::update() {
 
 			lastFound = 0;
 			faceChanged = false;
+
+			autoExposureBB = camTracker.getImageFeature(ofxFaceTracker::FACE_OUTLINE).getBoundingBox();
+			autoExposureBB.scaleFromCenter(.5);
+			autoExposure.update(grayPixels,autoExposureBB);
 		}else{
 			camTex.loadData(cam.getPixelsRef());
 			if(!faceChanged){
@@ -87,6 +93,9 @@ void testApp::draw() {
 		//clone.draw(0, 0, ofGetWidth(), ofGetHeight());
 		ofScale(-ofGetWidth()/cam.getWidth(),ofGetWidth()/cam.getWidth(),1);
 		clone.draw(srcFbo.getTextureReference(), cam.getTextureReference(), camMesh);
+		ofNoFill();
+		ofRect(autoExposureBB);
+		ofFill();
 	} else {
 		camTex.draw(0, 0, -ofGetWidth(),ofGetHeight());
 	}
@@ -94,6 +103,8 @@ void testApp::draw() {
 	ofDrawBitmapString(ofToString((int)ofGetFrameRate()),20,20);
 	ofDrawBitmapString(ofToString((int)camFPS.getFPS()),20,40);
 	ofDrawBitmapString(ofToString((int)camRealFPS.getFPS()),20,60);
+	ofDrawBitmapString(ofToString((int)autoExposure.settings["Exposure (Absolute)"]),20,80);
+
 }
 
 

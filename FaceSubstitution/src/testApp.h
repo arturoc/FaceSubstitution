@@ -7,6 +7,7 @@
 #include "ofxFaceTrackerThreaded.h"
 #include "FaceLoader.h"
 #include "ofxFPS.h"
+#include "AutoExposure.h"
 
 class testApp : public ofBaseApp {
 public:
@@ -36,4 +37,8 @@ public:
 	bool refreshOnNewFrameOnly;
 
 	ofxFPS camFPS, camRealFPS;
+	AutoExposure autoExposure;
+
+	ofPixels grayPixels;
+	ofRectangle autoExposureBB;
 };
