@@ -32,12 +32,13 @@ void testApp::setup() {
 
 	ofHideCursor();
 
-	refreshOnNewFrameOnly = true;
+	refreshOnNewFrameOnly = false;
 	mutex.lock();
 }
 
 void testApp::onNewFrame(ofPixels & pixels){
 	condition.signal();
+	camRealFPS.newFrame();
 }
 
 void testApp::update() {
@@ -92,6 +93,7 @@ void testApp::draw() {
 	ofPopMatrix();
 	ofDrawBitmapString(ofToString((int)ofGetFrameRate()),20,20);
 	ofDrawBitmapString(ofToString((int)camFPS.getFPS()),20,40);
+	ofDrawBitmapString(ofToString((int)camRealFPS.getFPS()),20,60);
 }
 
 

@@ -35,5 +35,5 @@ public:
 	Poco::Condition condition;
 	bool refreshOnNewFrameOnly;
 
-	ofxFPS camFPS;
+	ofxFPS camFPS, camRealFPS;
 };
