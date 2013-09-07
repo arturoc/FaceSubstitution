@@ -12,19 +12,24 @@ public:
 	void setup();
 	void update();
 	void draw();
+	void onNewFrame(ofPixels & pixels);
 	
 	void keyPressed(int key);
 
 	ofxFaceTrackerThreaded camTracker;
 	ofVideoGrabber cam;
+	ofTexture camTex;
 	
 	bool cloneReady;
 	Clone clone;
 	ofFbo srcFbo;
 
-	ofVboMesh camMesh;
+	ofVboMesh camMesh, camMeshWithPicTexCoords;
 
 	FaceLoader faceLoader;
 	int lastFound;
 	bool faceChanged;
+
+	ofMutex mutex;
+	Poco::Condition condition;
 };
