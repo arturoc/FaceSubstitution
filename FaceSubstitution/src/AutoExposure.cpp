@@ -76,7 +76,7 @@ void AutoExposure::update(ofPixels & frame, ofRectangle & roi){
 	cv::Scalar mean;
 	mean = cv::mean(cvGrayRoi);
 
-	int exposure = ofMap(mean.val[0],40,200,minExposure,maxExposure);
+	int exposure = ofMap(mean.val[0],40,200,maxExposure,minExposure);
 
 	settings["Exposure (Absolute)"] = exposure;
 }
