@@ -7,6 +7,7 @@ void testApp::setup() {
 	ofSetDataPathRoot("../data/");
 #endif
 	ofSetVerticalSync(true);
+
 	cloneReady = false;
 	cam.setUseTexture(false);
 	cam.initGrabber(960,544);
