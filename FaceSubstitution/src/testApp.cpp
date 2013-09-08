@@ -69,7 +69,7 @@ void testApp::update() {
 			lastFound = 0;
 			faceChanged = false;
 
-			if(numCamFrames%10==0){
+			if(numCamFrames%2==0){
 				autoExposureBB = camTracker.getImageFeature(ofxFaceTracker::FACE_OUTLINE).getBoundingBox();
 				autoExposureBB.scaleFromCenter(.5);
 			}
@@ -85,13 +85,13 @@ void testApp::update() {
 				}
 			}
 
-			if(numCamFrames%10==0){
+			if(numCamFrames%2==0){
 				autoExposureBB.set(0,0,cam.getWidth(),cam.getHeight());
 				autoExposureBB.scaleFromCenter(.5);
 			}
 		}
 
-		if(numCamFrames%10==0){
+		if(numCamFrames%2==0){
 			autoExposure.update(grayPixels,autoExposureBB);
 		}
 		numCamFrames++;
