@@ -33,7 +33,7 @@ bool AutoExposure::setup(int device, int w, int h){
 
 	// logitech
 	minExposure.set("min exposure",200,0,2047);
-	maxExposure.set("max exposure",300,0,2047);
+	maxExposure.set("max exposure",1000,0,2047);
 
 	return true;
 }
