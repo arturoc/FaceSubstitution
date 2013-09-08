@@ -37,11 +37,13 @@ void testApp::setup() {
 	refreshOnNewFrameOnly = false;
 	mutex.lock();
 	numCamFrames = 0;
+
+	gui.setup(autoExposure,clone,cam);
 }
 
 void testApp::onNewFrame(ofPixels & pixels){
 	if(refreshOnNewFrameOnly) condition.signal();
-	camRealFPS.newFrame();
+	gui.newCamFrame();
 }
 
 void testApp::update() {
@@ -51,7 +53,7 @@ void testApp::update() {
 	faceLoader.update();
 	if(refreshOnNewFrameOnly || cam.isFrameNew()){
 		convertColor(cam,grayPixels,CV_RGB2GRAY);
-		camFPS.newFrame();
+		gui.newCamProcessFrame();
 		camTracker.update(toCv(grayPixels));
 		cloneReady = camTracker.getFound();
 		if(cloneReady) {
@@ -96,6 +98,7 @@ void testApp::update() {
 		}
 		numCamFrames++;
 	}
+	gui.update(autoExposureBB);
 }
 
 void testApp::draw() {
@@ -107,19 +110,12 @@ void testApp::draw() {
 		//clone.draw(0, 0, ofGetWidth(), ofGetHeight());
 		ofScale(-ofGetWidth()/cam.getWidth(),ofGetWidth()/cam.getWidth(),1);
 		clone.draw(srcFbo.getTextureReference(), cam.getTextureReference(), camMesh);
-		ofNoFill();
-		ofRect(autoExposureBB);
-		ofFill();
 	} else {
 		camTex.draw(0, 0, -ofGetWidth(),ofGetHeight());
 	}
 	ofPopMatrix();
-	ofDrawBitmapString("app: " + ofToString((int)ofGetFrameRate()),20,20);
-	ofDrawBitmapString("cam: " + ofToString((int)camFPS.getFPS()),20,40);
-	ofDrawBitmapString("cam real: " + ofToString((int)camRealFPS.getFPS()),20,60);
-	ofDrawBitmapString("exp: " + ofToString((int)autoExposure.settings["Exposure (Absolute)"]),20,80);
-	ofDrawBitmapString("refresh on new: " + ofToString(refreshOnNewFrameOnly),20,100);
 
+	gui.draw();
 }
 
 
@@ -133,6 +129,14 @@ void testApp::keyPressed(int key){
 		break;
 	case ' ':
 		refreshOnNewFrameOnly = !refreshOnNewFrameOnly;
+		break;
+	case 'h':
+		gui.show=!gui.show;
+		if(gui.show){
+			ofShowCursor();
+		}else{
+			ofHideCursor();
+		}
 		break;
 	}
 }

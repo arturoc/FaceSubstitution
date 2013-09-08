@@ -6,8 +6,8 @@
 #include "ofxFaceTracker.h"
 #include "ofxFaceTrackerThreaded.h"
 #include "FaceLoader.h"
-#include "ofxFPS.h"
 #include "AutoExposure.h"
+#include "Gui.h"
 
 class testApp : public ofBaseApp {
 public:
@@ -36,10 +36,11 @@ public:
 	Poco::Condition condition;
 	bool refreshOnNewFrameOnly;
 
-	ofxFPS camFPS, camRealFPS;
 	AutoExposure autoExposure;
 
 	ofPixels grayPixels;
 	ofRectangle autoExposureBB;
 	int numCamFrames;
+
+	Gui gui;
 };

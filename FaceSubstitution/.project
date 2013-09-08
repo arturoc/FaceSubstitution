@@ -35,5 +35,10 @@
 			<type>2</type>
 			<locationURI>$%7BPARENT-3-PROJECT_LOC%7D/addons/ofxFaceTracker</locationURI>
 		</link>
+		<link>
+			<name>ofxOsc</name>
+			<type>2</type>
+			<locationURI>$%7BPARENT-3-PROJECT_LOC%7D/addons/ofxOsc</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>

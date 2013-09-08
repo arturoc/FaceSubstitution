@@ -2,3 +2,5 @@ ofxOpenCv
 ofxCv
 ofxFaceTracker
 ofxV4L2Settings
+ofxOsc
+ofxGui
