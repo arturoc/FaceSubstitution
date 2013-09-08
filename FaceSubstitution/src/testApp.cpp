@@ -33,12 +33,14 @@ void testApp::setup() {
 	ofHideCursor();
 
 	autoExposure.setup(0,cam.getWidth(),cam.getHeight());
+
 	refreshOnNewFrameOnly = false;
 	mutex.lock();
+	numCamFrames = 0;
 }
 
 void testApp::onNewFrame(ofPixels & pixels){
-	condition.signal();
+	if(refreshOnNewFrameOnly) condition.signal();
 	camRealFPS.newFrame();
 }
 
@@ -67,9 +69,11 @@ void testApp::update() {
 			lastFound = 0;
 			faceChanged = false;
 
-			autoExposureBB = camTracker.getImageFeature(ofxFaceTracker::FACE_OUTLINE).getBoundingBox();
-			autoExposureBB.scaleFromCenter(.5);
-			autoExposure.update(grayPixels,autoExposureBB);
+			if(numCamFrames%10==0){
+				autoExposureBB = camTracker.getImageFeature(ofxFaceTracker::FACE_OUTLINE).getBoundingBox();
+				autoExposureBB.scaleFromCenter(.5);
+			}
+
 		}else{
 			camTex.loadData(cam.getPixelsRef());
 			if(!faceChanged){
@@ -80,7 +84,17 @@ void testApp::update() {
 					lastFound = 0;
 				}
 			}
+
+			if(numCamFrames%10==0){
+				autoExposureBB.set(0,0,cam.getWidth(),cam.getHeight());
+				autoExposureBB.scaleFromCenter(.5);
+			}
 		}
+
+		if(numCamFrames%10==0){
+			autoExposure.update(grayPixels,autoExposureBB);
+		}
+		numCamFrames++;
 	}
 }
 
@@ -100,10 +114,11 @@ void testApp::draw() {
 		camTex.draw(0, 0, -ofGetWidth(),ofGetHeight());
 	}
 	ofPopMatrix();
-	ofDrawBitmapString(ofToString((int)ofGetFrameRate()),20,20);
-	ofDrawBitmapString(ofToString((int)camFPS.getFPS()),20,40);
-	ofDrawBitmapString(ofToString((int)camRealFPS.getFPS()),20,60);
-	ofDrawBitmapString(ofToString((int)autoExposure.settings["Exposure (Absolute)"]),20,80);
+	ofDrawBitmapString("app: " + ofToString((int)ofGetFrameRate()),20,20);
+	ofDrawBitmapString("cam: " + ofToString((int)camFPS.getFPS()),20,40);
+	ofDrawBitmapString("cam real: " + ofToString((int)camRealFPS.getFPS()),20,60);
+	ofDrawBitmapString("exp: " + ofToString((int)autoExposure.settings["Exposure (Absolute)"]),20,80);
+	ofDrawBitmapString("refresh on new: " + ofToString(refreshOnNewFrameOnly),20,100);
 
 }
 

@@ -41,4 +41,5 @@ public:
 
 	ofPixels grayPixels;
 	ofRectangle autoExposureBB;
+	int numCamFrames;
 };
