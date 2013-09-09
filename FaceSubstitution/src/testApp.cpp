@@ -21,7 +21,7 @@ void testApp::setup() {
 	srcFbo.allocate(settings);
 	camTracker.setup();
 	camTracker.setIterations(3);
-	camTracker.setRescale(.5);
+	//camTracker.setRescale(.5);
 
 	faceLoader.setup("faces",FaceLoader::Random);
 
