@@ -26,6 +26,7 @@ public:
 	void newCamFrame();
 
 	ofParameter<bool> show;
+	ofParameter<int> numRotations;
 
 private:
 	AutoExposure * autoExposure;

@@ -38,7 +38,7 @@ public:
 
 	AutoExposure autoExposure;
 
-	ofPixels grayPixels;
+	ofPixels grayPixels, grayPixelsRotated;
 	ofRectangle autoExposureBB;
 	int numCamFrames;
 

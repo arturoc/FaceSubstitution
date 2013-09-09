@@ -12,6 +12,8 @@ void testApp::setup() {
 	cam.setUseTexture(false);
 	cam.initGrabber(960,544);
 	clone.setup(cam.getWidth(), cam.getHeight());
+	grayPixels.allocate(cam.getWidth(),cam.getHeight(),1);
+	grayPixelsRotated.allocate(cam.getHeight(),cam.getWidth(),1);
 	camTex.allocate(cam.getWidth(), cam.getHeight(),GL_RGB);
 	ofFbo::Settings settings;
 	settings.width = cam.getWidth();
@@ -53,12 +55,30 @@ void testApp::update() {
 	cam.update();
 	faceLoader.update();
 	if(refreshOnNewFrameOnly || cam.isFrameNew()){
-		convertColor(cam,grayPixels,CV_RGB2GRAY);
 		gui.newCamProcessFrame();
-		camTracker.update(toCv(grayPixels));
+		convertColor(cam,grayPixels,CV_RGB2GRAY);
+		if(gui.numRotations>0){
+			grayPixels.rotate90To(grayPixelsRotated,gui.numRotations);
+			camTracker.update(toCv(grayPixelsRotated));
+		}else{
+			camTracker.update(toCv(grayPixels));
+		}
 		cloneReady = camTracker.getFound();
 		if(cloneReady) {
 			camMesh = camTracker.getImageMesh();
+			for(int i=0;i<camMesh.getNumVertices();i++){
+				ofVec3f & v = camMesh.getVertices()[i];
+				ofVec2f & t = camMesh.getTexCoords()[i];
+				std::swap(v.x,v.y);
+				std::swap(t.x,t.y);
+				if(gui.numRotations==1){
+					v.y = cam.getHeight()-v.y;
+					t.y = cam.getHeight()-t.y;
+				}else if(gui.numRotations==3){
+					v.x = cam.getWidth()-v.x;
+					t.x = cam.getWidth()-t.x;
+				}
+			}
 			camMeshWithPicTexCoords = camMesh;
 			camMeshWithPicTexCoords.getTexCoords() = faceLoader.getCurrentImagePoints();
 
@@ -94,8 +114,20 @@ void testApp::update() {
 			}
 		}
 
+		//TODO: fix BB when image is rotated
 		if(numCamFrames%2==0){
-			autoExposure.update(grayPixels,autoExposureBB);
+			if(gui.numRotations>0){
+				swap(autoExposureBB.x,autoExposureBB.y);
+				swap(autoExposureBB.width,autoExposureBB.height);
+				if(gui.numRotations==1){
+					autoExposureBB.y = cam.getHeight()-autoExposureBB.y;
+				}else if(gui.numRotations==3){
+					autoExposureBB.x = cam.getHeight()-autoExposureBB.x;
+				}
+				//autoExposure.update(grayPixelsRotated,autoExposureBB);
+			}else{
+				autoExposure.update(grayPixels,autoExposureBB);
+			}
 		}
 		numCamFrames++;
 	}
@@ -105,13 +137,13 @@ void testApp::update() {
 void testApp::draw() {
 	ofSetColor(255);
 	ofPushMatrix();
-	ofTranslate(ofGetWidth(),0);
 
 	if(faceLoader.getCurrentImg().getWidth() > 0 && cloneReady) {
-		//clone.draw(0, 0, ofGetWidth(), ofGetHeight());
+		ofTranslate(ofGetWidth(),0);
 		ofScale(-ofGetWidth()/cam.getWidth(),ofGetWidth()/cam.getWidth(),1);
 		clone.draw(srcFbo.getTextureReference(), cam.getTextureReference(), camMesh);
 	} else {
+		ofTranslate(ofGetWidth(),0);
 		camTex.draw(0, 0, -ofGetWidth(),ofGetHeight());
 	}
 	ofPopMatrix();
