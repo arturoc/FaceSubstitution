@@ -42,6 +42,8 @@ void Gui::setup(AutoExposure & autoExposure, Clone & clone, ofVideoGrabber & cam
 	this->autoExposure = &autoExposure;
 	this->clone = &clone;
 	this->cam = &cam;
+
+	font.loadFont("Ubuntu Mono",18);
 }
 
 void Gui::update(const ofRectangle & bb){
@@ -67,11 +69,11 @@ void Gui::draw(){
 	ofSetColor(255);
 	gui.draw();
 
-	ofSetColor(0);
-	ofDrawBitmapString("app: " + ofToString((int)ofGetFrameRate()),ofGetWidth()-220,20);
-	ofDrawBitmapString("cam: " + ofToString((int)camFPS.getFPS()),ofGetWidth()-220,40);
-	ofDrawBitmapString("cam real: " + ofToString((int)camRealFPS.getFPS()),ofGetWidth()-220,60);
-	ofDrawBitmapString("exp: " + ofToString((int)autoExposure->settings["Exposure (Absolute)"]),ofGetWidth()-220,80);
+	ofSetColor(30);
+	font.drawString("app: " + ofToString((int)ofGetFrameRate()),ofGetWidth()-220,45);
+	font.drawString("cam: " + ofToString((int)camFPS.getFPS()),ofGetWidth()-220,80);
+	font.drawString("cam real: " + ofToString((int)camRealFPS.getFPS()),ofGetWidth()-220,115);
+	font.drawString("exp: " + ofToString((int)autoExposure->settings["Exposure (Absolute)"]),ofGetWidth()-220,150);
 
 
 	ofSetOrientation(OF_ORIENTATION_DEFAULT);

@@ -38,6 +38,7 @@ private:
 	ofxOscParameterSync oscParamSync;
 	ofRectangle autoExposureBB;
 	ofxFPS camFPS, camRealFPS;
+	ofTrueTypeFont font;
 };
 
 #endif /* GUI_H_ */
