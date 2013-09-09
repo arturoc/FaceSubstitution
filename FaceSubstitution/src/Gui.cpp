@@ -69,23 +69,30 @@ void Gui::draw(){
 	ofSetColor(255);
 	gui.draw();
 
-	ofSetColor(30);
-	font.drawString("app: " + ofToString((int)ofGetFrameRate()),ofGetWidth()-220,45);
-	font.drawString("cam: " + ofToString((int)camFPS.getFPS()),ofGetWidth()-220,80);
-	font.drawString("cam real: " + ofToString((int)camRealFPS.getFPS()),ofGetWidth()-220,115);
-	font.drawString("exp: " + ofToString((int)autoExposure->settings["Exposure (Absolute)"]),ofGetWidth()-220,150);
+	ofSetColor(50);
+	font.drawString("app: " + ofToString((int)ofGetFrameRate()),ofGetWidth()-140,45);
+	font.drawString("proc: " + ofToString((int)camFPS.getFPS()),ofGetWidth()-140,80);
+	font.drawString("cam: " + ofToString((int)camRealFPS.getFPS()),ofGetWidth()-140,115);
+	font.drawString("exp: " + ofToString((int)autoExposure->settings["Exposure (Absolute)"]),ofGetWidth()-140,150);
 
-
-	ofSetOrientation(OF_ORIENTATION_DEFAULT);
-	ofPopView();
+	float imgWidth;
+	if(numRotations==1 || numRotations==3){
+		imgWidth = cam->getHeight();
+	}else{
+		imgWidth = cam->getWidth();
+	}
 
 	ofSetColor(ofColor::magenta);
 	ofPushMatrix();
 	ofTranslate(ofGetWidth(),0);
-	ofScale(-ofGetWidth()/cam->getWidth(),ofGetWidth()/cam->getWidth(),1);
+	ofScale(-ofGetWidth()/imgWidth,ofGetWidth()/imgWidth,1);
 	ofNoFill();
 	ofRect(autoExposureBB);
 	ofFill();
 	ofPopMatrix();
 	ofSetColor(255);
+
+
+	ofSetOrientation(OF_ORIENTATION_DEFAULT);
+	ofPopView();
 }

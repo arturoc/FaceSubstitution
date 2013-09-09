@@ -110,22 +110,19 @@ void testApp::update() {
 			}
 
 			if(numCamFrames%2==0){
-				autoExposureBB.set(0,0,cam.getWidth(),cam.getHeight());
+				if(gui.numRotations==1 || gui.numRotations==3){
+					autoExposureBB.set(0,0,cam.getHeight(),cam.getWidth());
+				}else{
+					autoExposureBB.set(0,0,cam.getWidth(),cam.getHeight());
+				}
 				autoExposureBB.scaleFromCenter(.5);
 			}
 		}
 
 		//TODO: fix BB when image is rotated
 		if(numCamFrames%2==0){
-			if(gui.numRotations>0){
-				swap(autoExposureBB.x,autoExposureBB.y);
-				swap(autoExposureBB.width,autoExposureBB.height);
-				if(gui.numRotations==1){
-					autoExposureBB.y = cam.getHeight()-autoExposureBB.y;
-				}else if(gui.numRotations==3){
-					autoExposureBB.x = cam.getHeight()-autoExposureBB.x;
-				}
-				//autoExposure.update(grayPixelsRotated,autoExposureBB);
+			if(gui.numRotations==1 || gui.numRotations==3){
+				autoExposure.update(grayPixelsRotated,autoExposureBB);
 			}else{
 				autoExposure.update(grayPixels,autoExposureBB);
 			}
@@ -164,7 +161,7 @@ void testApp::keyPressed(int key){
 	case ' ':
 		refreshOnNewFrameOnly = !refreshOnNewFrameOnly;
 		break;
-	case 'h':
+	case 'g':
 		gui.show=!gui.show;
 		if(gui.show){
 			ofShowCursor();
