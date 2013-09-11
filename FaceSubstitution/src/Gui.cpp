@@ -31,19 +31,33 @@ void Gui::setup(AutoExposure & autoExposure, Clone & clone, ofVideoGrabber & cam
 	parameters.add(autoExposure.minExposure);
 	parameters.add(clone.strength);
 	parameters.add(show.set("show",false));
+	parameters.add(save.set("save",false));
 	parameters.add(numRotations.set("numRotations",1,0,3));
 
+	save.addListener(this,&Gui::onSave);
+
 	autoExposure.settings["Exposure (Absolute)"].setSerializable(false);
+	autoExposure.settings["Focus, Auto"] = 0;
+	autoExposure.settings["Focus (absolute)"] = 3;
+
 
 	gui.setup(parameters);
 
 	oscParamSync.setup(parameters,8024,"laptop.local",8025);
+
+	gui.loadFromFile("settings.xml");
 
 	this->autoExposure = &autoExposure;
 	this->clone = &clone;
 	this->cam = &cam;
 
 	font.loadFont("Ubuntu Mono",18);
+}
+
+void Gui::onSave(bool & save){
+	if(save){
+		gui.saveToFile("settings.xml");
+	}
 }
 
 void Gui::update(const ofRectangle & bb){

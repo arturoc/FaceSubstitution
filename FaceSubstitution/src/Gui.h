@@ -22,12 +22,14 @@ public:
 	void update(const ofRectangle & bb);
 	void draw();
 
+	void onSave(bool & save);
+
 	void newCamProcessFrame();
 	void newCamFrame();
 
 	ofParameter<bool> show;
 	ofParameter<int> numRotations;
-
+	ofParameter<bool> save;
 private:
 	AutoExposure * autoExposure;
 	Clone * clone;
