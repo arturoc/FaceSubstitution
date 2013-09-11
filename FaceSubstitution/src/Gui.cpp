@@ -34,7 +34,9 @@ void Gui::setup(AutoExposure & autoExposure, Clone & clone, ofVideoGrabber & cam
 	parameters.add(save.set("save",false));
 	parameters.add(numRotations.set("numRotations",1,0,3));
 
-	save.addListener(this,&Gui::onSave);
+
+	show.setSerializable(false);
+	save.setSerializable(false);
 
 	autoExposure.settings["Exposure (Absolute)"].setSerializable(false);
 	autoExposure.settings["Focus, Auto"] = 0;
@@ -47,6 +49,11 @@ void Gui::setup(AutoExposure & autoExposure, Clone & clone, ofVideoGrabber & cam
 
 	gui.loadFromFile("settings.xml");
 
+	save = false;
+	show = false;
+
+	save.addListener(this,&Gui::onSave);
+
 	this->autoExposure = &autoExposure;
 	this->clone = &clone;
 	this->cam = &cam;
@@ -57,6 +64,7 @@ void Gui::setup(AutoExposure & autoExposure, Clone & clone, ofVideoGrabber & cam
 void Gui::onSave(bool & save){
 	if(save){
 		gui.saveToFile("settings.xml");
+		this->save = false;
 	}
 }
 
