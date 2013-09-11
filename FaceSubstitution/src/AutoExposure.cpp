@@ -59,7 +59,7 @@ void AutoExposure::update(ofPixels & frame, ofPixels & mask){
 
 	int exposure = ofMap(mean.val[0],40,200,maxExposure,minExposure);
 
-	settings["Exposure (Absolute)"] = exposure;
+	settings["Exposure (Absolute)"] = settings["Exposure (Absolute)"]*.9 + exposure*.1;
 }
 
 void AutoExposure::update(ofPixels & frame, ofRectangle & roi){
