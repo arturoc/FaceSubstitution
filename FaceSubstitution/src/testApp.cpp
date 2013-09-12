@@ -55,6 +55,7 @@ void testApp::update() {
 	cam.update();
 	faceLoader.update();
 	if(refreshOnNewFrameOnly || cam.isFrameNew()){
+		camTex.loadData(cam.getPixelsRef());
 		gui.newCamProcessFrame();
 		convertColor(cam,grayPixels,CV_RGB2GRAY);
 		if(gui.numRotations>0){
@@ -98,7 +99,6 @@ void testApp::update() {
 			}
 
 		}else{
-			camTex.loadData(cam.getPixelsRef());
 			if(!faceChanged){
 				lastFound++;
 				if(lastFound>5){
