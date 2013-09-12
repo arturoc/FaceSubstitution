@@ -9,8 +9,7 @@ void testApp::setup() {
 	ofSetVerticalSync(true);
 
 	cloneReady = false;
-	cam.setUseTexture(false);
-	cam.initGrabber(960,544);
+	cam.initGrabber(960,544,false);
 	clone.setup(cam.getWidth(), cam.getHeight());
 	grayPixels.allocate(cam.getWidth(),cam.getHeight(),1);
 	grayPixelsRotated.allocate(cam.getHeight(),cam.getWidth(),1);
@@ -139,7 +138,7 @@ void testApp::draw() {
 	if(faceLoader.getCurrentImg().getWidth() > 0 && cloneReady) {
 		ofTranslate(ofGetWidth(),0);
 		ofScale(-ofGetWidth()/cam.getWidth(),ofGetWidth()/cam.getWidth(),1);
-		clone.draw(srcFbo.getTextureReference(), cam.getTextureReference(), camMesh);
+		clone.draw(srcFbo.getTextureReference(), camTex, camMesh);
 	} else {
 		ofTranslate(ofGetWidth(),0);
 		camTex.draw(0, 0, -ofGetWidth(),ofGetHeight());
