@@ -4,7 +4,7 @@ using namespace ofxCv;
 
 void testApp::setup() {
 #ifdef TARGET_OSX
-	ofSetDataPathRoot("../data/");
+	//ofSetDataPathRoot("../data/");
 #endif
 	ofSetVerticalSync(true);
 	cloneReady = false;
