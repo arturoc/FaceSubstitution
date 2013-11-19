@@ -51,6 +51,18 @@ void Clone::setup(int width, int height) {
 	srcBlur.allocate(settings);
 	dstBlur.allocate(settings);
 	
+	srcBlur.begin();
+	ofClear(0, 255);
+	srcBlur.end();
+	
+	dstBlur.begin();
+	ofClear(0, 255);
+	dstBlur.end();
+	
+	buffer.begin();
+	ofClear(0, 255);
+	buffer.end();
+	
 	maskBlurShader.setupShaderFromSource(GL_FRAGMENT_SHADER, maskBlurShaderSource);
 	cloneShader.setupShaderFromSource(GL_FRAGMENT_SHADER, cloneShaderSource);
 	maskBlurShader.linkProgram();

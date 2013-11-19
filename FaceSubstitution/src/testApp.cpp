@@ -3,13 +3,10 @@
 using namespace ofxCv;
 
 void testApp::setup() {
-#ifdef TARGET_OSX
-	//ofSetDataPathRoot("../data/");
-#endif
-	ofSetVerticalSync(true);
 	cloneReady = false;
-	cam.initGrabber(640, 480);
+	cam.initGrabber(1280, 720);
 	clone.setup(cam.getWidth(), cam.getHeight());
+	clone.setStrength(0);
 	ofFbo::Settings settings;
 	settings.width = cam.getWidth();
 	settings.height = cam.getHeight();
@@ -19,19 +16,31 @@ void testApp::setup() {
 	srcTracker.setup();
 	srcTracker.setIterations(25);
 	srcTracker.setAttempts(4);
+	
+	strength = 0;
+	targetStrength = 0;
 
-	faces.allowExt("jpg");
-	faces.allowExt("png");
-	faces.listDir("faces");
-	currentFace = 0;
-	if(faces.size()!=0){
-		loadFace(faces.getPath(currentFace));
-	}
+	loadFace("marina.jpg");
+	
+//	ui.setup();
+//	ui.add("rescale", rescale, .5, 1);
+//	ui.add("iterations", iterations, 1, 25);
+//	ui.add("clamp", clamp, 0, 15);
+//	ui.add("tolerance", tolerance, .01, 1);
+//	ui.add("attempts", attempts, 1, 4);
 }
 
 void testApp::update() {
+	strength = ofLerp(strength, targetStrength, .01);
+	
 	cam.update();
 	if(cam.isFrameNew()) {
+		camTracker.setRescale(rescale);
+		camTracker.setIterations(iterations);
+		camTracker.setClamp(clamp);
+		camTracker.setTolerance(tolerance);
+		camTracker.setAttempts(attempts);
+		
 		camTracker.update(toCv(cam));
 		
 		cloneReady = camTracker.getFound();
@@ -52,7 +61,7 @@ void testApp::update() {
 			src.unbind();
 			srcFbo.end();
 			
-			clone.setStrength(16);
+			clone.setStrength(strength);
 			clone.update(srcFbo.getTextureReference(), cam.getTextureReference(), maskFbo.getTextureReference());
 		}
 	}
@@ -60,21 +69,9 @@ void testApp::update() {
 
 void testApp::draw() {
 	ofSetColor(255);
-	
-	if(src.getWidth() > 0 && cloneReady) {
-		clone.draw(0, 0);
-	} else {
-		cam.draw(0, 0);
-	}
-	
-	if(!camTracker.getFound()) {
-		drawHighlightString("camera face not found", 10, 10);
-	}
-	if(src.getWidth() == 0) {
-		drawHighlightString("drag an image here", 10, 30);
-	} else if(!srcTracker.getFound()) {
-		drawHighlightString("image face not found", 10, 30);
-	}
+	clone.draw(0, 0);
+//	cam.draw(0, 0);
+//	camTracker.draw();
 }
 
 void testApp::loadFace(string face){
@@ -89,17 +86,8 @@ void testApp::dragEvent(ofDragInfo dragInfo) {
 	loadFace(dragInfo.files[0]);
 }
 
-void testApp::keyPressed(int key){
-	switch(key){
-	case OF_KEY_UP:
-		currentFace++;
-		break;
-	case OF_KEY_DOWN:
-		currentFace--;
-		break;
-	}
-	currentFace = ofClamp(currentFace,0,faces.size());
-	if(faces.size()!=0){
-		loadFace(faces.getPath(currentFace));
-	}
+void testApp::keyPressed(int key) {
+	int level = key - '1';
+	level = ofClamp(level, 0, 9);
+	targetStrength = ofMap(level, 1, 9, 0, 25);
 }
