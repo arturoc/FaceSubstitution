@@ -9,6 +9,5 @@ public:
 	void update();
 	void draw();
 	
-	ofImage src, dst, mask;
-    ofImage result;
+	ofImage src, dst, mask, result;
 };
