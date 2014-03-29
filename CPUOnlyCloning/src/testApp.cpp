@@ -12,6 +12,8 @@ void testApp::setup() {
 	dst.setImageType(OF_IMAGE_COLOR);
 	mask.loadImage("mask.png");
 	mask.setImageType(OF_IMAGE_GRAYSCALE);
+    
+    copy(dst, result);
 }
 
 void testApp::update() {
@@ -49,47 +51,46 @@ void maskedBlur(Mat tex, Mat mask, Mat dist, Mat& result) {
 	}
 }
 
-Mat dist;
-ofImage srcBlur, dstBlur;
-void blend(Mat src, Mat dst, Mat mask, ofImage& result) {
+Mat dist, srcBlur, dstBlur;
+void blend(Mat srcFull, Mat dstFull, Mat maskFull, Mat resultFull, cv::Rect roi) {
+    Mat src((srcFull), roi);
+    Mat dst((dstFull), roi);
+    Mat mask((maskFull), roi);
+    Mat result((resultFull), roi);
+    
     imitate(srcBlur, src);
     imitate(dstBlur, dst);
-    imitate(result, dst);
-    
-    Mat srcBlurMat = toCv(srcBlur);
-    Mat dstBlurMat = toCv(dstBlur);
-    Mat resultMat = toCv(result);
     
 	distanceTransform(mask, dist, CV_DIST_L2, 3); // what does CV_DIST_C do?
 	dist *= (1 / sqrt(2)); // normalize to the square corner
     
-    maskedBlur(src, mask, dist, srcBlurMat);
-	maskedBlur(dst, mask, dist, dstBlurMat);
+    maskedBlur(src, mask, dist, srcBlur);
+	maskedBlur(dst, mask, dist, dstBlur);
     
-    int rows = resultMat.rows;
-	int cols = resultMat.cols;
+    int rows = result.rows;
+	int cols = result.cols;
 	for(int row = 0; row < rows; row++) {
 		for(int col = 0; col < cols; col++) {
 			if(mask.at<uchar>(row, col) > 0) {
                 Vec3s srcColor = src.at<Vec3b>(row, col);
-                Vec3s srcBlurColor = srcBlurMat.at<Vec3b>(row, col);
-                Vec3s dstBlurColor = dstBlurMat.at<Vec3b>(row, col);
+                Vec3s srcBlurColor = srcBlur.at<Vec3b>(row, col);
+                Vec3s dstBlurColor = dstBlur.at<Vec3b>(row, col);
                 Vec3s offset = dstBlurColor - srcBlurColor;
-                resultMat.at<Vec3b>(row, col) = srcColor + offset;
+                result.at<Vec3b>(row, col) = srcColor + offset;
             } else {
-                resultMat.at<Vec3b>(row, col) = dst.at<Vec3b>(row, col);
+                result.at<Vec3b>(row, col) = dst.at<Vec3b>(row, col);
             }
         }
     }
-    
-    result.update();
 }
 
 
 void testApp::draw() {
 	ofBackground(0);
     
-    blend(toCv(src), toCv(dst), toCv(mask), result);
+    cv::Rect roi(97, 76, 368, 372);
+    blend(toCv(src), toCv(dst), toCv(mask), toCv(result), roi);
+    result.update();
 	
 	src.draw(0, 0);
 	dst.draw(640, 0);
