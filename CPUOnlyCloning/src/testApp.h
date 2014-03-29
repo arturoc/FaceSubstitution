@@ -10,7 +10,5 @@ public:
 	void draw();
 	
 	ofImage src, dst, mask;
-	ofImage srcBlur, dstBlur;
     ofImage result;
-    ofShader cloneShader;
 };

@@ -12,13 +12,6 @@ void testApp::setup() {
 	dst.setImageType(OF_IMAGE_COLOR);
 	mask.loadImage("mask.png");
 	mask.setImageType(OF_IMAGE_GRAYSCALE);
-	
-	imitate(srcBlur, src);
-	imitate(dstBlur, dst);
-    imitate(result, dst);
-    
-//	imitate(dist, mask, CV_32FC1);
-    cloneShader.load("", "Clone.frag");
 }
 
 void testApp::update() {
@@ -70,8 +63,16 @@ void maskedBlur(ofImage& tex, ofImage& mask, ofImage& result) {
 	result.update();
 }
 
-void blend(ofImage& src, ofImage& dst, ofImage& srcBlur, ofImage& dstBlur, ofImage& result) {
-    imitate(result, dstBlur);
+ofImage srcBlur, dstBlur;
+void blend(ofImage& src, ofImage& dst, ofImage& mask, ofImage& result) {
+    imitate(srcBlur, src);
+    imitate(dstBlur, dst);
+    imitate(result, dst);
+    
+    maskedBlur(src, mask, srcBlur);
+	maskedBlur(dst, mask, dstBlur);
+    
+    Mat maskMat = toCv(mask);
     Mat srcMat = toCv(src);
     Mat dstMat = toCv(dst);
     Mat srcBlurMat = toCv(srcBlur);
@@ -82,10 +83,9 @@ void blend(ofImage& src, ofImage& dst, ofImage& srcBlur, ofImage& dstBlur, ofIma
 	int cols = resultMat.cols;
 	for(int row = 0; row < rows; row++) {
 		for(int col = 0; col < cols; col++) {
-            // should use the mask here instead
-            Vec3s srcBlurColor = srcBlurMat.at<Vec3b>(row, col);
-			if(srcBlurColor[0] > 0) {
+			if(maskMat.at<uchar>(row, col) > 0) {
                 Vec3s srcColor = srcMat.at<Vec3b>(row, col);
+                Vec3s srcBlurColor = srcBlurMat.at<Vec3b>(row, col);
                 Vec3s dstBlurColor = dstBlurMat.at<Vec3b>(row, col);
                 Vec3s offset = dstBlurColor - srcBlurColor;
                 resultMat.at<Vec3b>(row, col) = srcColor + offset;
@@ -101,23 +101,13 @@ void blend(ofImage& src, ofImage& dst, ofImage& srcBlur, ofImage& dstBlur, ofIma
 
 void testApp::draw() {
 	ofBackground(0);
-	
-	ofPushMatrix();
-	ofScale(.5, .5);
+    
+    blend(src, dst, mask, result);
 	
 	src.draw(0, 0);
 	dst.draw(640, 0);
-	
-    maskedBlur(src, mask, srcBlur);
-	maskedBlur(dst, mask, dstBlur);
-	
-	srcBlur.draw(0, 480);
-	dstBlur.draw(640, 480);
-	ofPopMatrix();
-    
-    blend(src, dst, srcBlur, dstBlur, result);
-    
-    result.draw(640, 0);
+    mask.draw(0, 480);
+    result.draw(640, 480);
 	
 	drawHighlightString(ofToString((int) ofGetFrameRate()), 10, 20);
 }
