@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>D9B1FFA7-F4B1-468E-9E47-F3E66BBD7DB8</string>
+	<key>IDESourceControlProjectName</key>
+	<string>emptyExample</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>388ABD15-2E6A-4E0E-8B71-C58B6440710A</key>
+		<string>ssh://github.com/arturoc/FaceSubstitution.git</string>
+		<key>45B3C133-C1B6-4559-87A7-790B0FC0D90B</key>
+		<string>ssh://github.com/kylemcdonald/openFrameworks.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>apps/FaceSubstitution/CPUOnlyCloning/emptyExample.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>388ABD15-2E6A-4E0E-8B71-C58B6440710A</key>
+		<string>../../..</string>
+		<key>45B3C133-C1B6-4559-87A7-790B0FC0D90B</key>
+		<string>../../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://github.com/arturoc/FaceSubstitution.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>45B3C133-C1B6-4559-87A7-790B0FC0D90B</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>388ABD15-2E6A-4E0E-8B71-C58B6440710A</string>
+			<key>IDESourceControlWCCName</key>
+			<string>FaceSubstitution</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>45B3C133-C1B6-4559-87A7-790B0FC0D90B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>openFrameworks</string>
+		</dict>
+	</array>
+</dict>
+</plist>
