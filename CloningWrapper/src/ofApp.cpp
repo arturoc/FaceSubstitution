@@ -1,6 +1,6 @@
-#include "testApp.h"
+#include "ofApp.h"
 
-void testApp::setup() {
+void ofApp::setup() {
 	ofSetVerticalSync(true);
 	w = 640, h = 480;
 	src.allocate(640, 480);
@@ -9,7 +9,7 @@ void testApp::setup() {
 	clone.setup(w, h);
 }
 
-void testApp::update() {
+void ofApp::update() {
 	dst.update();
 	if(dst.isFrameNew()) {
 		int x = mouseX, y = mouseY;
@@ -31,7 +31,7 @@ void testApp::update() {
 	}
 }
 
-void testApp::draw() {
+void ofApp::draw() {
 	ofBackground(0);
 	clone.draw(0, 0);
 }

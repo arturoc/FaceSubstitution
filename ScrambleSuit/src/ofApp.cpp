@@ -1,4 +1,4 @@
-#include "testApp.h"
+#include "ofApp.h"
 
 ofMesh texturedRectMesh;
 void texturedRect(float width, float height) {
@@ -21,7 +21,7 @@ void texturedRect(float width, float height) {
 
 // this is important for avoiding slightl discrepencies when the mesh is
 // projected, or processed by GL transforms vs OF transforms
-void testApp::normalizeMesh(ofMesh& mesh) {
+void ofApp::normalizeMesh(ofMesh& mesh) {
 	vector<ofVec3f>& vertices = mesh.getVertices();
 	for(int i = 0; i < vertices.size(); i++) {
 		vertices[i] *= normalizedMeshScale / normalizedWidth;
@@ -30,14 +30,14 @@ void testApp::normalizeMesh(ofMesh& mesh) {
 	}
 }
 
-void testApp::drawNormalized(ofxFaceTracker& tracker) {
+void ofApp::drawNormalized(ofxFaceTracker& tracker) {
 	ofClear(0, 0);
 	ofMesh mesh = tracker.getMeanObjectMesh();
 	normalizeMesh(mesh);	
 	mesh.draw();
 }
 
-void testApp::drawNormalized(ofxFaceTracker& tracker, ofBaseHasTexture& tex, ofFbo& result) {
+void ofApp::drawNormalized(ofxFaceTracker& tracker, ofBaseHasTexture& tex, ofFbo& result) {
 	result.begin();
 	tex.getTextureReference().bind();
 	drawNormalized(tracker);
@@ -45,7 +45,7 @@ void testApp::drawNormalized(ofxFaceTracker& tracker, ofBaseHasTexture& tex, ofF
 	result.end();
 }
 
-void testApp::maskBlur(ofBaseHasTexture& tex, ofFbo& result) {
+void ofApp::maskBlur(ofBaseHasTexture& tex, ofFbo& result) {
 	int k = ofMap(mouseX, 0, ofGetWidth(), 1, 128, true);
 	
 	halfMaskBlur.begin();
@@ -70,7 +70,7 @@ void testApp::maskBlur(ofBaseHasTexture& tex, ofFbo& result) {
 	maskBlurShader.end();
 	result.end();
 }
-void testApp::alphaBlur(ofBaseHasTexture& tex, ofFbo& result) {
+void ofApp::alphaBlur(ofBaseHasTexture& tex, ofFbo& result) {
 	int k = ofMap(mouseY, 0, ofGetHeight(), 1, 25, true);
 	
 	halfAlphaBlur.begin();
@@ -94,7 +94,7 @@ void testApp::alphaBlur(ofBaseHasTexture& tex, ofFbo& result) {
 	result.end();
 }
 
-void testApp::normalizeImage(ofImage& img, ofImage& normalized) {
+void ofApp::normalizeImage(ofImage& img, ofImage& normalized) {
 	srcTracker.update(toCv(img));
 	if(srcTracker.getFound()) {
 		drawNormalized(srcTracker, img, srcNormalized);
@@ -106,7 +106,7 @@ void testApp::normalizeImage(ofImage& img, ofImage& normalized) {
 	}
 }
 
-void testApp::setup() {
+void ofApp::setup() {
 	ofSetVerticalSync(true);
 	
 	maskBlurShader.load("", "MaskBlur.frag");
@@ -162,7 +162,7 @@ void testApp::setup() {
 	debug = false;
 }
 
-void testApp::buildVoronoiFace() {
+void ofApp::buildVoronoiFace() {
 	ofSeedRandom(0);
 	float* pixels = pointsImage.getPixels();
 	for(int i = 0; i < faces.size(); i++) {
@@ -201,7 +201,7 @@ void testApp::buildVoronoiFace() {
 	ofPopMatrix();
 }
 
-void testApp::updateCurrentImage() {
+void ofApp::updateCurrentImage() {
 	src.loadImage(faceDirectory.getPath(currentImage));
 	srcTracker.update(toCv(src));
 	if(srcTracker.getFound()) {
@@ -211,7 +211,7 @@ void testApp::updateCurrentImage() {
 	}
 }
 
-void testApp::update() {
+void ofApp::update() {
 	dst.update();
 	if(dst.isFrameNew()) {
 		dstTracker.update(toCv(dst));
@@ -246,7 +246,7 @@ void testApp::update() {
 	}
 }
 
-void testApp::draw() {
+void ofApp::draw() {
 	ofEnableAlphaBlending();
 	
 	ofSetColor(255);
@@ -268,7 +268,7 @@ void testApp::draw() {
 	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, 20);
 }
 
-void testApp::keyPressed(int key) {
+void ofApp::keyPressed(int key) {
 	if(key == 'r') {
 		maskBlurShader.load("", "MaskBlur.frag");
 		cloneShader.load("", "Clone.frag");

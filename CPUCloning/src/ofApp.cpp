@@ -1,9 +1,9 @@
-#include "testApp.h"
+#include "ofApp.h"
 
 using namespace ofxCv;
 using namespace cv;
 
-void testApp::setup() {
+void ofApp::setup() {
 	//ofSetVerticalSync(true);
 	
 	src.loadImage("src.jpg");
@@ -20,10 +20,10 @@ void testApp::setup() {
 	cloneShader.load("", "Clone.frag");
 }
 
-void testApp::update() {
+void ofApp::update() {
 }
 
-void testApp::maskedBlur(ofImage& tex, ofImage& mask, ofImage& result) {	
+void ofApp::maskedBlur(ofImage& tex, ofImage& mask, ofImage& result) {	
 	Mat texMat = toCv(tex);
 	Mat resultMat = toCv(result);
 	Mat maskMat = toCv(mask);
@@ -68,7 +68,7 @@ void testApp::maskedBlur(ofImage& tex, ofImage& mask, ofImage& result) {
 	result.update();
 }
 
-void testApp::draw() {
+void ofApp::draw() {
 	ofBackground(0);
 	
 	ofPushMatrix();
@@ -99,5 +99,5 @@ void testApp::draw() {
 	drawHighlightString(ofToString((int) ofGetFrameRate()), 10, 20);
 }
 
-void testApp::keyPressed(int key) {
+void ofApp::keyPressed(int key) {
 }

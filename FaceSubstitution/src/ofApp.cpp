@@ -1,8 +1,8 @@
-#include "testApp.h"
+#include "ofApp.h"
 
 using namespace ofxCv;
 
-void testApp::setup() {
+void ofApp::setup() {
 #ifdef TARGET_OSX
 	//ofSetDataPathRoot("../data/");
 #endif
@@ -29,7 +29,7 @@ void testApp::setup() {
 	}
 }
 
-void testApp::update() {
+void ofApp::update() {
 	cam.update();
 	if(cam.isFrameNew()) {
 		camTracker.update(toCv(cam));
@@ -58,7 +58,7 @@ void testApp::update() {
 	}
 }
 
-void testApp::draw() {
+void ofApp::draw() {
 	ofSetColor(255);
 	
 	if(src.getWidth() > 0 && cloneReady) {
@@ -77,7 +77,7 @@ void testApp::draw() {
 	}
 }
 
-void testApp::loadFace(string face){
+void ofApp::loadFace(string face){
 	src.loadImage(face);
 	if(src.getWidth() > 0) {
 		srcTracker.update(toCv(src));
@@ -85,11 +85,11 @@ void testApp::loadFace(string face){
 	}
 }
 
-void testApp::dragEvent(ofDragInfo dragInfo) {
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 	loadFace(dragInfo.files[0]);
 }
 
-void testApp::keyPressed(int key){
+void ofApp::keyPressed(int key){
 	switch(key){
 	case OF_KEY_UP:
 		currentFace++;

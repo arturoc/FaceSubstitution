@@ -1,9 +1,9 @@
-#include "testApp.h"
+#include "ofApp.h"
 
 using namespace ofxCv;
 using namespace cv;
 
-void testApp::setup() {
+void ofApp::setup() {
     ofSetVerticalSync(false);
 	
 	src.loadImage("src.jpg");
@@ -16,7 +16,7 @@ void testApp::setup() {
     copy(dst, result);
 }
 
-void testApp::update() {
+void ofApp::update() {
 }
 
 Mat summed;
@@ -85,7 +85,7 @@ void blend(Mat srcFull, Mat dstFull, Mat maskFull, Mat resultFull, cv::Rect roi)
 }
 
 
-void testApp::draw() {
+void ofApp::draw() {
 	ofBackground(0);
     
     cv::Rect roi(97, 76, 368, 372);

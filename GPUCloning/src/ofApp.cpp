@@ -1,6 +1,6 @@
-#include "testApp.h"
+#include "ofApp.h"
 
-void testApp::setup() {
+void ofApp::setup() {
 	//ofSetVerticalSync(true);
 	
 	src.loadImage("src.jpg");
@@ -22,10 +22,10 @@ void testApp::setup() {
 	cloneShader.load("", "Clone.frag");
 }
 
-void testApp::update() {
+void ofApp::update() {
 }
 
-void testApp::maskedBlur(ofBaseHasTexture& tex, ofBaseHasTexture& mask, ofFbo& result) {
+void ofApp::maskedBlur(ofBaseHasTexture& tex, ofBaseHasTexture& mask, ofFbo& result) {
 	int k = ofMap(mouseX, 0, ofGetWidth(), 0, 128, true);
 	
 	halfBlur.begin();
@@ -49,7 +49,7 @@ void testApp::maskedBlur(ofBaseHasTexture& tex, ofBaseHasTexture& mask, ofFbo& r
 	result.end();
 }
 
-void testApp::draw() {
+void ofApp::draw() {
 	ofBackground(0);
 	
 	ofPushMatrix();
@@ -80,7 +80,7 @@ void testApp::draw() {
 	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, 20);
 }
 
-void testApp::keyPressed(int key) {
+void ofApp::keyPressed(int key) {
 	if(key == 'r') {
 		maskBlurShader.load("", "MaskBlur.frag");
 		cloneShader.load("", "Clone.frag");
