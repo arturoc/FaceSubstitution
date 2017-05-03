@@ -6,11 +6,11 @@ using namespace cv;
 void ofApp::setup() {
 	//ofSetVerticalSync(true);
 	
-	src.loadImage("src.jpg");
+	src.load("src.jpg");
 	src.setImageType(OF_IMAGE_COLOR);
-	dst.loadImage("dst.jpg");
+	dst.load("dst.jpg");
 	dst.setImageType(OF_IMAGE_COLOR);
-	mask.loadImage("mask.png");
+	mask.load("mask.png");
 	mask.setImageType(OF_IMAGE_GRAYSCALE);
 	
 	imitate(srcBlur, src);
@@ -96,7 +96,7 @@ void ofApp::draw() {
 	cloneShader.end();
 	ofDisableAlphaBlending();
 	
-	drawHighlightString(ofToString((int) ofGetFrameRate()), 10, 20);
+	ofDrawBitmapStringHighlight(ofToString((int) ofGetFrameRate()), 10, 20);
 }
 
 void ofApp::keyPressed(int key) {

@@ -3,11 +3,11 @@
 void ofApp::setup() {
 	//ofSetVerticalSync(true);
 	
-	src.loadImage("src.jpg");
+	src.load("src.jpg");
 	src.setImageType(OF_IMAGE_COLOR);
-	dst.loadImage("dst.jpg");
+	dst.load("dst.jpg");
 	dst.setImageType(OF_IMAGE_COLOR);
-	mask.loadImage("mask.png");
+	mask.load("mask.png");
 	mask.setImageType(OF_IMAGE_GRAYSCALE);
 	
 	ofFbo::Settings settings;
@@ -34,7 +34,7 @@ void ofApp::maskedBlur(ofBaseHasTexture& tex, ofBaseHasTexture& mask, ofFbo& res
 	maskBlurShader.setUniformTexture("mask", mask, 2);
 	maskBlurShader.setUniform2f("direction", 1, 0);
 	maskBlurShader.setUniform1i("k", k);
-	tex.getTextureReference().draw(0, 0);
+	tex.getTexture().draw(0, 0);
 	maskBlurShader.end();
 	halfBlur.end();
 	
@@ -77,7 +77,7 @@ void ofApp::draw() {
 	cloneShader.end();
 	ofDisableAlphaBlending();
 	
-	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, 20);
+	ofDrawBitmapStringHighlight(ofToString((int) ofGetFrameRate()), 10, 20);
 }
 
 void ofApp::keyPressed(int key) {

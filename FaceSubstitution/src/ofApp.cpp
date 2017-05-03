@@ -53,7 +53,7 @@ void ofApp::update() {
 			srcFbo.end();
 			
 			clone.setStrength(16);
-			clone.update(srcFbo.getTextureReference(), cam.getTextureReference(), maskFbo.getTextureReference());
+			clone.update(srcFbo.getTexture(), cam.getTexture(), maskFbo.getTexture());
 		}
 	}
 }
@@ -68,17 +68,17 @@ void ofApp::draw() {
 	}
 	
 	if(!camTracker.getFound()) {
-		drawHighlightString("camera face not found", 10, 10);
+		ofDrawBitmapStringHighlight("camera face not found", 10, 10);
 	}
 	if(src.getWidth() == 0) {
-		drawHighlightString("drag an image here", 10, 30);
+		ofDrawBitmapStringHighlight("drag an image here", 10, 30);
 	} else if(!srcTracker.getFound()) {
-		drawHighlightString("image face not found", 10, 30);
+		ofDrawBitmapStringHighlight("image face not found", 10, 30);
 	}
 }
 
 void ofApp::loadFace(string face){
-	src.loadImage(face);
+	src.load(face);
 	if(src.getWidth() > 0) {
 		srcTracker.update(toCv(src));
 		srcPoints = srcTracker.getImagePoints();

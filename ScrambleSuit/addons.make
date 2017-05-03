@@ -1,3 +1,3 @@
-ofxOpenCv
 ofxCv
 ofxFaceTracker
+ofxOpenCv
