@@ -6,11 +6,11 @@ using namespace cv;
 void ofApp::setup() {
     ofSetVerticalSync(false);
 	
-	src.loadImage("src.jpg");
+	src.load("src.jpg");
 	src.setImageType(OF_IMAGE_COLOR);
-	dst.loadImage("dst.jpg");
+	dst.load("dst.jpg");
 	dst.setImageType(OF_IMAGE_COLOR);
-	mask.loadImage("mask.png");
+	mask.load("mask.png");
 	mask.setImageType(OF_IMAGE_GRAYSCALE);
     
     copy(dst, result);
@@ -97,6 +97,6 @@ void ofApp::draw() {
     mask.draw(0, 480);
     result.draw(640, 480);
 	
-	drawHighlightString(ofToString((int) ofGetFrameRate()), 10, 20);
+	ofDrawBitmapStringHighlight(ofToString((int) ofGetFrameRate()), 10, 20);
 }
 

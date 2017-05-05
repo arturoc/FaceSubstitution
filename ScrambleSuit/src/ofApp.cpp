@@ -1,17 +1,23 @@
 #include "ofApp.h"
 
+
+const int ofApp::normalizedWidth = 256;
+const int ofApp::normalizedHeight = 256;
+const float ofApp::normalizedMeshScale = 1400;
+
+
 ofMesh texturedRectMesh;
 void texturedRect(float width, float height) {
 	if(texturedRectMesh.getNumVertices() == 0) {
 		texturedRectMesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
-		texturedRectMesh.addTexCoord(ofVec2f(0, 0));
-		texturedRectMesh.addVertex(ofVec2f(0, 0));
-		texturedRectMesh.addTexCoord(ofVec2f(0, 1));
-		texturedRectMesh.addVertex(ofVec2f(0, 1));
-		texturedRectMesh.addTexCoord(ofVec2f(1, 0));
-		texturedRectMesh.addVertex(ofVec2f(1, 0));
-		texturedRectMesh.addTexCoord(ofVec2f(1, 1));
-		texturedRectMesh.addVertex(ofVec2f(1, 1));
+        texturedRectMesh.addTexCoord(glm::vec2(0, 0));
+		texturedRectMesh.addVertex(glm::vec3(0, 0, 0));
+		texturedRectMesh.addTexCoord(glm::vec2(0, 1));
+		texturedRectMesh.addVertex(glm::vec3(0, 1, 0));
+		texturedRectMesh.addTexCoord(glm::vec2(1, 0));
+		texturedRectMesh.addVertex(glm::vec3(1, 0, 0));
+		texturedRectMesh.addTexCoord(glm::vec2(1, 1));
+		texturedRectMesh.addVertex(glm::vec3(1, 1, 0));
 	}
 	ofPushMatrix();
 	ofScale(width, height);
@@ -22,10 +28,10 @@ void texturedRect(float width, float height) {
 // this is important for avoiding slightl discrepencies when the mesh is
 // projected, or processed by GL transforms vs OF transforms
 void ofApp::normalizeMesh(ofMesh& mesh) {
-	vector<ofVec3f>& vertices = mesh.getVertices();
-	for(int i = 0; i < vertices.size(); i++) {
+	auto& vertices = mesh.getVertices();
+    for(std::size_t i = 0; i < vertices.size(); i++) {
 		vertices[i] *= normalizedMeshScale / normalizedWidth;
-		vertices[i] += ofVec2f(normalizedWidth, normalizedHeight) / 2.;
+        vertices[i] += glm::vec3(normalizedWidth, normalizedHeight, 0) / 2.;
 		vertices[i].z = 0;
 	}
 }
@@ -39,9 +45,9 @@ void ofApp::drawNormalized(ofxFaceTracker& tracker) {
 
 void ofApp::drawNormalized(ofxFaceTracker& tracker, ofBaseHasTexture& tex, ofFbo& result) {
 	result.begin();
-	tex.getTextureReference().bind();
+	tex.getTexture().bind();
 	drawNormalized(tracker);
-	tex.getTextureReference().unbind();
+	tex.getTexture().unbind();
 	result.end();
 }
 
@@ -55,7 +61,7 @@ void ofApp::maskBlur(ofBaseHasTexture& tex, ofFbo& result) {
 	maskBlurShader.setUniformTexture("mask", faceMask, 2);
 	maskBlurShader.setUniform2f("direction", 1, 0);
 	maskBlurShader.setUniform1i("k", k);
-	tex.getTextureReference().draw(0, 0);
+	tex.getTexture().draw(0, 0);
 	maskBlurShader.end();
 	halfMaskBlur.end();
 	
@@ -79,7 +85,7 @@ void ofApp::alphaBlur(ofBaseHasTexture& tex, ofFbo& result) {
 	blurAlphaShader.setUniformTexture("tex", tex, 1);
 	blurAlphaShader.setUniform2f("direction", 1, 0);
 	blurAlphaShader.setUniform1i("k", k);
-	tex.getTextureReference().draw(0, 0);
+	tex.getTexture().draw(0, 0);
 	blurAlphaShader.end();
 	halfAlphaBlur.end();
 	
@@ -95,11 +101,11 @@ void ofApp::alphaBlur(ofBaseHasTexture& tex, ofFbo& result) {
 }
 
 void ofApp::normalizeImage(ofImage& img, ofImage& normalized) {
-	srcTracker.update(toCv(img));
+	srcTracker.update(ofxCv::toCv(img));
 	if(srcTracker.getFound()) {
 		drawNormalized(srcTracker, img, srcNormalized);
 		normalized.allocate(normalizedWidth, normalizedHeight, OF_IMAGE_COLOR);
-		srcNormalized.readToPixels(normalized.getPixelsRef());
+		srcNormalized.readToPixels(normalized.getPixels());
 		normalized.update();
 	} else {
 		ofLogWarning() << "couldn't find the face" << endl;
@@ -136,14 +142,14 @@ void ofApp::setup() {
 	cloned.allocate(settings);
 	halfAlphaBlur.allocate(settings);
 	final.allocate(settings);
-	
-	faceDirectory.listDir("faces");
-	faceDirectory.sort();
-	int n = 5;
-	faces.resize(n);
+
+    faceDirectory = ofDirectory("faces/");
+    faceDirectory.sort();
+	int n = faceDirectory.listDir();
+    faces.resize(n);
 	for(int i = 0; i < n; i++) {
 		ofImage curFace;
-		curFace.loadImage(faceDirectory[i]);
+		curFace.load(faceDirectory[i]);
 		normalizeImage(curFace, faces[i]);
 	}
 	pointsImage.allocate(n, 1, OF_IMAGE_COLOR);
@@ -164,7 +170,7 @@ void ofApp::setup() {
 
 void ofApp::buildVoronoiFace() {
 	ofSeedRandom(0);
-	float* pixels = pointsImage.getPixels();
+	float* pixels = pointsImage.getPixels().getData();
 	for(int i = 0; i < faces.size(); i++) {
 		float speed = .4;
 		pixels[i * 3 + 0] = ofNoise(ofGetElapsedTimef() * speed + ofRandom(1024));
@@ -176,7 +182,7 @@ void ofApp::buildVoronoiFace() {
 	srcNormalized.begin();
 	voronoiShader.begin();
 	voronoiShader.setUniform1i("count", faces.size());
-	for(int i = 0; i < faces.size(); i++) {
+    for(std::size_t i = 0; i < faces.size(); i++) {
 		string texName = "tex" + ofToString(i);
 		voronoiShader.setUniformTexture(texName.c_str(), faces[i], i);
 	}
@@ -202,8 +208,8 @@ void ofApp::buildVoronoiFace() {
 }
 
 void ofApp::updateCurrentImage() {
-	src.loadImage(faceDirectory.getPath(currentImage));
-	srcTracker.update(toCv(src));
+	src.load(faceDirectory.getPath(currentImage));
+	srcTracker.update(ofxCv::toCv(src));
 	if(srcTracker.getFound()) {
 		drawNormalized(srcTracker, src, srcNormalized);
 	} else {
@@ -214,7 +220,7 @@ void ofApp::updateCurrentImage() {
 void ofApp::update() {
 	dst.update();
 	if(dst.isFrameNew()) {
-		dstTracker.update(toCv(dst));
+		dstTracker.update(ofxCv::toCv(dst));
 		drawNormalized(dstTracker, dst, dstNormalized);
 		
 		if(useVoronoi) {
@@ -226,9 +232,9 @@ void ofApp::update() {
 		
 		ofMesh dstMesh = dstTracker.getImageMesh();
 		dstMesh.clearTexCoords();
-		vector<ofVec3f>& vertices = referenceMeanMesh.getVertices();
-		for(int i = 0; i < vertices.size(); i++) {
-			dstMesh.addTexCoord(ofVec2f(vertices[i].x, vertices[i].y));
+		auto& vertices = referenceMeanMesh.getVertices();
+        for(std::size_t i = 0; i < vertices.size(); i++) {
+            dstMesh.addTexCoord(glm::vec2(vertices[i].x, vertices[i].y));
 		}
 		
 		cloned.begin();

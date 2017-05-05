@@ -21,7 +21,7 @@ public:
 	
 	ofxFaceTracker srcTracker;
 	ofImage src;
-	vector<ofVec2f> srcPoints;
+    vector<glm::vec2> srcPoints;
 	
 	bool cloneReady;
 	Clone clone;

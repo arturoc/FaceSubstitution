@@ -23,11 +23,11 @@ void ofApp::update() {
 		
 		mask.begin();
 		ofClear(0, 255);
-		ofCircle(x, y, 32);
+		ofDrawCircle(x, y, 32);
 		mask.end();
 		
 		clone.setStrength(32);
-		clone.update(src.getTextureReference(), dst.getTextureReference(), mask.getTextureReference());
+		clone.update(src.getTexture(), dst.getTexture(), mask.getTexture());
 	}
 }
 
