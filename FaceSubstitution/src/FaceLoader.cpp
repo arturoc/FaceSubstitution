@@ -7,7 +7,6 @@
 
 #include "FaceLoader.h"
 #include "ofxFaceTracker.h"
-#include "Poco/ScopedLock.h"
 #include "Utils.h"
 
 #include "ofxCv.h"
@@ -22,6 +21,8 @@ FaceLoader::FaceLoader() {
 
 FaceLoader::~FaceLoader() {
 	// TODO Auto-generated destructor stub
+    this->stopThread();
+    loadNew.notify_all();
 }
 
 void FaceLoader::resizeAndDiscardImages(string folder){
@@ -81,7 +82,7 @@ void FaceLoader::setup(string folder, Mode _mode){
 
 	mode = _mode;
 	loadNextFace = false;
-	startThread(true,false);
+    startThread(true);
 }
 
 void FaceLoader::update(){
@@ -98,9 +99,12 @@ void FaceLoader::setMode(Mode _mode){
 
 
 void FaceLoader::threadedFunction(){
-	mutex.lock();
+    auto lock = std::unique_lock(mutex);
 	while(isThreadRunning()) {
-		loadNew.wait(mutex);
+        loadNew.wait(lock);
+        if(!isThreadRunning()) {
+            return;
+        }
 		cout << "loading " << faces.getPath(currentFace) << endl;
 		string facePath = faces.getPath(currentFace);
 		loadFace(facePath);
@@ -139,7 +143,7 @@ ofxFaceTracker & FaceLoader::getTracker(){
 	return tracker;
 }
 
-vector<ofVec2f> & FaceLoader::getCurrentImagePoints(){
+vector<glm::vec2> & FaceLoader::getCurrentImagePoints(){
 	return *currentPoints;
 }
 
@@ -157,7 +161,7 @@ string FaceLoader::loadNext(){
 		currentFace++;
 		currentFace %= faces.size();
 	}
-	loadNew.signal();
+    loadNew.notify_all();
 	return faces.getPath(currentFace);
 }
 
@@ -175,7 +179,7 @@ string FaceLoader::loadPrevious(){
 		currentFace--;
 		currentFace %= faces.size();
 	}
-	loadNew.signal();
+    loadNew.notify_all();
 	return faces.getPath(currentFace);
 }
 

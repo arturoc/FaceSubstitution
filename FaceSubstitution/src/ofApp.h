@@ -15,12 +15,14 @@ public:
 	void update();
 	void draw();
 	void onNewFrame(ofPixels & pixels);
-	
+    void allocate(int & numRotations);
+
 	void keyPressed(int key);
 
 	ofxFaceTrackerThreaded camTracker;
 	ofVideoGrabber cam;
-	ofTexture camTex;
+    ofTexture camTex;
+
 	
 	bool cloneReady;
 	Clone clone;
@@ -32,15 +34,15 @@ public:
 	int lastFound;
 	bool faceChanged;
 
-	ofMutex mutex;
-	Poco::Condition condition;
+    std::mutex mutex;
+    std::condition_variable condition;
 	bool refreshOnNewFrameOnly;
 
-	AutoExposure autoExposure;
+    AutoExposure autoExposure;
 
-	ofPixels grayPixels, grayPixelsRotated;
+    ofPixels camRotated, grayPixels;
 	ofRectangle autoExposureBB;
 	int numCamFrames;
 
-	Gui gui;
+    Gui gui;
 };

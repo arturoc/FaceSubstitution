@@ -32,7 +32,7 @@ public:
 
 	ofImage & getCurrentImg();
 	ofxFaceTracker & getTracker();
-	vector<ofVec2f> & getCurrentImagePoints();
+    vector<glm::vec2> & getCurrentImagePoints();
 
 	void threadedFunction();
 
@@ -52,10 +52,10 @@ private:
 
 	ofxFaceTracker tracker;
 	ofImage src[2], *currentImg, *nextImg;
-	vector<ofVec2f> srcPoints[2], *currentPoints, *nextPoints;
+    vector<glm::vec2> srcPoints[2], *currentPoints, *nextPoints;
 	ofDirectory faces;
 	bool loadNextFace;
-	Poco::Condition loadNew;
+    std::condition_variable loadNew;
 	Mode mode;
 	int currentFace, previousFace;;
 

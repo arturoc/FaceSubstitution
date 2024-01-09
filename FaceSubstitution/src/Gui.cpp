@@ -45,20 +45,24 @@ void Gui::setup(AutoExposure & autoExposure, Clone & clone, ofVideoGrabber & cam
 
 	gui.setup(parameters);
 
-	oscParamSync.setup(parameters,8024,"laptop.local",8025);
+    //oscParamSync.setup(parameters,8024,"laptop.local",8025);
+
+    listener = clone.strength.newListener([](int & strength){
+        std::cout << strength << std::endl;
+    });
 
 	gui.loadFromFile("settings.xml");
 
 	save = false;
 	show = false;
 
-	save.addListener(this,&Gui::onSave);
+    save.addListener(this, &Gui::onSave);
 
 	this->autoExposure = &autoExposure;
 	this->clone = &clone;
 	this->cam = &cam;
 
-	font.loadFont("Ubuntu Mono",18);
+    font.load("Ubuntu Mono", 18);
 }
 
 void Gui::onSave(bool & save){
@@ -69,7 +73,7 @@ void Gui::onSave(bool & save){
 }
 
 void Gui::update(const ofRectangle & bb){
-	oscParamSync.update();
+    //oscParamSync.update();
 	autoExposureBB = bb;
 }
 
@@ -84,9 +88,9 @@ void Gui::newCamFrame(){
 
 void Gui::draw(){
 	if(!show) return;
-	ofPushView();
-	ofSetOrientation(getOrientation(numRotations),true);
-	ofSetupScreenPerspective();
+    //ofPushView();
+    //ofSetOrientation(getOrientation(numRotations),true);
+    //ofSetupScreenPerspective();
 
 	ofSetColor(255);
 	gui.draw();
@@ -115,6 +119,6 @@ void Gui::draw(){
 	ofSetColor(255);
 
 
-	ofSetOrientation(OF_ORIENTATION_DEFAULT);
-	ofPopView();
+    //ofSetOrientation(OF_ORIENTATION_DEFAULT);
+    //ofPopView();
 }

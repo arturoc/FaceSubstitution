@@ -29,18 +29,19 @@ public:
 
 	ofParameter<bool> show;
 	ofParameter<int> numRotations;
-	ofParameter<bool> save;
+    ofParameter<bool> save;
 private:
 	AutoExposure * autoExposure;
 	Clone * clone;
-	ofVideoGrabber * cam;
-	ofParameterGroup parameters;
+    ofVideoGrabber * cam;
+    ofParameterGroup parameters;
 	ofxPanel gui;
 
-	ofxOscParameterSync oscParamSync;
+    //ofxOscParameterSync oscParamSync;
 	ofRectangle autoExposureBB;
 	ofxFPS camFPS, camRealFPS;
 	ofTrueTypeFont font;
+    ofEventListener listener;
 };
 
 #endif /* GUI_H_ */

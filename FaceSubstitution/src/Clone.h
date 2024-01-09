@@ -5,6 +5,7 @@
 class Clone {
 public:
 	void setup(int width, int height);
+    void allocate(int width, int height);
 	void draw(ofTexture& src, ofTexture& dst, const ofMesh& mask);
 	ofParameter<int> strength;
 

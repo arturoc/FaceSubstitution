@@ -61,15 +61,7 @@ void main() {\
 }";
 
 void Clone::setup(int width, int height) {
-	ofFbo::Settings settings;
-	settings.width = width;
-	settings.height = height;
-	settings.internalformat = GL_RGB;
-	
-	buffer.allocate(settings);
-	srcBlur.allocate(settings);
-	dstBlur.allocate(settings);
-	
+    allocate(width, height);
 	strength = 0;
 
 	maskBlurShaderH.setupShaderFromSource(GL_FRAGMENT_SHADER, getMaskBlurShaderSourceH(strength));
@@ -81,6 +73,18 @@ void Clone::setup(int width, int height) {
 	
 	strength.addListener(this,&Clone::setStrength);
 	strength.set("strength",7,0,30);
+}
+
+
+void Clone::allocate(int width, int height) {
+    ofFbo::Settings settings;
+    settings.width = width;
+    settings.height = height;
+    settings.internalformat = GL_RGB;
+
+    buffer.allocate(settings);
+    srcBlur.allocate(settings);
+    dstBlur.allocate(settings);
 }
 
 void Clone::maskedBlur(ofTexture& tex, const ofMesh& mask, ofTexture & maskTex, ofFbo& result, bool dst) {

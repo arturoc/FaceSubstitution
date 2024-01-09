@@ -8,7 +8,7 @@
 #   The location of your root openFrameworks installation
 #       (default) OF_ROOT = ../../.. 
 ################################################################################
-# OF_ROOT = ../../..
+OF_ROOT = ../../..
 
 ################################################################################
 # PROJECT ROOT
@@ -37,7 +37,7 @@
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-# PROJECT_EXTERNAL_SOURCE_PATHS = ../Common
+# PROJECT_EXTERNAL_SOURCE_PATHS = 
 
 ################################################################################
 # PROJECT EXCLUSIONS
@@ -76,7 +76,24 @@
 # add a runtime path to search for those shared libraries, since they aren't 
 # incorporated directly into the final executable application binary.
 ################################################################################
-PROJECT_LDFLAGS=-lv4l2 -fopenmp
+# PROJECT_LDFLAGS=-Wl,-rpath=./libs
+# PROJECT_LDFLAGS+=../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libopencv_dnn.a
+# PROJECT_LDFLAGS+=../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libopencv_ml.a
+# PROJECT_LDFLAGS+=../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libopencv_objdetect.a
+# PROJECT_LDFLAGS+=../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libopencv_shape.a
+# PROJECT_LDFLAGS+=../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libopencv_stitching.a
+# PROJECT_LDFLAGS+=../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libopencv_superres.a
+# PROJECT_LDFLAGS+=../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libopencv_videostab.a
+# PROJECT_LDFLAGS+=../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libopencv_calib3d.a
+# PROJECT_LDFLAGS+=../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libopencv_features2d.a
+# PROJECT_LDFLAGS+=../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libopencv_highgui.a
+# PROJECT_LDFLAGS+=../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libopencv_videoio.a
+# PROJECT_LDFLAGS+=../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libopencv_imgcodecs.a
+# PROJECT_LDFLAGS+=../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libopencv_video.a
+# PROJECT_LDFLAGS+=../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libopencv_photo.a
+# PROJECT_LDFLAGS+=../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libopencv_imgproc.a
+# PROJECT_LDFLAGS+=../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libopencv_flann.a
+# PROJECT_LDFLAGS+=../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libopencv_core.a
 
 ################################################################################
 # PROJECT DEFINES
@@ -104,7 +121,7 @@ PROJECT_LDFLAGS=-lv4l2 -fopenmp
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-PROJECT_CFLAGS = -fopenmp
+# PROJECT_CFLAGS = 
 
 ################################################################################
 # PROJECT OPTIMIZATION CFLAGS
@@ -127,7 +144,7 @@ PROJECT_CFLAGS = -fopenmp
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-PROJECT_OPTIMIZATION_CFLAGS_RELEASE = -march=native -mtune=native -g3
+# PROJECT_OPTIMIZATION_CFLAGS_RELEASE = 
 # PROJECT_OPTIMIZATION_CFLAGS_DEBUG = 
 
 ################################################################################

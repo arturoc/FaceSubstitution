@@ -41,17 +41,17 @@ bool AutoExposure::setup(int device, int w, int h){
 void AutoExposure::update(ofPixels & frame, ofPixels & mask){
 	cv::Mat cvGray;
 	if(frame.getNumChannels()>1){
-		ofxCv::convertColor(frame,grayPixels,CV_RGB2GRAY);
+        ofxCv::convertColor(frame,grayPixels,cv::COLOR_RGB2GRAY);
 		cvGray = ofxCv::toCv(grayPixels);
 	}else{
 		cvGray = ofxCv::toCv(frame);
 	}
 	cv::Scalar mean;
 	if(mask.getNumChannels()==4){
-		ofxCv::convertColor(mask,grayPixelsMask,CV_RGBA2GRAY);
+        ofxCv::convertColor(mask,grayPixelsMask,cv::COLOR_RGBA2GRAY);
 		mean = cv::mean(cvGray,ofxCv::toCv(grayPixelsMask));
 	}else if(mask.getNumChannels()==3){
-		ofxCv::convertColor(mask,grayPixelsMask,CV_RGB2GRAY);
+        ofxCv::convertColor(mask,grayPixelsMask,cv::COLOR_RGB2GRAY);
 		mean = cv::mean(cvGray,ofxCv::toCv(grayPixelsMask));
 	}else if(mask.getNumChannels()==1){
 		mean = cv::mean(cvGray,ofxCv::toCv(mask));
@@ -65,7 +65,7 @@ void AutoExposure::update(ofPixels & frame, ofPixels & mask){
 void AutoExposure::update(ofPixels & frame, ofRectangle & roi){
 	cv::Mat cvGray;
 	if(frame.getNumChannels()>1){
-		ofxCv::convertColor(frame,grayPixels,CV_RGB2GRAY);
+        ofxCv::convertColor(frame,grayPixels,cv::COLOR_RGB2GRAY);
 		cvGray = ofxCv::toCv(grayPixels);
 	}else{
 		cvGray = ofxCv::toCv(frame);
